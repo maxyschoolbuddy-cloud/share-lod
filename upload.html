@@ -252,7 +252,8 @@ window.loadFiles=async()=>{
 };
 
 window.copyLink=(token,projId)=>{
-  const url=`${location.origin}/client-view.html?token=${token}&project=${projId}`;
+  const base=location.origin+location.pathname.replace(/\/[^/]*$/,'/');
+  const url=`${base}client-view.html?token=${token}&project=${projId}`;
   navigator.clipboard.writeText(url).then(()=>toast('✅ Copy Link ແລ້ວ! ສົ່ງໃຫ້ລູກຄ້າໄດ້ເລີຍ'));
 };
 

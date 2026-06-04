@@ -387,7 +387,8 @@ window.likeCmt=async(cmtId)=>{
 };
 
 window.doShare=(studioId)=>{
-  navigator.clipboard.writeText(`${location.origin}/studio.html?id=${studioId}`).then(()=>{
+  const _base=location.origin+location.pathname.replace(/\/[^/]*$/,'/');
+  navigator.clipboard.writeText(`${_base}studio.html?id=${studioId}`).then(()=>{
     const t=document.createElement('div');
     t.textContent='✅ Copy Link ແລ້ວ!';
     t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1e1e30;border:1px solid rgba(124,92,252,.4);border-radius:10px;padding:10px 20px;font-size:13px;z-index:9999;color:#fff';

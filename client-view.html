@@ -150,7 +150,7 @@ footer{text-align:center;padding:24px;font-size:11px;color:var(--muted);}
   <div class="lb-foot">
     <button class="lbb lbb-nav" onclick="navLb(-1)">← ກ່ອນ</button>
     <button class="lb-star" id="lb-star" onclick="lbToggleStar()" title="ໝາຍດາວ">☆</button>
-    <a class="lbb lbb-dl" id="lb-dl" download>⬇ Download</a>
+    <button class="lbb lbb-dl" id="lb-dl" onclick="dlFile(this.dataset.url,this.dataset.name)">⬇ Download</button>
     <button class="lbb lbb-nav" onclick="navLb(1)">ຕໍ່ໄປ →</button>
   </div>
 </div>
@@ -390,7 +390,7 @@ function renderGallery(){
             <div class="gi-name">${f.name}</div>
           </div>
           <button class="star-btn" data-star="${f.id}" onclick="event.stopPropagation();toggleStar('${f.id}',this)">${starSet.has(f.id)?'⭐':'☆'}</button>
-          <a class="dl-btn" href="${f.url}" download="${f.name}" onclick="event.stopPropagation()">⬇</a>
+          <button class="dl-btn" onclick="event.stopPropagation();dlFile('${f.url}','${f.name}')">⬇</button>
         </div>
       </div>`).join('')}</div>`;
   }else{
@@ -419,7 +419,7 @@ function updLb(){
   else if(f.mime_type?.startsWith('video'))b.innerHTML=`<video src="${f.url}" controls autoplay style="max-width:90vw;max-height:85vh;border-radius:10px;"></video>`;
   else b.innerHTML=`<div style="color:#fff;text-align:center"><div style="font-size:60px">📄</div><p>${f.name}</p></div>`;
   document.getElementById('lb-star').textContent=starSet.has(f.id)?'⭐':'☆';
-  const dl=document.getElementById('lb-dl'); dl.href=f.url; dl.download=f.name;
+  const dl=document.getElementById('lb-dl'); dl.dataset.url=f.url; dl.dataset.name=f.name;
 }
 
 // ─── FACE SEARCH ───────────────────────────────────────────
@@ -500,7 +500,15 @@ async function trackView(){
   if(!studioUid)return;
   try{await sb.from('gallery_views').insert({project_id:projId,studio_uid:studioUid});}catch(e){}
 }
-window.dlAll=()=>viewFiles.forEach((f,i)=>setTimeout(()=>{const a=document.createElement('a');a.href=f.url;a.download=f.name;a.click();},i*600));
+// ── Download helper (works cross-origin) ──────────────────
+window.dlFile=async(url,name)=>{
+  try{
+    const r=await fetch(url);const blob=await r.blob();
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href),5000);
+  }catch(e){window.open(url,'_blank');}
+};
+window.dlAll=()=>viewFiles.forEach((f,i)=>setTimeout(()=>dlFile(f.url,f.name),i*800));
 document.addEventListener('keydown',e=>{
   if(!document.getElementById('lb').classList.contains('hidden')){
     if(e.key==='Escape')closeLb();if(e.key==='ArrowLeft')navLb(-1);if(e.key==='ArrowRight')navLb(1);if(e.key==='s')lbToggleStar();

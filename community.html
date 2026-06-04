@@ -305,7 +305,8 @@ window.submitStudioCmt=async(postId)=>{
 };
 
 window.sharePost=()=>{
-  const url=`${location.origin}/studio.html?id=${uid}`;
+  const base=location.origin+location.pathname.replace(/\/[^/]*$/,'/');
+  const url=`${base}studio.html?id=${uid}`;
   navigator.clipboard.writeText(url).then(()=>toast('✅ Copy Link ໜ້າ Studio ແລ້ວ!'));
 };
 
