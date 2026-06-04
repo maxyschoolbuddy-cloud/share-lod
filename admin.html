@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SHARE LOD — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&family=Noto+Sans+Lao:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080810;--surface:#0f0f1a;--card:#13131f;--border:rgba(255,255,255,0.06);--text:#f0eff8;--muted:#7a79a0;--a1:#7c5cfc;--grad:linear-gradient(135deg,#7c5cfc,#e05cfc);--sw:220px;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans','Noto Sans Lao',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;}
+.sb{width:var(--sw);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:50;}
+.sb-logo{padding:24px 20px 16px;border-bottom:1px solid var(--border);}
+.sb-logo-txt{font-family:'Playfair Display',serif;font-size:19px;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.sb-admin{font-size:11px;color:#ff8080;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:3px;}
+.sb-nav{flex:1;padding:14px 10px;display:flex;flex-direction:column;gap:3px;}
+.ni{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:var(--muted);text-decoration:none;font-size:13.5px;font-weight:500;transition:all .2s;cursor:pointer;border:none;background:none;width:100%;font-family:'DM Sans','Noto Sans Lao',sans-serif;}
+.ni:hover{background:rgba(255,255,255,.05);color:var(--text);}
+.ni.active{background:rgba(124,92,252,.15);color:var(--a1);}
+.ni .ic{font-size:15px;width:20px;text-align:center;}
+.sb-foot{padding:12px 10px;border-top:1px solid var(--border);}
+.main{margin-left:var(--sw);flex:1;}
+.topbar{padding:18px 28px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:40;}
+.tb-title{font-family:'Playfair Display',serif;font-size:21px;font-weight:800;}
+.content{padding:28px;}
+.panel{display:none;}.panel.on{display:block;}
+/* STATS */
+.sg{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:24px;}
+.sc{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:18px;}
+.sc-n{font-family:'Playfair Display',serif;font-size:28px;font-weight:800;margin-bottom:3px;}
+.sc-l{font-size:12px;color:var(--muted);}
+/* TABLE */
+.tc{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+.th{padding:16px 22px;border-bottom:1px solid var(--border);font-size:14px;font-weight:600;display:flex;justify-content:space-between;align-items:center;}
+table{width:100%;border-collapse:collapse;}
+th{padding:10px 18px;text-align:left;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);}
+td{padding:12px 18px;font-size:13px;border-bottom:1px solid rgba(255,255,255,.03);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,.015);}
+.bdg{display:inline-block;padding:3px 11px;border-radius:100px;font-size:11px;font-weight:600;}
+.ba{background:rgba(80,255,150,.1);color:#80ffaa;border:1px solid rgba(80,255,150,.2);}
+.bp{background:rgba(245,200,66,.1);color:#f5c842;border:1px solid rgba(245,200,66,.2);}
+.bs{background:rgba(124,92,252,.12);color:#a88bff;}
+.bbt{padding:5px 12px;border-radius:7px;font-size:11px;font-weight:500;cursor:pointer;font-family:'DM Sans','Noto Sans Lao',sans-serif;border:none;transition:all .2s;}
+.bap{background:rgba(80,255,150,.12);color:#80ffaa;border:1px solid rgba(80,255,150,.2);}
+.bap:hover{background:rgba(80,255,150,.22);}
+.brj{background:rgba(255,80,80,.1);color:#ff8080;border:1px solid rgba(255,80,80,.18);}
+.brj:hover{background:rgba(255,80,80,.2);}
+.bsu{background:rgba(255,80,80,.1);color:#ff8080;border:1px solid rgba(255,80,80,.18);}
+.sl{color:var(--a1);text-decoration:none;font-size:11px;}
+.sl:hover{text-decoration:underline;}
+.si{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--a1);border-radius:50%;animation:spin .8s linear infinite;display:inline-block;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.search{padding:9px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-family:'DM Sans','Noto Sans Lao',sans-serif;outline:none;width:220px;}
+.empty{padding:36px;text-align:center;color:var(--muted);font-size:13px;}
+/* FILES GRID */
+.fg{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;}
+.ft{background:var(--surface);border:1px solid var(--border);border-radius:11px;overflow:hidden;cursor:pointer;transition:border-color .2s,transform .15s;}
+.ft:hover{border-color:rgba(124,92,252,.4);transform:translateY(-2px);}
+.ft img,.ft video{width:100%;aspect-ratio:1;object-fit:cover;display:block;}
+.ft-ph{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:32px;background:rgba(255,255,255,.03);}
+.ft-info{padding:8px 10px;}
+.ft-name{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text);}
+.ft-meta{font-size:10px;color:var(--muted);margin-top:2px;}
+/* USER DETAIL MODAL */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(10px);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto;}
+.ov.hidden{display:none;}
+.umodal{background:var(--card);border:1px solid var(--border);border-radius:20px;width:100%;max-width:700px;max-height:90vh;overflow-y:auto;}
+.umod-head{padding:24px 28px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--card);z-index:10;}
+.umod-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:800;}
+.umod-cls{background:rgba(255,255,255,.08);border:none;color:var(--text);width:34px;height:34px;border-radius:50%;font-size:16px;cursor:pointer;}
+.umod-body{padding:24px 28px;}
+.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;}
+.info-card{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:14px;}
+.info-card-n{font-family:'Playfair Display',serif;font-size:22px;font-weight:800;margin-bottom:3px;}
+.info-card-l{font-size:11px;color:var(--muted);}
+.section-title{font-size:13px;font-weight:600;margin:18px 0 10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+/* Days adjuster */
+.days-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:18px;}
+.days-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.days-inp{width:90px;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:'DM Sans','Noto Sans Lao',sans-serif;outline:none;text-align:center;}
+.dadd{padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans','Noto Sans Lao',sans-serif;border:none;}
+.dadd-p{background:rgba(80,255,150,.12);color:#80ffaa;border:1px solid rgba(80,255,150,.2);}
+.dadd-m{background:rgba(255,80,80,.1);color:#ff8080;border:1px solid rgba(255,80,80,.18);}
+/* Client list in modal */
+.cl-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:13px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;}
+.cl-info{flex:1;}
+.cl-name{font-size:13px;font-weight:600;}
+.cl-meta{font-size:11px;color:var(--muted);margin-top:2px;}
+.cl-exp{font-size:11px;}
+@media(max-width:900px){.sb{display:none;}.main{margin-left:0;}.sg{grid-template-columns:repeat(2,1fr);}.tc{overflow-x:auto;}.info-grid{grid-template-columns:repeat(2,1fr);}}
+</style>
+</head>
+<body>
+<aside class="sb">
+  <div class="sb-logo"><div class="sb-logo-txt">SHARE LOD</div><div class="sb-admin">🔑 Admin</div></div>
+  <nav class="sb-nav">
+    <button class="ni active" id="tab-ov" onclick="go('overview',this)"><span class="ic">📊</span>Overview</button>
+    <button class="ni" id="tab-py" onclick="go('payments',this)"><span class="ic">💳</span>ການຊຳລະ</button>
+    <button class="ni" id="tab-us" onclick="go('users',this)"><span class="ic">👥</span>ຜູ້ໃຊ້</button>
+    <button class="ni" id="tab-st" onclick="go('settings',this)"><span class="ic">⚙️</span>ຕັ້ງຄ່າ</button>
+  </nav>
+  <div class="sb-foot">
+    <button class="ni" onclick="logout()" style="color:#ff7070;width:100%"><span class="ic">🚪</span>ອອກ</button>
+  </div>
+</aside>
+<div class="main">
+  <div class="topbar"><div class="tb-title">🔑 Admin Panel</div></div>
+  <div class="content">
+    <div class="panel on" id="panel-overview">
+      <div class="sg">
+        <div class="sc"><div class="sc-n" id="st-u">—</div><div class="sc-l">ຜູ້ໃຊ້ທັງໝົດ</div></div>
+        <div class="sc"><div class="sc-n" id="st-a">—</div><div class="sc-l">Active</div></div>
+        <div class="sc"><div class="sc-n" id="st-p">—</div><div class="sc-l">ລໍຖ້າ Activate</div></div>
+        <div class="sc"><div class="sc-n" id="st-s">—</div><div class="sc-l">Slip ໃໝ່</div></div>
+      </div>
+      <div class="tc"><div class="th">Slip ລໍຖ້າກວດ</div><div id="ov-pay"><div style="padding:28px;text-align:center"><div class="si"></div></div></div></div>
+    </div>
+    <div class="panel" id="panel-payments">
+      <div class="tc"><div class="th">ການຊຳລະທັງໝົດ <input class="search" type="text" placeholder="ຄົ້ນຫາ..." oninput="filterPay(this.value)"></div><div id="pay-tbl"><div style="padding:28px;text-align:center"><div class="si"></div></div></div></div>
+    </div>
+    <div class="panel" id="panel-users">
+      <div class="tc"><div class="th">ຜູ້ໃຊ້ທັງໝົດ <input class="search" type="text" placeholder="ຄົ້ນຫາ..." oninput="filterUsers(this.value)"></div><div id="usr-tbl"><div style="padding:28px;text-align:center"><div class="si"></div></div></div></div>
+    </div>
+    <!-- LIGHTBOX ADMIN -->
+    <div class="ov hidden" id="alb" style="z-index:600;background:rgba(0,0,0,.95)">
+      <button onclick="closeAlb()" style="position:fixed;top:18px;right:18px;background:rgba(255,255,255,.1);border:none;color:#fff;width:38px;height:38px;border-radius:50%;font-size:17px;cursor:pointer">✕</button>
+      <div id="alb-body" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%"></div>
+      <div id="alb-info" style="position:fixed;bottom:60px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 18px;font-size:12px;color:var(--muted);text-align:center;white-space:nowrap"></div>
+      <div style="position:fixed;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:10px">
+        <button onclick="navAlb(-1)" style="padding:9px 22px;border-radius:100px;background:rgba(255,255,255,.1);color:#fff;border:none;font-size:13px;cursor:pointer">← ກ່ອນ</button>
+        <a id="alb-dl" download style="padding:9px 22px;border-radius:100px;background:var(--grad);color:#fff;border:none;font-size:13px;cursor:pointer;text-decoration:none">⬇ Download</a>
+        <button onclick="navAlb(1)" style="padding:9px 22px;border-radius:100px;background:rgba(255,255,255,.1);color:#fff;border:none;font-size:13px;cursor:pointer">ຕໍ່ໄປ →</button>
+      </div>
+    </div>
+    <!-- USER DETAIL MODAL -->
+    <div class="ov hidden" id="umod">
+      <div class="umodal">
+        <div class="umod-head">
+          <div class="umod-title" id="umod-title">ລາຍລະອຽດທີມ</div>
+          <button class="umod-cls" onclick="closeUmod()">✕</button>
+        </div>
+        <div class="umod-body" id="umod-body">
+          <div style="text-align:center;padding:40px"><div class="si"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="panel" id="panel-settings">
+      <div class="tc">
+        <div class="th">⚙️ ຕັ້ງຄ່າຂໍ້ມູນທະນາຄານ</div>
+        <div style="padding:28px;max-width:520px">
+          <div style="margin-bottom:16px">
+            <label style="display:block;font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px">ທະນາຄານ</label>
+            <input id="st-bank" style="width:100%;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:9px;color:var(--text);font-size:13px;font-family:'DM Sans','Noto Sans Lao',sans-serif;outline:none" placeholder="BCEL One">
+          </div>
+          <div style="margin-bottom:16px">
+            <label style="display:block;font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px">ຊື່ບັນຊີ</label>
+            <input id="st-aname" style="width:100%;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:9px;color:var(--text);font-size:13px;font-family:'DM Sans','Noto Sans Lao',sans-serif;outline:none" placeholder="SHARE LOD Co., Ltd.">
+          </div>
+          <div style="margin-bottom:16px">
+            <label style="display:block;font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px">ເລກທີບັນຊີ</label>
+            <input id="st-anum" style="width:100%;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:9px;color:var(--text);font-size:13px;font-family:'DM Sans','Noto Sans Lao',sans-serif;outline:none" placeholder="010-12345-6789">
+          </div>
+          <div style="margin-bottom:24px">
+            <label style="display:block;font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px">ໝາຍເຫດການໂອນ</label>
+            <input id="st-note" style="width:100%;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:9px;color:var(--text);font-size:13px;font-family:'DM Sans','Noto Sans Lao',sans-serif;outline:none" placeholder="SHARE LOD-email">
+          </div>
+          <button onclick="saveSettings()" style="padding:11px 28px;background:var(--grad);border:none;border-radius:9px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans','Noto Sans Lao',sans-serif">💾 ບັນທຶກ</button>
+          <span id="st-msg" style="margin-left:14px;font-size:12px;color:#80ffaa;display:none">✅ ບັນທຶກສຳເລັດ!</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+const sb = createClient('https://vuhjmwnxbvzppcoklgir.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1aGptd254YnZ6cHBjb2tsZ2lyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5OTM2NzAsImV4cCI6MjA5MDU2OTY3MH0.ijlH_tjBZm4irxrq-FXfIKIKdwZJTdTzaYbTPrpd928');
+const PL={starter:10737418240,pro:32212254720,studio:85899345920};
+let allU=[],allP=[];
+function fmt(b){if(b<1073741824)return(b/1048576).toFixed(0)+' MB';return(b/1073741824).toFixed(1)+' GB';}
+function fd(ts){if(!ts)return'—';return new Date(ts).toLocaleDateString('lo-LA');}
+
+window.logout=async()=>{await sb.auth.signOut();location.href='login.html';}
+
+window.go=(tab,el)=>{
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  document.getElementById('panel-'+tab).classList.add('on');
+  el.classList.add('active');
+  if(tab==='settings') loadSettings();
+};
+
+window.approvePay=async(pid,uid,plan)=>{
+  if(!confirm('Approve ແລະ Activate Plan?'))return;
+  const {error}=await sb.rpc('approve_payment',{payment_id:pid,target_uid:uid,plan_name:plan||'starter'});
+  if(error){alert('ຜິດພາດ: '+error.message);return;}
+  load();
+};
+window.rejectPay=async(pid)=>{if(!confirm('Reject Slip ນີ້?'))return;await sb.rpc('reject_payment',{payment_id:pid});load();};
+window.activateUser=async(uid,plan)=>{
+  if(!confirm('Activate User?'))return;
+  const {error}=await sb.rpc('activate_user',{target_uid:uid,plan_name:plan||'starter'});
+  if(error){alert('ຜິດພາດ: '+error.message);return;}
+  load();
+};
+window.suspendUser=async(uid)=>{
+  if(!confirm('Suspend User?'))return;
+  const {error}=await sb.rpc('suspend_user',{target_uid:uid});
+  if(error){alert('ຜິດພາດ: '+error.message);return;}
+  load();
+};
+
+window.filterPay=q=>{const f=allP.filter(p=>(p.studio_name||'').toLowerCase().includes(q.toLowerCase())||(p.email||'').toLowerCase().includes(q.toLowerCase()));renderPay(f);};
+window.filterUsers=q=>{const f=allU.filter(u=>(u.studio_name||'').toLowerCase().includes(q.toLowerCase())||(u.email||'').toLowerCase().includes(q.toLowerCase()));renderUsers(f);};
+
+function renderPay(pays,lim){
+  const data=lim?pays.slice(0,lim):pays;
+  const el=document.getElementById(lim?'ov-pay':'pay-tbl');
+  if(!data.length){el.innerHTML='<div class="empty">ບໍ່ມີລາຍການ</div>';return;}
+  el.innerHTML=`<table><thead><tr><th>Studio</th><th>Plan</th><th>Slip</th><th>ວັນທີ</th><th>Status</th><th>Action</th></tr></thead><tbody>${
+    data.map(p=>`<tr>
+      <td><div>${p.studio_name||'—'}</div><div style="font-size:11px;color:var(--muted)">${p.email||''}</div></td>
+      <td><span class="bdg bs">${(p.plan||'starter').toUpperCase()}</span></td>
+      <td><a class="sl" href="${p.slip_url||'#'}" target="_blank">🧾 ເບິ່ງ</a></td>
+      <td style="color:var(--muted)">${fd(p.created_at)}</td>
+      <td><span class="bdg ${p.status==='approved'?'ba':'bp'}">${p.status==='approved'?'✅ OK':p.status==='rejected'?'❌ Reject':'⏳ Pending'}</span></td>
+      <td style="display:flex;gap:5px">${p.status==='pending'?`<button class="bbt bap" onclick="approvePay('${p.id}','${p.uid}','${p.plan||'starter'}')">✅</button><button class="bbt brj" onclick="rejectPay('${p.id}')">❌</button>`:'—'}</td>
+    </tr>`).join('')}</tbody></table>`;
+}
+
+function renderUsers(users){
+  document.getElementById('usr-tbl').innerHTML=`<table><thead><tr><th>Studio</th><th>Plan</th><th>Status</th><th>Storage</th><th>ໝົດອາຍຸ</th><th>Action</th></tr></thead><tbody>${
+    users.map(u=>{
+      const days=u.plan_expires_at?Math.ceil((new Date(u.plan_expires_at)-new Date())/(1000*60*60*24)):null;
+      const expTxt=days===null?'—':days<=0?`<span style="color:#ff5050">ໝົດແລ້ວ</span>`:days<=7?`<span style="color:#f5c842">${days} ວັນ</span>`:`${days} ວັນ`;
+      return `<tr>
+      <td><div>${u.studio_name||'—'}</div><div style="font-size:11px;color:var(--muted)">${u.email||''}</div></td>
+      <td><span class="bdg bs">${(u.plan||'starter').toUpperCase()}</span></td>
+      <td><span class="bdg ${u.plan_status==='active'?'ba':u.plan_status==='suspended'?'brj':'bp'}">${u.plan_status==='active'?'✅ Active':u.plan_status==='suspended'?'🚫 Suspended':'⏳ Pending'}</span></td>
+      <td style="font-size:12px;color:var(--muted)">${fmt(u.storage_used||0)} / ${fmt(u.storage_limit||0)}</td>
+      <td style="font-size:12px">${expTxt}</td>
+      <td style="display:flex;gap:5px;flex-wrap:wrap">
+        <button class="bbt" style="background:rgba(124,92,252,.12);color:#a88bff;border:1px solid rgba(124,92,252,.2)" onclick="openUmod('${u.id}')">🔍 ລາຍລະອຽດ</button>
+        ${u.plan_status!=='active'?`<button class="bbt bap" onclick="activateUser('${u.id}','${u.plan||'starter'}')">✅</button>`:''}
+        <button class="bbt bsu" onclick="suspendUser('${u.id}')">🚫</button>
+      </td>
+    </tr>`;}).join('')}</tbody></table>`;
+}
+
+// ─── USER FILES (inside modal) ────────────────────────────
+let uFiles=[], uFilesFiltered=[], albIdx=0;
+
+window.filterUFiles=()=>{
+  const q=(document.getElementById('ufl-search')?.value||'').toLowerCase();
+  const t=document.getElementById('ufl-type')?.value||'';
+  uFilesFiltered=uFiles.filter(f=>{
+    const mq=!q||(f.name||'').toLowerCase().includes(q)||(f.project_name||'').toLowerCase().includes(q)||(f.folder_name||'').toLowerCase().includes(q);
+    const mt=!t||f.mime_type?.startsWith(t);
+    return mq&&mt;
+  });
+  const imgs=uFilesFiltered.filter(f=>f.mime_type?.startsWith('image')).length;
+  const vids=uFilesFiltered.filter(f=>f.mime_type?.startsWith('video')).length;
+  const sz=uFilesFiltered.reduce((s,f)=>s+(f.size||0),0);
+  const el=document.getElementById('ufl-stats');
+  if(el) el.textContent=`${uFilesFiltered.length} ຟາຍ · 🖼 ${imgs} · 🎬 ${vids} · 💾 ${fmt(sz)}`;
+  const grid=document.getElementById('ufl-grid');
+  if(!grid) return;
+  if(!uFilesFiltered.length){grid.innerHTML='<div class="empty">ບໍ່ພົບຟາຍ</div>';return;}
+  grid.innerHTML=`<div class="fg">${uFilesFiltered.map((f,i)=>`
+    <div class="ft" onclick="openAlb(${i})">
+      ${f.mime_type?.startsWith('image')
+        ?`<img src="${f.url}" loading="lazy" alt="${f.name}">`
+        :f.mime_type?.startsWith('video')
+        ?`<video src="${f.url}" muted preload="none">`
+        :`<div class="ft-ph">📄</div>`}
+      <div class="ft-info">
+        <div class="ft-name">${f.name}</div>
+        <div class="ft-meta">${f.folder_name?`📂 ${f.folder_name} · `:''}${f.project_name||''}</div>
+        <div class="ft-meta">${fmt(f.size||0)}</div>
+      </div>
+    </div>`).join('')}</div>`;
+};
+
+window.openAlb=(i)=>{albIdx=i;updAlb();document.getElementById('alb').classList.remove('hidden');};
+window.closeAlb=()=>document.getElementById('alb').classList.add('hidden');
+window.navAlb=(d)=>{albIdx=Math.max(0,Math.min(uFilesFiltered.length-1,albIdx+d));updAlb();};
+function updAlb(){
+  const f=uFilesFiltered[albIdx]; if(!f) return;
+  const b=document.getElementById('alb-body');
+  if(f.mime_type?.startsWith('image'))
+    b.innerHTML=`<img src="${f.url}" style="max-width:90vw;max-height:80vh;border-radius:10px;object-fit:contain">`;
+  else if(f.mime_type?.startsWith('video'))
+    b.innerHTML=`<video src="${f.url}" controls autoplay style="max-width:90vw;max-height:80vh;border-radius:10px;"></video>`;
+  else
+    b.innerHTML=`<div style="color:#fff;text-align:center"><div style="font-size:60px">📄</div><p>${f.name}</p></div>`;
+  document.getElementById('alb-info').textContent=`${f.name} · ${f.project_name||''} · ${fmt(f.size||0)}`;
+  const dl=document.getElementById('alb-dl'); dl.href=f.url; dl.download=f.name;
+}
+
+window.closeUmod=()=>document.getElementById('umod').classList.add('hidden');
+
+window.openUmod=async(uid)=>{
+  document.getElementById('umod').classList.remove('hidden');
+  document.getElementById('umod-body').innerHTML='<div style="text-align:center;padding:40px"><div class="si"></div></div>';
+  const {data,error}=await sb.rpc('get_user_detail',{target_uid:uid});
+  if(error||!data){document.getElementById('umod-body').innerHTML='<p style="padding:28px;color:#ff8080">ດຶງຂໍ້ມູນຜິດພາດ</p>';return;}
+  const p=data.profile, clients=data.clients||[];
+  document.getElementById('umod-title').textContent='🏢 '+( p.studio_name||'ທີມ Production');
+  const days=p.plan_expires_at?Math.ceil((new Date(p.plan_expires_at)-new Date())/(1000*60*60*24)):null;
+  const expStr=p.plan_expires_at?new Date(p.plan_expires_at).toLocaleDateString('lo-LA'):'ບໍ່ໄດ້ຕັ້ງ';
+  document.getElementById('umod-body').innerHTML=`
+    <div class="info-grid">
+      <div class="info-card"><div class="info-card-n">${clients.length}</div><div class="info-card-l">👥 Clients</div></div>
+      <div class="info-card"><div class="info-card-n">${fmt(p.storage_used||0)}</div><div class="info-card-l">💾 Storage ໃຊ້</div></div>
+      <div class="info-card"><div class="info-card-n">${fmt(p.storage_limit||0)}</div><div class="info-card-l">📦 Storage ລວມ</div></div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:14px 18px;margin-bottom:18px;display:flex;gap:18px;flex-wrap:wrap;font-size:13px">
+      <div><span style="color:var(--muted)">Email:</span> <strong>${p.email||'—'}</strong></div>
+      <div><span style="color:var(--muted)">Plan:</span> <strong>${(p.plan||'starter').toUpperCase()}</strong></div>
+      <div><span style="color:var(--muted)">Status:</span> <span class="bdg ${p.plan_status==='active'?'ba':'bp'}">${p.plan_status==='active'?'✅ Active':'⏳ Pending'}</span></div>
+    </div>
+    <div class="section-title">⏰ ຈັດການ Subscription</div>
+    <div class="days-box">
+      <div style="font-size:13px;margin-bottom:10px">
+        ໝົດອາຍຸ: <strong style="color:${days!==null&&days<=7?'#f5c842':'var(--text)'}">${expStr}</strong>
+        ${days!==null?`<span style="color:var(--muted);font-size:12px">(ອີກ ${days} ວັນ)</span>`:''}
+      </div>
+      <div class="days-row">
+        <input class="days-inp" type="number" id="adj-days-${uid}" placeholder="30" min="1" value="30">
+        <button class="dadd dadd-p" onclick="adjustDays('${uid}',1)">➕ ເພີ່ມວັນ</button>
+        <button class="dadd dadd-m" onclick="adjustDays('${uid}',-1)">➖ ລຶດວັນ</button>
+        <span id="adj-msg-${uid}" style="font-size:12px;display:none"></span>
+      </div>
+    </div>
+    <div class="section-title">👥 Clients ທັງໝົດ (${clients.length})</div>
+    ${!clients.length?'<div class="empty">ຍັງບໍ່ມີ Client</div>':clients.map(c=>{
+      const cdays=c.expires_at?Math.ceil((new Date(c.expires_at)-new Date())/(1000*60*60*24)):null;
+      const cexp=cdays===null?'<span style="color:var(--muted)">♾️ ບໍ່ໝົດກຳນົດ</span>':cdays<=0?'<span style="color:#ff5050">🗑 ໝົດແລ້ວ</span>':`<span style="color:${cdays<=7?'#f5c842':'var(--muted)'}">⏰ ${cdays} ວັນ</span>`;
+      return `<div class="cl-item">
+        <span style="font-size:22px">👤</span>
+        <div class="cl-info">
+          <div class="cl-name">${c.name}</div>
+          <div class="cl-meta">${c.email||'ບໍ່ມີ email'} · 📁 ${c.projects_count} Projects · 🖼 ${c.files_count} ຟາຍ · 💾 ${fmt(c.total_size||0)}</div>
+        </div>
+        <div>${cexp}</div>
+      </div>`;
+    }).join('')}
+    <div class="section-title" style="margin-top:22px">🖼 ຮູບ & ວິດີໂອ ທັງໝົດ</div>
+    <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+      <input id="ufl-search" type="text" placeholder="ຄົ້ນຫາ..." oninput="filterUFiles()"
+        style="flex:1;min-width:140px;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:12px;font-family:'DM Sans','Noto Sans Lao',sans-serif;outline:none">
+      <select id="ufl-type" onchange="filterUFiles()"
+        style="padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:12px;font-family:'DM Sans','Noto Sans Lao',sans-serif;outline:none">
+        <option value="">ທຸກປະເພດ</option>
+        <option value="image">🖼 ຮູບ</option>
+        <option value="video">🎬 ວິດີໂອ</option>
+      </select>
+    </div>
+    <div id="ufl-stats" style="font-size:11px;color:var(--muted);margin-bottom:10px"></div>
+    <div id="ufl-grid"><div style="text-align:center;padding:28px"><div class="si"></div></div></div>`;
+
+  // ໂຫຼດຟາຍ
+  const {data:fdata}=await sb.rpc('get_user_files',{target_uid:uid});
+  uFiles=fdata||[];
+  uFilesFiltered=[...uFiles];
+  filterUFiles();
+};
+
+window.adjustDays=async(uid,sign)=>{
+  const inp=document.getElementById('adj-days-'+uid);
+  const msg=document.getElementById('adj-msg-'+uid);
+  const days=parseInt(inp.value)||30;
+  const delta=sign*days;
+  const {data,error}=await sb.rpc('adjust_expiry_days',{target_uid:uid,days_delta:delta});
+  if(error){msg.textContent='❌ '+error.message;msg.style.color='#ff8080';}
+  else{
+    const newExp=new Date(data).toLocaleDateString('lo-LA');
+    msg.textContent=`✅ ໝົດອາຍຸໃໝ່: ${newExp}`;
+    msg.style.color='#80ffaa';
+    load();
+  }
+  msg.style.display='inline';
+  setTimeout(()=>msg.style.display='none',4000);
+};
+
+async function loadSettings(){
+  const {data}=await sb.from('settings').select('*').eq('id',1).single();
+  if(!data) return;
+  document.getElementById('st-bank').value=data.bank_name||'';
+  document.getElementById('st-aname').value=data.bank_account_name||'';
+  document.getElementById('st-anum').value=data.bank_account_number||'';
+  document.getElementById('st-note').value=data.bank_note||'';
+}
+window.saveSettings=async()=>{
+  const {error}=await sb.rpc('update_bank_settings',{
+    p_bank_name:document.getElementById('st-bank').value.trim(),
+    p_account_name:document.getElementById('st-aname').value.trim(),
+    p_account_number:document.getElementById('st-anum').value.trim(),
+    p_bank_note:document.getElementById('st-note').value.trim()
+  });
+  const msg=document.getElementById('st-msg');
+  if(error){msg.textContent='❌ ຜິດພາດ: '+error.message;msg.style.color='#ff8080';}
+  else{msg.textContent='✅ ບັນທຶກສຳເລັດ!';msg.style.color='#80ffaa';}
+  msg.style.display='inline';
+  setTimeout(()=>msg.style.display='none',3000);
+};
+
+async function load(){
+  const [{data:users},{data:pays}]=await Promise.all([
+    sb.rpc('get_all_users'),
+    sb.rpc('get_all_payments')
+  ]);
+  allU=users||[]; allP=pays||[];
+  const pending=allP.filter(p=>p.status==='pending');
+  document.getElementById('st-u').textContent=allU.length;
+  document.getElementById('st-a').textContent=allU.filter(u=>u.plan_status==='active').length;
+  document.getElementById('st-p').textContent=allU.filter(u=>u.plan_status==='pending').length;
+  document.getElementById('st-s').textContent=pending.length;
+  renderPay(pending,10);
+  renderPay(allP);
+  renderUsers(allU);
+}
+
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('alb').classList.contains('hidden')){
+    if(e.key==='Escape')closeAlb();
+    if(e.key==='ArrowLeft')navAlb(-1);
+    if(e.key==='ArrowRight')navAlb(1);
+  }
+});
+const {data:{session}}=await sb.auth.getSession();
+if(!session){location.href='login.html';}
+const {data:me}=await sb.from('profiles').select('role').eq('id',session.user.id).single();
+if(me?.role!=='admin'){location.href='dashboard.html';}
+load();
+</script>
+</body>
+</html>

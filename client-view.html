@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SHARE LOD — ເບິ່ງຟາຍ</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&family=Noto+Sans+Lao:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080810;--surface:#0f0f1a;--card:#13131f;--border:rgba(255,255,255,0.06);--text:#f0eff8;--muted:#7a79a0;--p:#7c5cfc;--grad:linear-gradient(135deg,#7c5cfc,#e05cfc);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans','Noto Sans Lao',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.orb{position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:0;}
+.orb1{width:400px;height:400px;background:rgba(124,92,252,.1);top:-100px;right:-100px;}
+header{padding:20px 36px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;background:rgba(8,8,16,.88);backdrop-filter:blur(20px);}
+.brand{display:flex;align-items:center;gap:14px;}
+.brand-logo{width:44px;height:44px;border-radius:11px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;overflow:hidden;}
+.brand-logo img{width:100%;height:100%;object-fit:cover;}
+.brand-name{font-family:'Playfair Display',serif;font-size:19px;font-weight:800;}
+.brand-sub{font-size:11px;color:var(--muted);margin-top:1px;}
+.head-right{display:flex;gap:8px;align-items:center;}
+.dl-all{padding:9px 20px;background:var(--grad);border:none;border-radius:100px;color:#fff;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans','Noto Sans Lao',sans-serif;transition:opacity .2s;}
+.dl-all:hover{opacity:.85;}
+main{max-width:1200px;margin:0 auto;padding:32px 28px;position:relative;z-index:1;}
+.proj-info{margin-bottom:22px;}
+.proj-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:900;letter-spacing:-1px;margin-bottom:7px;}
+.proj-meta{display:flex;gap:16px;font-size:12px;color:var(--muted);flex-wrap:wrap;align-items:center;}
+.bio{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 18px;margin-bottom:22px;font-size:13px;color:var(--muted);line-height:1.7;}
+/* EXPIRY BANNER */
+.exp-banner{border-radius:12px;padding:12px 16px;margin-bottom:18px;display:flex;align-items:center;gap:10px;}
+.exp-banner.warn{background:rgba(245,200,66,.07);border:1px solid rgba(245,200,66,.2);}
+.exp-banner.danger{background:rgba(255,80,80,.07);border:1px solid rgba(255,80,80,.2);}
+.exp-banner h4{font-size:12px;font-weight:600;}
+.exp-banner.warn h4{color:#f5c842;}.exp-banner.danger h4{color:#ff6060;}
+.exp-banner p{font-size:11px;color:var(--muted);margin-top:1px;}
+/* SEARCH + FILTER */
+.search-bar{display:flex;gap:8px;margin-bottom:14px;align-items:center;}
+.search-input{flex:1;padding:9px 14px;background:var(--card);border:1px solid var(--border);border-radius:100px;color:var(--text);font-size:13px;font-family:'DM Sans','Noto Sans Lao',sans-serif;outline:none;transition:border-color .2s;}
+.search-input:focus{border-color:rgba(124,92,252,.4);}
+.search-input::placeholder{color:var(--muted);}
+.search-cls{background:none;border:none;color:var(--muted);cursor:pointer;font-size:15px;padding:3px;}
+/* STAR FILTER BAR */
+.star-bar{background:rgba(245,200,66,.06);border:1px solid rgba(245,200,66,.15);border-radius:10px;padding:9px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;font-size:12px;}
+.star-bar.hidden{display:none;}
+.star-bar-cls{background:none;border:none;color:var(--muted);cursor:pointer;font-size:11px;font-family:'DM Sans','Noto Sans Lao',sans-serif;}
+/* FOLDER TABS */
+.ftabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+.ftab{padding:6px 14px;border-radius:100px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'DM Sans','Noto Sans Lao',sans-serif;transition:all .2s;}
+.ftab:hover{border-color:rgba(124,92,252,.3);color:var(--text);}
+.ftab.on{background:var(--grad);border-color:transparent;color:#fff;}
+/* FACE BAR */
+.face-bar{background:rgba(124,92,252,.1);border:1px solid rgba(124,92,252,.2);border-radius:10px;padding:9px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;font-size:12px;}
+.face-bar.hidden{display:none;}
+.face-bar-cls{background:none;border:none;color:var(--p);cursor:pointer;font-size:11px;font-family:'DM Sans','Noto Sans Lao',sans-serif;}
+/* GALLERY TOP */
+.gallery-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.gallery-top-right{display:flex;align-items:center;gap:7px;}
+.face-btn{padding:7px 14px;border-radius:100px;background:rgba(124,92,252,.12);border:1px solid rgba(124,92,252,.2);color:var(--p);font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans','Noto Sans Lao',sans-serif;transition:all .2s;}
+.face-btn:hover{background:rgba(124,92,252,.22);}
+.face-btn.loading{opacity:.5;cursor:not-allowed;}
+.vt{display:flex;gap:3px;background:var(--surface);border-radius:8px;padding:3px;}
+.vb{padding:6px 10px;border-radius:6px;border:none;background:transparent;cursor:pointer;font-size:14px;color:var(--muted);transition:all .2s;}
+.vb.on{background:var(--card);color:var(--text);}
+.ct{font-size:12px;color:var(--muted);}
+/* GRID */
+.gg{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;}
+.gl{display:flex;flex-direction:column;gap:6px;}
+.gi{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:border-color .2s,transform .15s;}
+.gi:hover{border-color:rgba(124,92,252,.4);transform:translateY(-2px);}
+.gi img,.gi video{width:100%;aspect-ratio:1;object-fit:cover;display:block;}
+.gi-ph{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:36px;background:rgba(255,255,255,.03);}
+.gi-foot{padding:8px 10px;display:flex;align-items:center;gap:5px;}
+.gi-info{flex:1;min-width:0;}
+.gi-folder{font-size:10px;color:var(--p);}
+.gi-name{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+/* STAR BUTTON */
+.star-btn{background:none;border:none;font-size:18px;cursor:pointer;padding:3px;line-height:1;transition:transform .15s;flex-shrink:0;color:#f5c842;}
+.star-btn:hover{transform:scale(1.3);}
+.dl-btn{padding:3px 8px;border-radius:6px;background:rgba(124,92,252,.15);border:1px solid rgba(124,92,252,.2);color:var(--p);font-size:11px;text-decoration:none;flex-shrink:0;}
+/* LIST */
+.li-row{display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color .2s;}
+.li-row:hover{border-color:rgba(124,92,252,.3);}
+.li-th{width:38px;height:38px;border-radius:7px;flex-shrink:0;background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;font-size:14px;overflow:hidden;}
+.li-th img{width:100%;height:100%;object-fit:cover;}
+.li-info{flex:1;min-width:0;}
+.li-name{font-size:13px;font-weight:500;}
+.li-folder{font-size:10px;color:var(--p);}
+.li-sz{font-size:11px;color:var(--muted);margin-right:8px;flex-shrink:0;}
+/* LIGHTBOX */
+.lb{position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;}
+.lb.hidden{display:none;}
+.lb-x{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.1);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:16px;cursor:pointer;}
+.lb img,.lb video{max-width:90vw;max-height:85vh;border-radius:10px;object-fit:contain;}
+.lb-foot{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:8px;align-items:center;}
+.lbb{padding:8px 20px;border-radius:100px;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans','Noto Sans Lao',sans-serif;border:none;}
+.lbb-dl{background:var(--grad);color:#fff;}
+.lbb-nav{background:rgba(255,255,255,.1);color:#fff;}
+.lb-star{background:none;border:none;font-size:22px;cursor:pointer;padding:6px;transition:transform .15s;}
+.lb-star:hover{transform:scale(1.2);}
+/* FACE MODAL */
+.face-ov{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(12px);z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px;}
+.face-ov.hidden{display:none;}
+.face-box{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:28px;width:100%;max-width:360px;text-align:center;}
+.face-box h3{font-family:'Playfair Display',serif;font-size:18px;font-weight:800;margin-bottom:5px;}
+.face-box p{font-size:12px;color:var(--muted);margin-bottom:16px;}
+#face-video{width:100%;border-radius:12px;background:#000;display:block;aspect-ratio:4/3;object-fit:cover;}
+.face-status{font-size:12px;color:var(--muted);margin:8px 0 12px;}
+.face-btns{display:flex;gap:8px;}
+.face-btns button{flex:1;padding:10px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans','Noto Sans Lao',sans-serif;border:none;}
+.face-btns button:disabled{opacity:.4;cursor:not-allowed;}
+.fbtn-cap{background:var(--grad);color:#fff;}
+.fbtn-cls{background:rgba(255,255,255,.07);color:var(--muted);}
+canvas#face-canvas{display:none;}
+/* CHAT WIDGET */
+.chat-fab{position:fixed;bottom:24px;right:24px;width:54px;height:54px;background:var(--grad);border:none;border-radius:50%;font-size:22px;cursor:pointer;z-index:100;box-shadow:0 4px 20px rgba(124,92,252,.4);transition:transform .2s;}
+.chat-fab:hover{transform:scale(1.08);}
+.chat-badge{position:absolute;top:-3px;right:-3px;width:16px;height:16px;background:#ff5050;border-radius:50%;font-size:9px;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;}
+.chat-win{position:fixed;bottom:88px;right:24px;width:320px;background:var(--card);border:1px solid var(--border);border-radius:18px;z-index:100;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.4);transition:all .3s;}
+.chat-win.hidden{display:none;}
+.chat-head{padding:14px 16px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.chat-head-logo{width:32px;height:32px;border-radius:8px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:14px;overflow:hidden;flex-shrink:0;}
+.chat-head-logo img{width:100%;height:100%;object-fit:cover;}
+.chat-head-name{font-size:13px;font-weight:600;flex:1;}
+.chat-head-cls{background:none;border:none;color:var(--muted);cursor:pointer;font-size:15px;}
+.chat-msgs{height:280px;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;}
+.chat-msg{max-width:80%;padding:8px 12px;border-radius:12px;font-size:13px;line-height:1.5;}
+.chat-msg.from-me{background:var(--grad);color:#fff;align-self:flex-end;border-bottom-right-radius:4px;}
+.chat-msg.from-studio{background:var(--surface);color:var(--text);align-self:flex-start;border-bottom-left-radius:4px;}
+.chat-msg-name{font-size:10px;color:var(--muted);margin-bottom:2px;}
+.chat-time{font-size:9px;opacity:.6;margin-top:2px;text-align:right;}
+.chat-inp-row{padding:10px 12px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:center;}
+.chat-inp{flex:1;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:100px;color:var(--text);font-size:13px;font-family:'DM Sans','Noto Sans Lao',sans-serif;outline:none;}
+.chat-inp::placeholder{color:var(--muted);}
+.chat-send{padding:8px 14px;background:var(--grad);border:none;border-radius:100px;color:#fff;font-size:12px;cursor:pointer;font-family:'DM Sans','Noto Sans Lao',sans-serif;}
+/* STATES */
+.st{text-align:center;padding:60px 20px;}
+.st-icon{font-size:44px;margin-bottom:12px;}
+.spinner{width:26px;height:26px;border:3px solid var(--border);border-top-color:var(--p);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+footer{text-align:center;padding:24px;font-size:11px;color:var(--muted);}
+@media(max-width:600px){header{padding:14px;flex-wrap:wrap;gap:10px;}main{padding:18px 14px;}.gg{grid-template-columns:repeat(2,1fr);}.gallery-top{flex-direction:column;align-items:flex-start;gap:8px;}.chat-win{width:calc(100vw - 32px);right:16px;}}
+</style>
+</head>
+<body>
+<div class="orb orb1"></div>
+<div id="app"><div class="st"><div class="spinner"></div><p style="color:var(--muted)">ກຳລັງໂຫຼດ...</p></div></div>
+
+<!-- LIGHTBOX -->
+<div class="lb hidden" id="lb">
+  <button class="lb-x" onclick="closeLb()">✕</button>
+  <div id="lb-body"></div>
+  <div class="lb-foot">
+    <button class="lbb lbb-nav" onclick="navLb(-1)">← ກ່ອນ</button>
+    <button class="lb-star" id="lb-star" onclick="lbToggleStar()" title="ໝາຍດາວ">☆</button>
+    <a class="lbb lbb-dl" id="lb-dl" download>⬇ Download</a>
+    <button class="lbb lbb-nav" onclick="navLb(1)">ຕໍ່ໄປ →</button>
+  </div>
+</div>
+
+<!-- FACE MODAL -->
+<div class="face-ov hidden" id="face-modal">
+  <div class="face-box">
+    <h3>🤳 ຊອກຮູບດ້ວຍໜ້າ</h3>
+    <p>ຈ້ອງກ້ອງ ແລ້ວກົດຖ່າຍ</p>
+    <video id="face-video" autoplay muted playsinline></video>
+    <div class="face-status" id="face-status">ກຳລັງເປີດ Camera...</div>
+    <canvas id="face-canvas"></canvas>
+    <div class="face-btns">
+      <button class="fbtn-cap" id="btn-cap" onclick="captureAndSearch()" disabled>📸 ຖ່າຍ & ຊອກ</button>
+      <button class="fbtn-cls" onclick="closeFaceModal()">ຍົກເລີກ</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHAT WIDGET -->
+<button class="chat-fab" id="chat-fab" onclick="toggleChat()" title="ສົນທະນາກັບ Studio">💬</button>
+<div class="chat-win hidden" id="chat-win">
+  <div class="chat-head">
+    <div class="chat-head-logo" id="chat-logo">📷</div>
+    <div class="chat-head-name" id="chat-name">Studio</div>
+    <button class="chat-head-cls" onclick="toggleChat()">✕</button>
+  </div>
+  <div class="chat-msgs" id="chat-msgs"></div>
+  <div class="chat-inp-row">
+    <input class="chat-inp" id="chat-inp" placeholder="ພິມຂໍ້ຄວາມ..." onkeydown="if(event.key==='Enter')sendMsg()">
+    <button class="chat-send" onclick="sendMsg()">ສົ່ງ</button>
+  </div>
+</div>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+import * as faceapi from 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.esm.js';
+
+const sb = createClient('https://vuhjmwnxbvzppcoklgir.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1aGptd254YnZ6cHBjb2tsZ2lyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5OTM2NzAsImV4cCI6MjA5MDU2OTY3MH0.ijlH_tjBZm4irxrq-FXfIKIKdwZJTdTzaYbTPrpd928');
+
+const params = new URLSearchParams(location.search);
+const token = params.get('token'), projId = params.get('project');
+let files=[], lbIdx=0, view='grid', activeFolder=null, faceFilterIds=null;
+let faceStream=null, faceReady=false, viewFiles=[], searchQ='';
+let starSet=new Set(), starFilterOn=false;
+let studioUid=null, studioProfile=null;
+const sessKey=localStorage.getItem('slod_sess')||Math.random().toString(36).slice(2);
+localStorage.setItem('slod_sess',sessKey);
+let chatName=localStorage.getItem('chat_name')||'';
+
+function fmt(b){if(b<1048576)return(b/1024).toFixed(1)+' KB';if(b<1073741824)return(b/1048576).toFixed(1)+' MB';return(b/1073741824).toFixed(2)+' GB';}
+
+// Face AI
+const MODEL_URL='https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model';
+(async()=>{try{await Promise.all([faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),faceapi.nets.faceLandmark68TinyNet.loadFromUri(MODEL_URL),faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL)]);faceReady=true;const b=document.getElementById('face-search-btn');if(b){b.classList.remove('loading');b.textContent='🤳 ຊອກດ້ວຍໜ້າ';}}catch(e){}})();
+
+// ─── LOAD ──────────────────────────────────────────────────
+async function load(){
+  const app=document.getElementById('app');
+  if(!token||!projId){app.innerHTML='<div class="st"><div class="st-icon">🔒</div><p>Link ບໍ່ຖືກຕ້ອງ</p></div>';return;}
+
+  const [{data:proj},{data:profile}]=await Promise.all([
+    sb.from('projects').select('*').eq('id',projId).single(),
+    sb.from('profiles').select('studio_name,branding_logo,branding_color,branding_bio').limit(1)
+  ]);
+  if(!proj){app.innerHTML='<div class="st"><div class="st-icon">❌</div><p>ບໍ່ພົບ Project</p></div>';return;}
+
+  const {data:profileData}=await sb.from('profiles').select('studio_name,branding_logo,branding_color,branding_bio').eq('id',proj.uid).single();
+  studioProfile=profileData;
+  studioUid=proj.uid;
+  const color=profileData?.branding_color||'#7c5cfc';
+  document.documentElement.style.setProperty('--p',color);
+  document.documentElement.style.setProperty('--grad',`linear-gradient(135deg,${color},#e05cfc)`);
+
+  // Token check
+  const {data:tokenCheck}=await sb.from('files').select('id').eq('project_id',projId).eq('share_token',token).limit(1);
+  if(!tokenCheck?.length){app.innerHTML='<div class="st"><div class="st-icon">🔒</div><p>Link ບໍ່ຖືກຕ້ອງ ຫຼື ໝົດອາຍຸ</p></div>';return;}
+
+  // Load files
+  const {data:fdata}=await sb.from('files').select('*').eq('project_id',projId).eq('share_enabled',true).order('created_at',{ascending:false});
+  files=fdata||[];
+
+  // Load stars
+  await loadStars();
+
+  // Client expiry
+  const {data:clientData}=await sb.from('clients').select('expires_at').eq('id',proj.client_id).maybeSingle();
+
+  document.title=`${proj.name} — ${profileData?.studio_name||'SHARE LOD'}`;
+
+  // Chat widget setup
+  document.getElementById('chat-name').textContent=profileData?.studio_name||'Studio';
+  if(profileData?.branding_logo)document.getElementById('chat-logo').innerHTML=`<img src="${profileData.branding_logo}">`;
+
+  // Build expiry banner
+  let expiryHtml='';
+  if(clientData?.expires_at){
+    const days=Math.ceil((new Date(clientData.expires_at)-new Date())/(1000*60*60*24));
+    const expStr=new Date(clientData.expires_at).toLocaleDateString('lo-LA');
+    if(days<=0)expiryHtml=`<div class="exp-banner danger"><span style="font-size:20px">🗑</span><div><h4>Link ນີ້ໝົດກຳນົດແລ້ວ</h4><p>ຂໍ້ມູນຖືກລຶບໂດຍ Studio</p></div></div>`;
+    else if(days<=7)expiryHtml=`<div class="exp-banner ${days<=3?'danger':'warn'}"><span style="font-size:20px">${days<=3?'🚨':'⚠️'}</span><div><h4>Link ໝົດໃນ ${days} ວັນ!</h4><p>ກ່ອນ ${expStr} — ກະລຸນາ Download ຮູບໃຫ້ຄົບ</p></div></div>`;
+  }
+
+  app.innerHTML=`
+    <header>
+      <div class="brand">
+        <div class="brand-logo" style="background:linear-gradient(135deg,${color},#e05cfc)">${profileData?.branding_logo?`<img src="${profileData.branding_logo}">`:'📷'}</div>
+        <div><div class="brand-name">${profileData?.studio_name||'Studio'}</div><div class="brand-sub">ສົ່ງໃຫ້ທ່ານດ້ວຍ SHARE LOD</div></div>
+      </div>
+      <div class="head-right">
+        <button class="dl-all" onclick="dlAll()">⬇ Download ທັງໝົດ</button>
+      </div>
+    </header>
+    <main>
+      ${profileData?.branding_bio?`<div class="bio">${profileData.branding_bio}</div>`:''}
+      ${expiryHtml}
+      <div class="proj-info">
+        <div class="proj-title">📁 ${proj.name}</div>
+        <div class="proj-meta">
+          ${proj.shoot_date?`<span>📅 ${proj.shoot_date}</span>`:''}
+          <span>🖼 ${files.length} ຟາຍ</span>
+          <span>👤 ${proj.client_name||''}</span>
+          ${starSet.size>0?`<span style="color:#f5c842">⭐ ${starSet.size} ໝາຍດາວ</span>`:''}
+        </div>
+      </div>
+      <div class="search-bar">
+        <input class="search-input" id="search-input" type="text" placeholder="🔍 ຄົ້ນຫາ..." oninput="onSearch(this.value)">
+        <button class="search-cls" id="search-cls" onclick="clearSearch()" style="display:none">✕</button>
+      </div>
+      <div class="ftabs" id="ftabs"></div>
+      <div class="star-bar hidden" id="star-bar">
+        <span>⭐ ສະແດງ ${starSet.size} ຮູບທີ່ໝາຍດາວ</span>
+        <button class="star-bar-cls" onclick="clearStarFilter()">ສະແດງທັງໝົດ ✕</button>
+      </div>
+      <div class="face-bar hidden" id="face-bar">
+        <span id="face-bar-txt"></span>
+        <button class="face-bar-cls" onclick="clearFaceSearch()">✕</button>
+      </div>
+      <div class="gallery-top">
+        <div class="ct" id="gal-count"></div>
+        <div class="gallery-top-right">
+          <button class="face-btn loading" id="face-search-btn" onclick="openFaceModal()">⏳ ໂຫຼດ AI...</button>
+          <div class="vt">
+            <button class="vb on" id="vg" onclick="setView('grid')">⊞</button>
+            <button class="vb" id="vl" onclick="setView('list')">☰</button>
+          </div>
+        </div>
+      </div>
+      <div id="gallery"></div>
+    </main>
+    <footer>ສ່ວນໜຶ່ງຂອງ SHARE LOD · ລະບົບຝາກຟາຍສຳລັບຊ່າງພາບ</footer>`;
+
+  renderFolderTabs();
+  renderGallery();
+  trackView();
+  loadChat();
+}
+
+// ─── STARS ────────────────────────────────────────────────
+async function loadStars(){
+  const {data}=await sb.from('photo_stars').select('file_id').eq('project_id',projId).eq('share_token',token);
+  starSet=new Set((data||[]).map(s=>s.file_id));
+}
+window.toggleStar=async(fileId,btn)=>{
+  const f=files.find(x=>x.id===fileId);
+  if(starSet.has(fileId)){
+    await sb.from('photo_stars').delete().eq('file_id',fileId).eq('share_token',token);
+    starSet.delete(fileId);
+    btn.textContent='☆';
+  }else{
+    await sb.from('photo_stars').insert({file_id:fileId,project_id:projId,studio_uid:f?.uid,share_token:token});
+    starSet.add(fileId);
+    btn.textContent='⭐';
+    btn.style.animation='pop .2s ease';setTimeout(()=>btn.style.animation='',200);
+  }
+  updateStarCount();
+};
+function updateStarCount(){
+  const m=document.querySelector('.proj-meta');
+  if(m){const s=m.querySelector('.star-count');if(s)s.textContent=`⭐ ${starSet.size} ໝາຍດາວ`;else if(starSet.size>0)m.innerHTML+=`<span class="star-count" style="color:#f5c842">⭐ ${starSet.size} ໝາຍດາວ</span>`;}
+  if(starFilterOn) renderGallery();
+}
+window.filterByStars=()=>{starFilterOn=true;document.getElementById('star-bar').classList.remove('hidden');renderGallery();};
+window.clearStarFilter=()=>{starFilterOn=false;document.getElementById('star-bar').classList.add('hidden');renderGallery();};
+
+// ─── LIGHTBOX STAR ─────────────────────────────────────────
+window.lbToggleStar=()=>{
+  const f=viewFiles[lbIdx]; if(!f)return;
+  const allBtns=document.querySelectorAll(`[data-star="${f.id}"]`);
+  toggleStar(f.id,{textContent:'',style:{animation:''}});
+  // Update all star buttons for this file
+  setTimeout(()=>{allBtns.forEach(b=>b.textContent=starSet.has(f.id)?'⭐':'☆');document.getElementById('lb-star').textContent=starSet.has(f.id)?'⭐':'☆';},100);
+};
+
+// ─── FOLDER TABS ───────────────────────────────────────────
+function renderFolderTabs(){
+  const folders=[...new Set(files.map(f=>f.folder_name).filter(Boolean))];
+  const el=document.getElementById('ftabs');
+  if(!folders.length){el.style.display='none';return;}
+  el.innerHTML=`<button class="ftab on" onclick="setFolder(null,this)">ທັງໝົດ (${files.length})</button>`
+    +folders.map(fn=>`<button class="ftab" onclick="setFolder('${fn}',this)">📂 ${fn} (${files.filter(f=>f.folder_name===fn).length})</button>`).join('');
+}
+window.setFolder=(folder,el)=>{
+  activeFolder=folder;faceFilterIds=null;
+  document.querySelectorAll('.ftab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');renderGallery();
+};
+
+// ─── GALLERY ───────────────────────────────────────────────
+function getFiltered(){
+  let f=files;
+  if(activeFolder) f=f.filter(x=>x.folder_name===activeFolder);
+  if(faceFilterIds) f=f.filter(x=>faceFilterIds.has(x.id));
+  if(starFilterOn) f=f.filter(x=>starSet.has(x.id));
+  if(searchQ){const q=searchQ.toLowerCase();f=f.filter(x=>(x.name||'').toLowerCase().includes(q)||(x.folder_name||'').toLowerCase().includes(q));}
+  return f;
+}
+window.setView=mode=>{view=mode;document.getElementById('vg').classList.toggle('on',mode==='grid');document.getElementById('vl').classList.toggle('on',mode==='list');renderGallery();};
+window.onSearch=q=>{searchQ=q;document.getElementById('search-cls').style.display=q?'block':'none';renderGallery();};
+window.clearSearch=()=>{searchQ='';document.getElementById('search-input').value='';document.getElementById('search-cls').style.display='none';renderGallery();};
+
+function renderGallery(){
+  viewFiles=getFiltered();
+  const g=document.getElementById('gallery');
+  const cnt=document.getElementById('gal-count');
+  if(cnt) cnt.textContent=`${viewFiles.length} ລາຍການ`;
+  if(!viewFiles.length){g.innerHTML='<div class="st"><div class="st-icon">📭</div><p style="color:var(--muted)">ບໍ່ພົບຮູບ</p></div>';return;}
+  if(view==='grid'){
+    g.innerHTML=`<div class="gg">${viewFiles.map((f,i)=>`
+      <div class="gi" onclick="openLb(${i})">
+        ${f.mime_type?.startsWith('image')?`<img src="${f.url}" loading="lazy" alt="${f.name}">`
+          :f.mime_type?.startsWith('video')?`<video src="${f.url}" muted>`
+          :`<div class="gi-ph">📄</div>`}
+        <div class="gi-foot">
+          <div class="gi-info">
+            ${f.folder_name?`<div class="gi-folder">📂 ${f.folder_name}</div>`:''}
+            <div class="gi-name">${f.name}</div>
+          </div>
+          <button class="star-btn" data-star="${f.id}" onclick="event.stopPropagation();toggleStar('${f.id}',this)">${starSet.has(f.id)?'⭐':'☆'}</button>
+          <a class="dl-btn" href="${f.url}" download="${f.name}" onclick="event.stopPropagation()">⬇</a>
+        </div>
+      </div>`).join('')}</div>`;
+  }else{
+    g.innerHTML=`<div class="gl">${viewFiles.map((f,i)=>`
+      <div class="li-row" onclick="openLb(${i})">
+        <div class="li-th">${f.mime_type?.startsWith('image')?`<img src="${f.url}" loading="lazy">`:f.mime_type?.startsWith('video')?'🎬':'📄'}</div>
+        <div class="li-info">
+          ${f.folder_name?`<div class="li-folder">📂 ${f.folder_name}</div>`:''}
+          <div class="li-name">${f.name}</div>
+        </div>
+        <span class="li-sz">${fmt(f.size||0)}</span>
+        <button class="star-btn" data-star="${f.id}" onclick="event.stopPropagation();toggleStar('${f.id}',this)">${starSet.has(f.id)?'⭐':'☆'}</button>
+        <a class="dl-btn" href="${f.url}" download="${f.name}" onclick="event.stopPropagation()">⬇</a>
+      </div>`).join('')}</div>`;
+  }
+}
+
+// ─── LIGHTBOX ──────────────────────────────────────────────
+window.openLb=i=>{lbIdx=i;updLb();document.getElementById('lb').classList.remove('hidden');};
+window.closeLb=()=>document.getElementById('lb').classList.add('hidden');
+window.navLb=d=>{lbIdx=Math.max(0,Math.min(viewFiles.length-1,lbIdx+d));updLb();};
+function updLb(){
+  const f=viewFiles[lbIdx]; if(!f)return;
+  const b=document.getElementById('lb-body');
+  if(f.mime_type?.startsWith('image'))b.innerHTML=`<img src="${f.url}" alt="${f.name}">`;
+  else if(f.mime_type?.startsWith('video'))b.innerHTML=`<video src="${f.url}" controls autoplay style="max-width:90vw;max-height:85vh;border-radius:10px;"></video>`;
+  else b.innerHTML=`<div style="color:#fff;text-align:center"><div style="font-size:60px">📄</div><p>${f.name}</p></div>`;
+  document.getElementById('lb-star').textContent=starSet.has(f.id)?'⭐':'☆';
+  const dl=document.getElementById('lb-dl'); dl.href=f.url; dl.download=f.name;
+}
+
+// ─── FACE SEARCH ───────────────────────────────────────────
+window.openFaceModal=()=>{
+  if(!faceReady){alert('AI ກຳລັງໂຫຼດ... ລໍຖ້າ 30 ວິ');return;}
+  document.getElementById('face-modal').classList.remove('hidden');
+  document.getElementById('face-status').textContent='ກຳລັງເປີດ Camera...';
+  document.getElementById('btn-cap').disabled=true;
+  navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}})
+    .then(stream=>{faceStream=stream;document.getElementById('face-video').srcObject=stream;document.getElementById('face-status').textContent='📸 ຈ້ອງກ້ອງ ແລ້ວກົດຖ່າຍ';document.getElementById('btn-cap').disabled=false;})
+    .catch(()=>{document.getElementById('face-status').textContent='❌ ເປີດ Camera ບໍ່ໄດ້';});
+};
+window.closeFaceModal=()=>{if(faceStream){faceStream.getTracks().forEach(t=>t.stop());faceStream=null;}document.getElementById('face-modal').classList.add('hidden');};
+window.captureAndSearch=async()=>{
+  const vid=document.getElementById('face-video');
+  const canvas=document.getElementById('face-canvas');
+  canvas.width=vid.videoWidth;canvas.height=vid.videoHeight;
+  canvas.getContext('2d').drawImage(vid,0,0);
+  document.getElementById('face-status').textContent='🔍 ກຳລັງວິເຄາະ...';
+  document.getElementById('btn-cap').disabled=true;
+  try{
+    const det=await faceapi.detectSingleFace(canvas,new faceapi.TinyFaceDetectorOptions({scoreThreshold:.4})).withFaceLandmarks(true).withFaceDescriptor();
+    if(!det){document.getElementById('face-status').textContent='😕 ບໍ່ພົບໜ້າ — ລອງໃໝ່';document.getElementById('btn-cap').disabled=false;return;}
+    const ref=det.descriptor;const THRESHOLD=0.52;
+    const matches=files.filter(f=>{
+      if(!f.face_descriptor||!f.mime_type?.startsWith('image'))return false;
+      const stored=new Float32Array(Array.isArray(f.face_descriptor)?f.face_descriptor:Object.values(f.face_descriptor));
+      return faceapi.euclideanDistance(stored,ref)<THRESHOLD;
+    });
+    closeFaceModal();
+    faceFilterIds=new Set(matches.map(f=>f.id));
+    activeFolder=null;
+    document.querySelectorAll('.ftab').forEach(t=>t.classList.remove('on'));
+    const bar=document.getElementById('face-bar');bar.classList.remove('hidden');
+    document.getElementById('face-bar-txt').textContent=`🤳 ພົບ ${matches.length} ຮູບທີ່ມີໜ້າຂອງທ່ານ`;
+    renderGallery();
+  }catch(e){document.getElementById('face-status').textContent='❌ '+e.message;document.getElementById('btn-cap').disabled=false;}
+};
+window.clearFaceSearch=()=>{faceFilterIds=null;document.getElementById('face-bar').classList.add('hidden');renderGallery();};
+
+// ─── CHAT ──────────────────────────────────────────────────
+let chatOpen=false;
+window.toggleChat=()=>{
+  chatOpen=!chatOpen;
+  document.getElementById('chat-win').classList.toggle('hidden',!chatOpen);
+  if(chatOpen)loadChat();
+};
+async function loadChat(){
+  if(!studioUid)return;
+  const {data}=await sb.from('messages').select('*').eq('studio_uid',studioUid).eq('project_id',projId).order('created_at',{ascending:true});
+  const el=document.getElementById('chat-msgs');
+  if(!data?.length){el.innerHTML='<div style="text-align:center;padding:20px;font-size:12px;color:var(--muted)">ສົ່ງຂໍ້ຄວາມຫາ Studio ໄດ້ເລີຍ</div>';return;}
+  el.innerHTML=data.map(m=>`
+    <div>
+      ${!m.is_from_studio?`<div class="chat-msg-name" style="padding-left:6px">${m.sender_name}</div>`:''}
+      <div class="chat-msg ${m.is_from_studio?'from-studio':'from-me'}">
+        ${m.content}
+        <div class="chat-time">${new Date(m.created_at).toLocaleTimeString('lo-LA',{hour:'2-digit',minute:'2-digit'})}</div>
+      </div>
+    </div>`).join('');
+  el.scrollTop=el.scrollHeight;
+}
+window.sendMsg=async()=>{
+  const inp=document.getElementById('chat-inp');
+  const content=inp.value.trim(); if(!content)return;
+  if(!chatName){
+    const name=prompt('ໃສ່ຊື່ຂອງທ່ານກ່ອນ:');
+    if(!name)return;
+    chatName=name;localStorage.setItem('chat_name',name);
+  }
+  inp.value='';
+  await sb.from('messages').insert({studio_uid:studioUid,sender_name:chatName,sender_key:sessKey,content,is_from_studio:false,project_id:projId,project_name:''});
+  loadChat();
+};
+
+// ─── UTILS ─────────────────────────────────────────────────
+async function trackView(){
+  if(!studioUid)return;
+  try{await sb.from('gallery_views').insert({project_id:projId,studio_uid:studioUid});}catch(e){}
+}
+window.dlAll=()=>viewFiles.forEach((f,i)=>setTimeout(()=>{const a=document.createElement('a');a.href=f.url;a.download=f.name;a.click();},i*600));
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('lb').classList.contains('hidden')){
+    if(e.key==='Escape')closeLb();if(e.key==='ArrowLeft')navLb(-1);if(e.key==='ArrowRight')navLb(1);if(e.key==='s')lbToggleStar();
+  }else if(e.key==='Escape')closeFaceModal();
+});
+load();
+</script>
+</body>
+</html>

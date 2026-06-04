@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SHARE LOD — Upload</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&family=Noto+Sans+Lao:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080810;--surface:#0f0f1a;--card:#13131f;--border:rgba(255,255,255,0.06);--text:#f0eff8;--muted:#7a79a0;--a1:#7c5cfc;--grad:linear-gradient(135deg,#7c5cfc,#e05cfc);--sw:240px;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans','Noto Sans Lao',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;}
+.sb{width:var(--sw);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:50;}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid var(--border);}
+.sb-logo-txt{font-family:'Playfair Display',serif;font-size:20px;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.sb-studio{font-size:12px;color:var(--muted);margin-top:3px;}
+.sb-nav{flex:1;padding:14px 10px;display:flex;flex-direction:column;gap:3px;}
+.ni{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:var(--muted);text-decoration:none;font-size:13.5px;font-weight:500;transition:all .2s;cursor:pointer;border:none;background:none;width:100%;font-family:'DM Sans','Noto Sans Lao',sans-serif;}
+.ni:hover{background:rgba(255,255,255,.05);color:var(--text);}
+.ni.active{background:rgba(124,92,252,.15);color:var(--a1);}
+.ni .ic{font-size:15px;width:20px;text-align:center;}
+.sb-foot{padding:14px 10px;border-top:1px solid var(--border);}
+.plan-box{background:rgba(124,92,252,.08);border:1px solid rgba(124,92,252,.18);border-radius:10px;padding:12px;margin-bottom:10px;}
+.plan-nm{font-size:11px;color:var(--a1);font-weight:700;text-transform:uppercase;letter-spacing:1px;}
+.stor-lbl{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:6px;margin-bottom:4px;}
+.stor-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden;}
+.stor-fill{height:100%;background:var(--grad);border-radius:2px;}
+.main{margin-left:var(--sw);flex:1;}
+.topbar{padding:18px 28px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:40;}
+.tb-title{font-family:'Playfair Display',serif;font-size:21px;font-weight:800;}
+.content{padding:28px;}
+label{display:block;font-size:12px;color:var(--muted);margin-bottom:7px;font-weight:500;}
+select,input{width:100%;padding:11px 15px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;font-family:'DM Sans','Noto Sans Lao',sans-serif;outline:none;transition:border-color .2s;}
+select:focus,input:focus{border-color:rgba(124,92,252,.5);}
+.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:28px;margin-bottom:24px;}
+.card h3{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;margin-bottom:22px;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:22px;}
+.dz{border:2px dashed var(--border);border-radius:14px;padding:48px 20px;text-align:center;cursor:pointer;transition:all .2s;position:relative;}
+.dz:hover,.dz.over{border-color:rgba(124,92,252,.5);background:rgba(124,92,252,.05);}
+.dz input{position:absolute;inset:0;opacity:0;cursor:pointer;}
+.dz-icon{font-size:42px;margin-bottom:10px;}
+.dz-title{font-size:15px;font-weight:600;margin-bottom:4px;}
+.dz-sub{font-size:12px;color:var(--muted);}
+.flist{margin-top:16px;display:flex;flex-direction:column;gap:8px;}
+.fi{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:12px;}
+.fi-ic{font-size:20px;flex-shrink:0;}
+.fi-info{flex:1;min-width:0;}
+.fi-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.fi-sz{font-size:11px;color:var(--muted);margin-top:2px;}
+.fi-rm{background:none;border:none;color:#ff8080;cursor:pointer;font-size:16px;flex-shrink:0;}
+.prog{height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:6px;}
+.prog-fill{height:100%;background:var(--grad);border-radius:2px;transition:width .3s;}
+.btn-up{width:100%;padding:14px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:600;cursor:pointer;font-family:'DM Sans','Noto Sans Lao',sans-serif;margin-top:10px;transition:opacity .2s;}
+.btn-up:disabled{opacity:.4;cursor:not-allowed;}
+.btn-up:hover:not(:disabled){opacity:.88;}
+.status-txt{font-size:13px;color:var(--muted);margin-top:10px;display:none;}
+/* FILES GRID */
+.filter-row{display:flex;gap:10px;margin-bottom:16px;}
+.filter-row select{flex:1;}
+.fg{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;}
+.ft{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:border-color .2s,transform .15s;}
+.ft:hover{border-color:rgba(124,92,252,.4);transform:translateY(-2px);}
+.ft img{width:100%;aspect-ratio:1;object-fit:cover;display:block;}
+.ft-ph{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:32px;background:rgba(255,255,255,.03);}
+.ft-foot{padding:8px 10px;}
+.ft-name{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ft-sz{font-size:10px;color:var(--muted);}
+.ft-acts{display:flex;gap:5px;padding:0 10px 8px;}
+.ba{padding:4px 9px;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;font-family:'DM Sans','Noto Sans Lao',sans-serif;text-decoration:none;border:none;}
+.ba-l{background:rgba(124,92,252,.15);border:1px solid rgba(124,92,252,.2);color:var(--a1);}
+.ba-d{background:rgba(255,80,80,.1);border:1px solid rgba(255,80,80,.15);color:#ff8080;}
+/* LIGHTBOX */
+.lb{position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;}
+.lb.hidden{display:none;}
+.lb-close{position:absolute;top:18px;right:18px;background:rgba(255,255,255,.1);border:none;color:#fff;width:38px;height:38px;border-radius:50%;font-size:17px;cursor:pointer;}
+.lb img,.lb video{max-width:90vw;max-height:85vh;border-radius:10px;object-fit:contain;}
+.lb-foot{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:10px;}
+.lb-btn{padding:9px 22px;border-radius:100px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans','Noto Sans Lao',sans-serif;border:none;}
+.lb-dl{background:var(--grad);color:#fff;}
+.lb-nav{background:rgba(255,255,255,.1);color:#fff;}
+/* TOAST */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#1e1e30;border:1px solid rgba(124,92,252,.4);border-radius:10px;padding:12px 22px;font-size:13px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;}
+.toast.show{opacity:1;}
+.empty{text-align:center;padding:36px;color:var(--muted);font-size:13px;}
+.spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--a1);border-radius:50%;animation:spin .8s linear infinite;display:inline-block;}
+@keyframes spin{to{transform:rotate(360deg);}}
+@media(max-width:900px){.sb{display:none;}.main{margin-left:0;}.row2{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<aside class="sb">
+  <div class="sb-logo"><div class="sb-logo-txt">SHARE LOD</div><div class="sb-studio" id="sb-name"></div></div>
+  <nav class="sb-nav">
+    <a class="ni" href="dashboard.html"><span class="ic">📊</span>Dashboard</a>
+    <a class="ni" href="clients.html"><span class="ic">👥</span>Clients</a>
+    <a class="ni active" href="upload.html"><span class="ic">⬆️</span>Upload ຟາຍ</a>
+    <a class="ni" href="branding.html"><span class="ic">🎨</span>Branding</a>
+    <a class="ni" href="portfolio.html"><span class="ic">🖼</span>Portfolio</a>
+    <a class="ni" href="inbox.html"><span class="ic">💬</span>Inbox</a>
+    <a class="ni" href="community.html"><span class="ic">🌐</span>Community</a>
+    <a class="ni" href="subscription.html"><span class="ic">💳</span>Subscription</a>
+    <a class="ni" href="explore.html" target="_blank"><span class="ic">🌐</span>Explore Page</a>
+  </nav>
+  <div class="sb-foot">
+    <div class="plan-box"><div class="plan-nm" id="sb-plan"></div><div class="stor-lbl"><span id="sb-used"></span><span id="sb-lim"></span></div><div class="stor-bar"><div class="stor-fill" id="sb-bar" style="width:0%"></div></div></div>
+    <button class="ni" onclick="logout()" style="color:#ff7070;width:100%"><span class="ic">🚪</span>ອອກ</button>
+  </div>
+</aside>
+<div class="main">
+  <div class="topbar"><div class="tb-title">⬆️ Upload ຟາຍ</div></div>
+  <div class="content">
+    <div class="card">
+      <h3>ເລືອກ Client & Project</h3>
+      <div class="row2">
+        <div><label>Client</label><select id="sel-c" onchange="loadProjects()"><option value="">-- ເລືອກ Client --</option></select></div>
+        <div><label>Project</label><select id="sel-p"><option value="">-- ເລືອກ Project --</option></select></div>
+      </div>
+      <div style="margin-bottom:18px"><label>📂 Folder / ຊຸດ <span style="color:var(--muted);font-weight:400">(ຕົວເລືອກ — ໃຊ້ຈັດກຸ່ມ ເຊັ່ນ: ຊຸດ A, ກຸ່ມ 1)</span></label><input type="text" id="folder-input" placeholder="ປ່ອຍຫວ່າງ = ບໍ່ຈັດກຸ່ມ"></div>
+      <div class="dz" id="dz">
+        <input type="file" id="fi" multiple accept="image/*,video/*,.raw,.cr2,.nef,.arw,.dng" onchange="handleFiles(this.files)">
+        <div class="dz-icon">📂</div>
+        <div class="dz-title">ລາກ & ວາງ ຫຼື ຄລິກເລືອກ</div>
+        <div class="dz-sub">JPG · PNG · RAW · MP4 · MOV</div>
+      </div>
+      <div class="flist" id="flist"></div>
+      <div class="status-txt" id="status"></div>
+      <button class="btn-up" id="btn-up" disabled onclick="startUpload()">⬆ ເລີ່ມ Upload</button>
+    </div>
+    <div class="card">
+      <h3>ຟາຍທັງໝົດ</h3>
+      <div class="filter-row">
+        <select id="fc" onchange="loadFiles()"><option value="">ທຸກ Client</option></select>
+        <select id="fp" onchange="loadFiles()"><option value="">ທຸກ Project</option></select>
+      </div>
+      <div id="fgrid"><div style="padding:32px;text-align:center"><div class="spinner"></div></div></div>
+    </div>
+  </div>
+</div>
+<div class="lb hidden" id="lb">
+  <button class="lb-close" onclick="closeLb()">✕</button>
+  <div id="lb-body"></div>
+  <div class="lb-foot">
+    <button class="lb-btn lb-nav" onclick="navLb(-1)">←</button>
+    <a class="lb-btn lb-dl" id="lb-dl" download>⬇ Download</a>
+    <button class="lb-btn lb-nav" onclick="navLb(1)">→</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+import * as faceapi from 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.esm.js';
+const sb = createClient('https://vuhjmwnxbvzppcoklgir.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1aGptd254YnZ6cHBjb2tsZ2lyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5OTM2NzAsImV4cCI6MjA5MDU2OTY3MH0.ijlH_tjBZm4irxrq-FXfIKIKdwZJTdTzaYbTPrpd928');
+
+let uid, userData, sel=[], allFiles=[], lbIdx=0, faceReady=false;
+// ໂຫຼດ Face models ໃນ background
+const MODEL_URL='https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model';
+(async()=>{try{await Promise.all([faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),faceapi.nets.faceLandmark68TinyNet.loadFromUri(MODEL_URL),faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL)]);faceReady=true;console.log('Face models ready');}catch(e){console.log('Face models failed',e);}})();
+function fmt(b){if(b<1048576)return(b/1024).toFixed(1)+' KB';if(b<1073741824)return(b/1048576).toFixed(1)+' MB';return(b/1073741824).toFixed(2)+' GB';}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+window.logout=async()=>{await sb.auth.signOut();location.href='login.html';}
+
+// Drag & Drop
+const dz=document.getElementById('dz');
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('over');});
+dz.addEventListener('dragleave',()=>dz.classList.remove('over'));
+dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('over');handleFiles(e.dataTransfer.files);});
+
+window.handleFiles=files=>{sel=Array.from(files);renderSel();document.getElementById('btn-up').disabled=!sel.length;};
+function renderSel(){
+  const el=document.getElementById('flist');
+  if(!sel.length){el.innerHTML='';return;}
+  el.innerHTML=sel.map((f,i)=>`<div class="fi"><div class="fi-ic">${f.type.startsWith('video')?'🎬':'🖼'}</div><div class="fi-info"><div class="fi-name">${f.name}</div><div class="fi-sz">${fmt(f.size)}</div><div class="prog"><div class="prog-fill" id="pr${i}" style="width:0%"></div></div></div><button class="fi-rm" onclick="rmFile(${i})">✕</button></div>`).join('');
+}
+window.rmFile=i=>{sel.splice(i,1);renderSel();document.getElementById('btn-up').disabled=!sel.length;};
+
+window.loadProjects=async()=>{
+  const cid=document.getElementById('sel-c').value;
+  const sp=document.getElementById('sel-p');
+  sp.innerHTML='<option value="">-- ເລືອກ Project --</option>';
+  if(!cid)return;
+  const {data}=await sb.from('projects').select('id,name').eq('client_id',cid);
+  data?.forEach(p=>{const o=document.createElement('option');o.value=p.id;o.textContent=p.name;sp.appendChild(o);});
+  // Also update filter
+  const fp=document.getElementById('fp');
+  fp.innerHTML='<option value="">ທຸກ Project</option>';
+  data?.forEach(p=>{const o=document.createElement('option');o.value=p.id;o.textContent=p.name;fp.appendChild(o);});
+};
+
+window.startUpload=async()=>{
+  const cid=document.getElementById('sel-c').value, pid=document.getElementById('sel-p').value;
+  if(!cid||!pid){alert('ເລືອກ Client ແລະ Project ກ່ອນ');return;}
+  const totalSz=sel.reduce((s,f)=>s+f.size,0);
+  if((userData.storage_used||0)+totalSz>userData.storage_limit){alert('Storage ບໍ່ພໍ! ກະລຸນາ Upgrade Plan');return;}
+  if(userData.plan_status!=='active'){alert('Plan ຂອງທ່ານຍັງບໍ່ Activate — ກະລຸນາລໍຖ້າ Admin Activate ກ່ອນ');return;}
+  const btn=document.getElementById('btn-up'), st=document.getElementById('status');
+  btn.disabled=true; st.style.display='block';
+  const cSnap=await sb.from('clients').select('name').eq('id',cid).single();
+  const pSnap=await sb.from('projects').select('name').eq('id',pid).single();
+  let uploaded=0;
+  for(let i=0;i<sel.length;i++){
+    const f=sel[i]; st.textContent=`Upload ${i+1}/${sel.length}: ${f.name}`;
+    const safeName = f.name.replace(/[^\x00-\x7F]/g,'_').replace(/\s+/g,'_').replace(/[^a-zA-Z0-9._\-]/g,'_');
+    const path=`${uid}/${cid}/${pid}/${Date.now()}_${safeName}`;
+    // Upload to Supabase Storage
+    const {error:upErr}=await sb.storage.from('framevault-files').upload(path,f,{upsert:false});
+    if(upErr){st.textContent=`❌ Upload ຜິດພາດ: ${upErr.message}`;btn.disabled=false;return;}
+    document.getElementById('pr'+i).style.width='70%';
+    const {data:signedData}=await sb.storage.from('framevault-files').createSignedUrl(path,60*60*24*365*10);
+    const token=Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2);
+    const folderName=document.getElementById('folder-input').value.trim()||null;
+    const {error:dbErr,data:inserted}=await sb.from('files').insert({uid,client_id:cid,client_name:cSnap.data?.name||'',project_id:pid,project_name:pSnap.data?.name||'',name:f.name,size:f.size,mime_type:f.type,storage_path:path,url:signedData?.signedUrl||'',share_token:token,share_enabled:true,folder_name:folderName}).select('id').single();
+    if(dbErr){st.textContent=`❌ ບັນທຶກຂໍ້ມູນຜິດພາດ: ${dbErr.message}`;btn.disabled=false;return;}
+    // Face detection ໃນ background
+    if(f.type.startsWith('image/')&&faceReady&&inserted?.id){
+      (async()=>{try{
+        const burl=URL.createObjectURL(f);
+        const img=await faceapi.fetchImage(burl);
+        URL.revokeObjectURL(burl);
+        const det=await faceapi.detectSingleFace(img,new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks(true).withFaceDescriptor();
+        if(det)await sb.from('files').update({face_descriptor:Array.from(det.descriptor)}).eq('id',inserted.id);
+      }catch(e){}})();
+    }
+    uploaded+=f.size;
+    document.getElementById('pr'+i).style.width='100%';
+  }
+  // Update storage
+  await sb.from('profiles').update({storage_used:(userData.storage_used||0)+uploaded}).eq('id',uid);
+  userData.storage_used=(userData.storage_used||0)+uploaded;
+  updateSbar();
+  st.textContent='✅ Upload ສຳເລັດ!';
+  btn.disabled=false; sel=[]; renderSel();
+  setTimeout(()=>{st.style.display='none';},2000);
+  loadFiles();
+};
+
+window.loadFiles=async()=>{
+  const cid=document.getElementById('fc').value, pid=document.getElementById('fp').value;
+  let q=sb.from('files').select('*').eq('uid',uid).order('created_at',{ascending:false});
+  if(cid)q=q.eq('client_id',cid);
+  if(pid)q=q.eq('project_id',pid);
+  const {data}=await q;
+  allFiles=data||[];
+  const el=document.getElementById('fgrid');
+  if(!allFiles.length){el.innerHTML='<div class="empty">ຍັງບໍ່ມີຟາຍ — Upload ເລີຍ</div>';return;}
+  el.innerHTML=`<div class="fg">${allFiles.map((f,i)=>`
+    <div class="ft" onclick="openLb(${i})">
+      ${f.mime_type?.startsWith('image')?`<img src="${f.url}" loading="lazy" alt="${f.name}">`:`<div class="ft-ph">${f.mime_type?.startsWith('video')?'🎬':'📄'}</div>`}
+      <div class="ft-foot"><div class="ft-name">${f.name}</div><div class="ft-sz">${fmt(f.size||0)}</div></div>
+      <div class="ft-acts">
+        <button class="ba ba-l" onclick="event.stopPropagation();copyLink('${f.share_token}','${f.project_id}')">🔗 Link</button>
+        <button class="ba ba-d" onclick="event.stopPropagation();delFile('${f.id}','${f.storage_path}',${f.size||0})">🗑</button>
+      </div>
+    </div>`).join('')}</div>`;
+};
+
+window.copyLink=(token,projId)=>{
+  const url=`${location.origin}/client-view.html?token=${token}&project=${projId}`;
+  navigator.clipboard.writeText(url).then(()=>toast('✅ Copy Link ແລ້ວ! ສົ່ງໃຫ້ລູກຄ້າໄດ້ເລີຍ'));
+};
+
+window.delFile=async(id,path,sz)=>{
+  if(!confirm('ລຶບຟາຍນີ້?'))return;
+  await sb.storage.from('framevault-files').remove([path]);
+  await sb.from('files').delete().eq('id',id);
+  await sb.rpc('recalculate_storage',{user_uid:uid});
+  const {data:fresh}=await sb.from('profiles').select('storage_used').eq('id',uid).single();
+  userData.storage_used=fresh?.storage_used||0;
+  updateSbar(); loadFiles(); toast('ລຶບສຳເລັດ');
+};
+
+window.openLb=i=>{lbIdx=i;updateLb();document.getElementById('lb').classList.remove('hidden');};
+window.closeLb=()=>document.getElementById('lb').classList.add('hidden');
+window.navLb=d=>{lbIdx=Math.max(0,Math.min(allFiles.length-1,lbIdx+d));updateLb();};
+function updateLb(){
+  const f=allFiles[lbIdx];
+  const b=document.getElementById('lb-body');
+  if(f.mime_type?.startsWith('image'))b.innerHTML=`<img src="${f.url}" alt="${f.name}">`;
+  else if(f.mime_type?.startsWith('video'))b.innerHTML=`<video src="${f.url}" controls autoplay style="max-width:90vw;max-height:85vh;border-radius:10px;"></video>`;
+  else b.innerHTML=`<div style="color:#fff;text-align:center"><div style="font-size:60px">📄</div><p>${f.name}</p></div>`;
+  const dl=document.getElementById('lb-dl'); dl.href=f.url; dl.download=f.name;
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLb();if(e.key==='ArrowLeft')navLb(-1);if(e.key==='ArrowRight')navLb(1);});
+
+function updateSbar(){
+  const pct=userData.storage_limit>0?Math.min(100,(userData.storage_used/userData.storage_limit)*100):0;
+  document.getElementById('sb-used').textContent=fmt(userData.storage_used||0);
+  document.getElementById('sb-bar').style.width=pct+'%';
+}
+
+const {data:{session}}=await sb.auth.getSession();
+if(!session){location.href='login.html';}
+uid=session.user.id;
+await sb.rpc('check_and_suspend_expired');
+const {data:u}=await sb.from('profiles').select('*').eq('id',uid).single();
+userData=u;
+document.getElementById('sb-name').textContent=u.studio_name||'';
+document.getElementById('sb-plan').textContent=(u.plan||'starter').toUpperCase()+' Plan';
+document.getElementById('sb-lim').textContent=fmt(u.storage_limit||0);
+updateSbar();
+
+// Load clients for selects
+const {data:clients}=await sb.from('clients').select('id,name').eq('uid',uid).order('name');
+['sel-c','fc'].forEach(id=>{
+  const sel=document.getElementById(id);
+  clients?.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.name;sel.appendChild(o);});
+});
+// URL params
+const p=new URLSearchParams(location.search);
+if(p.get('client')){document.getElementById('sel-c').value=p.get('client');await loadProjects();}
+if(p.get('project'))document.getElementById('sel-p').value=p.get('project');
+loadFiles();
+</script>
+</body>
+</html>

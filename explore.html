@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SHARE LOD — ສຳຫຼວດ Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&family=Noto+Sans+Lao:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080810;--surface:#0f0f1a;--card:#13131f;--border:rgba(255,255,255,0.06);--text:#f0eff8;--muted:#7a79a0;--p:#7c5cfc;--grad:linear-gradient(135deg,#7c5cfc,#e05cfc);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans','Noto Sans Lao',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.orb{position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:0;}
+.orb1{width:600px;height:600px;background:rgba(124,92,252,.07);top:-200px;left:-200px;}
+.orb2{width:400px;height:400px;background:rgba(224,92,252,.05);bottom:-100px;right:-100px;}
+/* NAV */
+nav{padding:16px 40px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:rgba(8,8,16,.9);backdrop-filter:blur(20px);position:sticky;top:0;z-index:100;}
+.nav-logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none;}
+.nav-actions{display:flex;gap:8px;}
+.nbtn{padding:8px 20px;border-radius:100px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans','Noto Sans Lao',sans-serif;text-decoration:none;transition:all .2s;border:none;}
+.nbtn-grad{background:var(--grad);color:#fff;}
+.nbtn-out{background:transparent;border:1px solid var(--border);color:var(--text);}
+.nbtn-out:hover{background:rgba(255,255,255,.05);}
+/* HERO */
+.hero{max-width:860px;margin:0 auto;padding:72px 28px 48px;text-align:center;position:relative;z-index:1;}
+.hero-tag{display:inline-flex;align-items:center;gap:7px;padding:5px 16px;background:rgba(124,92,252,.1);border:1px solid rgba(124,92,252,.2);border-radius:100px;font-size:12px;color:var(--p);margin-bottom:22px;}
+.hero h1{font-family:'Playfair Display',serif;font-size:52px;font-weight:900;letter-spacing:-2px;line-height:1.1;margin-bottom:18px;}
+.hero h1 span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:16px;color:var(--muted);max-width:520px;margin:0 auto 36px;line-height:1.8;}
+/* SEARCH + FILTER */
+.search-area{max-width:600px;margin:0 auto 12px;}
+.search-wrap{position:relative;margin-bottom:12px;}
+.search-inp{width:100%;padding:14px 50px 14px 22px;background:var(--card);border:1px solid var(--border);border-radius:100px;color:var(--text);font-size:14px;font-family:'DM Sans','Noto Sans Lao',sans-serif;outline:none;transition:border-color .2s;}
+.search-inp:focus{border-color:rgba(124,92,252,.4);}
+.search-inp::placeholder{color:var(--muted);}
+.s-ic{position:absolute;right:20px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:16px;}
+.cat-filters{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;}
+.cf{padding:7px 16px;border-radius:100px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'DM Sans','Noto Sans Lao',sans-serif;transition:all .2s;}
+.cf:hover{border-color:rgba(124,92,252,.3);color:var(--text);}
+.cf.on{background:var(--grad);border-color:transparent;color:#fff;}
+/* STATS BAR */
+.stats-bar{display:flex;justify-content:center;gap:40px;padding:24px 0 0;font-size:13px;color:var(--muted);}
+.stats-bar strong{color:var(--text);font-size:20px;font-family:'Playfair Display',serif;display:block;margin-bottom:2px;}
+/* CONTAINER */
+.container{max-width:1300px;margin:0 auto;padding:28px;position:relative;z-index:1;}
+/* STUDIO GRID */
+.studio-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px;}
+.sc{background:var(--card);border:1px solid var(--border);border-radius:20px;overflow:hidden;cursor:pointer;transition:all .25s;}
+.sc:hover{border-color:rgba(124,92,252,.35);transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,.3);}
+/* PORTFOLIO PREVIEW */
+.sc-photos{display:grid;grid-template-columns:2fr 1fr;grid-template-rows:1fr 1fr;gap:3px;height:220px;background:var(--surface);}
+.sc-ph{overflow:hidden;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:28px;}
+.sc-ph:first-child{grid-row:1/3;}
+.sc-ph img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s;}
+.sc:hover .sc-ph img{transform:scale(1.04);}
+.sc-ph.empty{color:var(--border);}
+/* STUDIO INFO */
+.sc-body{padding:18px 20px 20px;}
+.sc-top{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.sc-logo{width:44px;height:44px;border-radius:11px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;overflow:hidden;}
+.sc-logo img{width:100%;height:100%;object-fit:cover;}
+.sc-name{font-family:'Playfair Display',serif;font-size:17px;font-weight:800;}
+.sc-plan{font-size:10px;color:var(--p);background:rgba(124,92,252,.1);padding:2px 7px;border-radius:100px;margin-top:2px;display:inline-block;}
+.sc-bio{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.sc-footer{display:flex;align-items:center;justify-content:space-between;}
+.sc-stats{display:flex;gap:14px;font-size:11px;color:var(--muted);}
+.sc-rating{text-align:right;}
+.stars{color:#f5c842;letter-spacing:1px;}
+.sc-rating-num{font-family:'Playfair Display',serif;font-size:17px;font-weight:800;}
+.sc-rating-lbl{font-size:10px;color:var(--muted);}
+/* STUDIO DETAIL PANEL */
+.detail-panel{position:fixed;top:0;right:-100%;width:min(680px,100vw);height:100vh;background:var(--surface);border-left:1px solid var(--border);z-index:300;overflow-y:auto;transition:right .35s cubic-bezier(.4,0,.2,1);}
+.detail-panel.open{right:0;}
+.panel-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:299;opacity:0;pointer-events:none;transition:opacity .35s;}
+.panel-backdrop.show{opacity:1;pointer-events:all;}
+.panel-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;position:sticky;top:0;background:var(--surface);z-index:10;}
+.panel-logo{width:50px;height:50px;border-radius:12px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;overflow:hidden;}
+.panel-logo img{width:100%;height:100%;object-fit:cover;}
+.panel-studio-name{font-family:'Playfair Display',serif;font-size:18px;font-weight:800;}
+.panel-bio{font-size:12px;color:var(--muted);margin-top:2px;}
+.panel-close{margin-left:auto;background:rgba(255,255,255,.07);border:none;color:var(--text);width:36px;height:36px;border-radius:50%;font-size:16px;cursor:pointer;}
+.panel-body{padding:22px 24px;}
+/* TABS in panel */
+.panel-tabs{display:flex;gap:2px;background:rgba(255,255,255,.04);border-radius:10px;padding:3px;margin-bottom:20px;}
+.ptab{flex:1;padding:9px;text-align:center;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;color:var(--muted);border:none;background:none;font-family:'DM Sans','Noto Sans Lao',sans-serif;transition:all .2s;}
+.ptab.on{background:var(--grad);color:#fff;}
+/* PANEL PORTFOLIO GRID */
+.panel-cats{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+.pcat{padding:5px 12px;border-radius:100px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'DM Sans','Noto Sans Lao',sans-serif;transition:all .2s;}
+.pcat:hover{border-color:rgba(124,92,252,.3);}
+.pcat.on{background:rgba(124,92,252,.15);border-color:rgba(124,92,252,.3);color:var(--p);}
+.panel-pg{columns:3 120px;gap:6px;}
+.panel-pi{break-inside:avoid;margin-bottom:6px;border-radius:9px;overflow:hidden;cursor:pointer;position:relative;}
+.panel-pi img{width:100%;display:block;transition:transform .3s;}
+.panel-pi:hover img{transform:scale(1.04);}
+.panel-pi-cap{position:absolute;bottom:0;left:0;right:0;padding:6px 8px;background:linear-gradient(transparent,rgba(0,0,0,.7));font-size:10px;color:#fff;opacity:0;transition:opacity .2s;}
+.panel-pi:hover .panel-pi-cap{opacity:1;}
+/* POSTS in panel */
+.panel-post{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px;}
+.pp-content{font-size:13px;line-height:1.7;margin-bottom:10px;}
+.pp-img{width:100%;border-radius:8px;display:block;margin-bottom:8px;max-height:300px;object-fit:cover;}
+.pp-foot{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--muted);}
+.pp-like{background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;font-family:'DM Sans','Noto Sans Lao',sans-serif;display:flex;align-items:center;gap:4px;transition:color .2s;}
+.pp-like:hover,.pp-like.on{color:#ff6090;}
+/* REVIEWS in panel */
+.rev-row{display:flex;align-items:center;gap:16px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;}
+.rev-big-num{font-family:'Playfair Display',serif;font-size:44px;font-weight:900;}
+.rev-stars-big{color:#f5c842;font-size:18px;letter-spacing:2px;}
+.rev-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:13px 16px;margin-bottom:8px;}
+.rev-head{display:flex;justify-content:space-between;margin-bottom:4px;}
+.rev-name{font-size:12px;font-weight:600;}
+.rev-stars{color:#f5c842;font-size:11px;}
+.rev-txt{font-size:12px;color:var(--muted);}
+/* RATE FORM */
+.rate-form{background:var(--card);border:1px solid rgba(124,92,252,.2);border-radius:12px;padding:18px;margin-top:14px;}
+.rate-form h4{font-size:13px;font-weight:600;margin-bottom:10px;}
+.star-sel{display:flex;gap:5px;cursor:pointer;margin-bottom:10px;}
+.star-sel span{font-size:24px;transition:transform .1s;}
+.star-sel span:hover{transform:scale(1.2);}
+.rinp{width:100%;padding:9px 13px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:12px;font-family:'DM Sans','Noto Sans Lao',sans-serif;outline:none;margin-bottom:8px;}
+.rinp::placeholder{color:var(--muted);}
+.rbtn{padding:9px 22px;background:var(--grad);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans','Noto Sans Lao',sans-serif;}
+/* LIGHTBOX */
+.lb{position:fixed;inset:0;background:rgba(0,0,0,.97);z-index:999;display:flex;align-items:center;justify-content:center;}
+.lb.hidden{display:none;}
+.lb-x{position:fixed;top:18px;right:18px;background:rgba(255,255,255,.1);border:none;color:#fff;width:38px;height:38px;border-radius:50%;font-size:16px;cursor:pointer;}
+.lb-prev{position:fixed;left:16px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.1);border:none;color:#fff;width:42px;height:42px;border-radius:50%;font-size:18px;cursor:pointer;}
+.lb-next{position:fixed;right:16px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.1);border:none;color:#fff;width:42px;height:42px;border-radius:50%;font-size:18px;cursor:pointer;}
+.lb-img{max-width:90vw;max-height:88vh;border-radius:10px;object-fit:contain;}
+.lb-cap{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.7);border-radius:8px;padding:8px 18px;font-size:12px;color:var(--muted);text-align:center;max-width:500px;}
+/* STATES */
+.spinner{width:24px;height:24px;border:3px solid var(--border);border-top-color:var(--p);border-radius:50%;animation:spin .8s linear infinite;margin:60px auto;display:block;}
+.empty{text-align:center;padding:60px;color:var(--muted);}
+@keyframes spin{to{transform:rotate(360deg);}}
+@media(max-width:700px){.hero h1{font-size:34px;}.studio-grid{grid-template-columns:1fr;}.stats-bar{gap:20px;}nav{padding:14px 18px;}.detail-panel{width:100vw;}.panel-pg{columns:2 100px;}}
+</style>
+</head>
+<body>
+<div class="orb orb1"></div><div class="orb orb2"></div>
+
+<nav>
+  <a class="nav-logo" href="explore.html">SHARE LOD</a>
+  <div style="display:flex;gap:3px;background:rgba(255,255,255,.05);border-radius:100px;padding:3px;">
+    <a href="explore.html" style="padding:7px 18px;border-radius:100px;font-size:13px;font-weight:500;background:var(--grad);color:#fff;text-decoration:none;">🔍 Studios</a>
+    <a href="feed.html" style="padding:7px 18px;border-radius:100px;font-size:13px;font-weight:500;color:var(--muted);text-decoration:none;transition:color .2s;">📰 Feed</a>
+  </div>
+  <div class="nav-actions">
+    <a href="login.html" class="nbtn nbtn-out">Login</a>
+    <a href="login.html?tab=member" class="nbtn nbtn-grad">ສ້າງ Account ຟຣີ</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-tag">✨ Community ຊ່າງພາບລາວ</div>
+  <h1>ຄົ້ນພົບ<br><span>Studio ຊັ້ນນຳ</span></h1>
+  <p>ເລືອກ Studio ທີ່ທ່ານໄວ້ວາງໃຈ — ເບິ່ງຜົນງານ ອ່ານ Review ແລະ ຕິດຕໍ່ໄດ້ທັນທີ</p>
+  <div class="search-area">
+    <div class="search-wrap">
+      <input class="search-inp" id="search" type="text" placeholder="🔍 ຄົ້ນຫາ Studio..." oninput="doSearch(this.value)">
+      <span class="s-ic">🔍</span>
+    </div>
+    <div class="cat-filters" id="cat-filters">
+      <button class="cf on" onclick="setCat('',this)">ທັງໝົດ</button>
+    </div>
+  </div>
+  <div class="stats-bar" id="stats-bar"></div>
+</div>
+
+<div class="container">
+  <div class="studio-grid" id="studio-grid">
+    <div style="grid-column:1/-1"><div class="spinner"></div></div>
+  </div>
+</div>
+
+<!-- STUDIO DETAIL PANEL -->
+<div class="panel-backdrop" id="backdrop" onclick="closePanel()"></div>
+<div class="detail-panel" id="detail-panel">
+  <div class="panel-header" id="panel-header"></div>
+  <div class="panel-body">
+    <div class="panel-tabs">
+      <button class="ptab on" onclick="switchPanelTab('portfolio',this)">🖼 Portfolio</button>
+      <button class="ptab" onclick="switchPanelTab('posts',this)">📢 ໂພສ</button>
+      <button class="ptab" onclick="switchPanelTab('reviews',this)">⭐ Reviews</button>
+    </div>
+    <div id="panel-tab-content"></div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lb hidden" id="lb">
+  <button class="lb-x" onclick="closeLb()">✕</button>
+  <button class="lb-prev" onclick="navLb(-1)">‹</button>
+  <img class="lb-img" id="lb-img">
+  <button class="lb-next" onclick="navLb(1)">›</button>
+  <div class="lb-cap" id="lb-cap"></div>
+</div>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+const sb = createClient('https://vuhjmwnxbvzppcoklgir.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1aGptd254YnZ6cHBjb2tsZ2lyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5OTM2NzAsImV4cCI6MjA5MDU2OTY3MH0.ijlH_tjBZm4irxrq-FXfIKIKdwZJTdTzaYbTPrpd928');
+
+let studios=[], curStudio=null, panelTab='portfolio';
+let lbPhotos=[], lbIdx=0, selStar=0;
+const sessKey=localStorage.getItem('slod_sess')||Math.random().toString(36).slice(2);
+localStorage.setItem('slod_sess',sessKey);
+
+function starsStr(n){return n?'★'.repeat(Math.round(n))+'☆'.repeat(5-Math.round(n)):'☆☆☆☆☆';}
+function timeAgo(ts){const d=Math.floor((Date.now()-new Date(ts))/1000);if(d<60)return'ຫາກໍ';if(d<3600)return Math.floor(d/60)+' ນາທີ';if(d<86400)return Math.floor(d/3600)+' ຊມ';return new Date(ts).toLocaleDateString('lo-LA');}
+
+// ─── LOAD STUDIOS ─────────────────────────────────────────
+async function loadStudios(){
+  const {data}=await sb.rpc('get_studios');
+  studios=data||[];
+
+  // Stats bar
+  const totalPort=studios.reduce((s,x)=>s+(x.portfolio_count||0),0);
+  const totalRevs=studios.reduce((s,x)=>s+(x.rating_count||0),0);
+  document.getElementById('stats-bar').innerHTML=`
+    <div><strong>${studios.length}</strong>Studios</div>
+    <div><strong>${totalPort}</strong>ຜົນງານ</div>
+    <div><strong>${totalRevs}</strong>Reviews</div>`;
+
+  // Category filters
+  const allCats=[...new Set(studios.flatMap(s=>s.categories||[]))].filter(Boolean);
+  const cf=document.getElementById('cat-filters');
+  cf.innerHTML=`<button class="cf on" onclick="setCat('',this)">ທັງໝົດ (${studios.length})</button>
+    ${allCats.slice(0,6).map(c=>`<button class="cf" onclick="setCat('${c}',this)">${c}</button>`).join('')}`;
+
+  renderStudios(studios);
+}
+
+function renderStudios(list){
+  const el=document.getElementById('studio-grid');
+  if(!list.length){el.innerHTML='<div class="empty">😕 ບໍ່ພົບ Studio</div>';return;}
+  el.innerHTML=list.map(s=>`
+    <div class="sc" onclick="openPanel('${s.id}')">
+      <div class="sc-photos" id="photos-${s.id}">
+        <div class="sc-ph empty" id="ph0-${s.id}">📷</div>
+        <div class="sc-ph empty" id="ph1-${s.id}"></div>
+        <div class="sc-ph empty" id="ph2-${s.id}"></div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-top">
+          <div class="sc-logo" style="background:${s.branding_color?`linear-gradient(135deg,${s.branding_color},#e05cfc)`:'var(--grad)'}">
+            ${s.branding_logo?`<img src="${s.branding_logo}" loading="lazy">`:'📷'}
+          </div>
+          <div>
+            <div class="sc-name">${s.studio_name||'Studio'}</div>
+            <span class="sc-plan">${(s.plan||'starter').toUpperCase()}</span>
+          </div>
+        </div>
+        <div class="sc-bio">${s.branding_bio||'ຊ່າງພາບມືອາຊີບ'}</div>
+        <div class="sc-footer">
+          <div class="sc-stats">
+            <span>🖼 ${s.portfolio_count||0}</span>
+            <span>❤️ ${s.total_favs||0}</span>
+            <span>👁 ${s.total_views||0}</span>
+          </div>
+          <div class="sc-rating">
+            <div class="sc-rating-num">${s.avg_rating||'—'}</div>
+            <div class="stars" style="font-size:11px">${starsStr(s.avg_rating)}</div>
+            <div class="sc-rating-lbl">${s.rating_count||0} reviews</div>
+          </div>
+        </div>
+      </div>
+    </div>`).join('');
+
+  // Load portfolio previews for each studio
+  list.forEach(async s=>{
+    const {data}=await sb.from('portfolio').select('url,mime_type').eq('uid',s.id).eq('is_visible',true).order('order_index').limit(3);
+    if(!data?.length) return;
+    [0,1,2].forEach((i)=>{
+      const el=document.getElementById(`ph${i}-${s.id}`);
+      if(!el||!data[i]) return;
+      if(data[i].mime_type?.startsWith('image')){
+        el.innerHTML=`<img src="${data[i].url}" loading="lazy">`;
+        el.classList.remove('empty');
+      }
+    });
+  });
+}
+
+window.doSearch=q=>{
+  const f=studios.filter(s=>(s.studio_name||'').toLowerCase().includes(q.toLowerCase())||(s.branding_bio||'').toLowerCase().includes(q.toLowerCase()));
+  renderStudios(f);
+};
+window.setCat=(cat,el)=>{
+  document.querySelectorAll('.cf').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  renderStudios(cat?studios.filter(s=>s.categories?.includes(cat)):studios);
+};
+
+// ─── DETAIL PANEL ─────────────────────────────────────────
+window.openPanel=async(id)=>{
+  curStudio=studios.find(s=>s.id===id);
+  if(!curStudio)return;
+  panelTab='portfolio';
+  document.getElementById('detail-panel').classList.add('open');
+  document.getElementById('backdrop').classList.add('show');
+  document.body.style.overflow='hidden';
+
+  // Header
+  const s=curStudio;
+  const color=s.branding_color||'#7c5cfc';
+  document.getElementById('panel-header').innerHTML=`
+    <div class="panel-logo" style="background:linear-gradient(135deg,${color},#e05cfc)">
+      ${s.branding_logo?`<img src="${s.branding_logo}">`:'📷'}
+    </div>
+    <div>
+      <div class="panel-studio-name">${s.studio_name||'Studio'}</div>
+      <div class="panel-bio">${s.branding_bio||''}</div>
+      <div style="margin-top:4px;display:flex;gap:10px;align-items:center;font-size:11px">
+        <span class="stars">${starsStr(s.avg_rating)}</span>
+        <span style="color:var(--muted)">${s.avg_rating||'—'} · ${s.rating_count||0} reviews</span>
+        <a href="studio.html?id=${s.id}" target="_blank" style="color:var(--p);text-decoration:none;font-size:11px">↗ ໜ້າ Profile</a>
+      </div>
+    </div>
+    <button onclick="goChat('${s.id}')" style="padding:7px 14px;border-radius:100px;background:var(--grad);border:none;color:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans','Noto Sans Lao',sans-serif;white-space:nowrap;margin-right:8px">💬 Chat</button>
+    <button class="panel-close" onclick="closePanel()">✕</button>`;
+
+  // Reset tabs
+  document.querySelectorAll('.ptab').forEach((t,i)=>t.classList.toggle('on',i===0));
+  loadPanelTab('portfolio');
+};
+
+window.closePanel=()=>{
+  document.getElementById('detail-panel').classList.remove('open');
+  document.getElementById('backdrop').classList.remove('show');
+  document.body.style.overflow='';
+};
+
+window.switchPanelTab=(tab,el)=>{
+  panelTab=tab;
+  document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  loadPanelTab(tab);
+};
+
+async function loadPanelTab(tab){
+  const el=document.getElementById('panel-tab-content');
+  el.innerHTML='<div class="spinner"></div>';
+  if(tab==='portfolio') await loadPanelPortfolio(el);
+  else if(tab==='posts') await loadPanelPosts(el);
+  else await loadPanelReviews(el);
+}
+
+// ── Portfolio Tab ──────────────────────────────────────────
+let panelPortfolio=[], panelCatFilter='all';
+async function loadPanelPortfolio(el){
+  const {data}=await sb.rpc('get_portfolio',{p_uid:curStudio.id});
+  panelPortfolio=data||[];
+  renderPanelPortfolio(el);
+}
+
+function renderPanelPortfolio(el){
+  const cats=[...new Set(panelPortfolio.map(p=>p.category).filter(Boolean))];
+  const filtered=panelCatFilter==='all'?panelPortfolio:panelPortfolio.filter(p=>p.category===panelCatFilter);
+
+  if(!panelPortfolio.length){el.innerHTML='<div class="empty">🖼 ຍັງບໍ່ມີຜົນງານ</div>';return;}
+
+  el.innerHTML=`
+    <div class="panel-cats">
+      <button class="pcat ${panelCatFilter==='all'?'on':''}" onclick="setPanelCat('all',this)">ທັງໝົດ (${panelPortfolio.length})</button>
+      ${cats.map(c=>`<button class="pcat ${panelCatFilter===c?'on':''}" onclick="setPanelCat('${c}',this)">📂 ${c} (${panelPortfolio.filter(p=>p.category===c).length})</button>`).join('')}
+    </div>
+    <div class="panel-pg" id="panel-pg">
+      ${filtered.map((p,i)=>`
+        <div class="panel-pi" onclick="openLb(${i},${JSON.stringify(filtered).replace(/"/g,'&quot;')})">
+          ${p.mime_type?.startsWith('image')?`<img src="${p.url}" loading="lazy" alt="${p.caption||''}">`:`<div style="aspect-ratio:1;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:28px">🎬</div>`}
+          ${p.caption?`<div class="panel-pi-cap">${p.caption}</div>`:''}
+        </div>`).join('')}
+    </div>`;
+}
+
+window.setPanelCat=(cat,el)=>{
+  panelCatFilter=cat;
+  document.querySelectorAll('.pcat').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  const cats=[...new Set(panelPortfolio.map(p=>p.category).filter(Boolean))];
+  const filtered=cat==='all'?panelPortfolio:panelPortfolio.filter(p=>p.category===cat);
+  document.getElementById('panel-pg').innerHTML=filtered.map((p,i)=>`
+    <div class="panel-pi" onclick="openLb(${i},${JSON.stringify(filtered).replace(/"/g,'&quot;')})">
+      ${p.mime_type?.startsWith('image')?`<img src="${p.url}" loading="lazy" alt="${p.caption||''}">`:`<div style="aspect-ratio:1;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:28px">🎬</div>`}
+      ${p.caption?`<div class="panel-pi-cap">${p.caption}</div>`:''}
+    </div>`).join('');
+};
+
+// ── Posts Tab ──────────────────────────────────────────────
+async function loadPanelPosts(el){
+  const {data}=await sb.from('posts').select('*').eq('uid',curStudio.id).order('created_at',{ascending:false});
+  if(!data?.length){el.innerHTML='<div class="empty">📢 ຍັງບໍ່ມີໂພສ</div>';return;}
+  el.innerHTML=data.map(p=>`
+    <div class="panel-post">
+      ${p.image_url?`<img class="pp-img" src="${p.image_url}" loading="lazy">`:''}
+      <div class="pp-content">${p.content.replace(/\n/g,'<br>')}</div>
+      <div class="pp-foot">
+        <span>${timeAgo(p.created_at)}</span>
+        <button class="pp-like" id="pl-${p.id}" onclick="togglePostLike('${p.id}',this)">
+          🤍 <span>${p.likes||0}</span>
+        </button>
+      </div>
+    </div>`).join('');
+  // Check liked
+  for(const p of data){
+    const {data:lk}=await sb.from('post_likes').select('id').eq('post_id',p.id).eq('session_key',sessKey).limit(1);
+    if(lk?.length){const b=document.getElementById('pl-'+p.id);if(b){b.classList.add('on');b.innerHTML='❤️ <span>'+p.likes+'</span>';}}
+  }
+}
+
+window.togglePostLike=async(postId,btn)=>{
+  const isOn=btn.classList.contains('on');
+  const cnt=parseInt(btn.querySelector('span')?.textContent||'0');
+  if(isOn){
+    await sb.from('post_likes').delete().eq('post_id',postId).eq('session_key',sessKey);
+    await sb.from('posts').update({likes:Math.max(0,cnt-1)}).eq('id',postId);
+    btn.classList.remove('on');btn.innerHTML=`🤍 <span>${Math.max(0,cnt-1)}</span>`;
+  }else{
+    await sb.from('post_likes').insert({post_id:postId,session_key:sessKey});
+    await sb.from('posts').update({likes:cnt+1}).eq('id',postId);
+    btn.classList.add('on');btn.innerHTML=`❤️ <span>${cnt+1}</span>`;
+  }
+};
+
+// ── Reviews Tab ────────────────────────────────────────────
+async function loadPanelReviews(el){
+  const {data}=await sb.from('ratings').select('*').eq('studio_uid',curStudio.id).order('created_at',{ascending:false});
+  const avg=data?.length?(data.reduce((s,r)=>s+r.score,0)/data.length).toFixed(1):null;
+  const revHtml=data?.length?data.map(r=>`
+    <div class="rev-item">
+      <div class="rev-head"><span class="rev-name">${r.reviewer_name||'ນິລະນາມ'}</span><span class="rev-stars">${starsStr(r.score)}</span></div>
+      ${r.comment?`<div class="rev-txt">${r.comment}</div>`:''}
+      <div style="font-size:10px;color:var(--muted);margin-top:3px">${timeAgo(r.created_at)}</div>
+    </div>`).join(''):'<div style="color:var(--muted);font-size:13px;padding:10px 0">ຍັງບໍ່ມີ Review</div>';
+
+  el.innerHTML=`
+    ${avg?`<div class="rev-row"><div class="rev-big-num">${avg}</div><div><div class="rev-stars-big">${starsStr(avg)}</div><div style="font-size:12px;color:var(--muted);margin-top:4px">${data.length} Reviews</div></div></div>`:''}
+    ${revHtml}
+    <div class="rate-form">
+      <h4>✍️ ໃຫ້ຄະແນນ</h4>
+      <div class="star-sel" id="ssl">${[1,2,3,4,5].map(n=>`<span onclick="setStar(${n})" id="ss${n}">☆</span>`).join('')}</div>
+      <input class="rinp" id="rn" placeholder="ຊື່ *">
+      <textarea class="rinp" id="rc" placeholder="ຄຳເຫັນ..." style="min-height:60px;resize:vertical"></textarea>
+      <button class="rbtn" onclick="submitRev()">⭐ ສົ່ງ</button>
+      <span id="rmsg" style="font-size:12px;margin-left:8px;display:none"></span>
+    </div>`;
+}
+window.setStar=n=>{selStar=n;[1,2,3,4,5].forEach(i=>{const e=document.getElementById('ss'+i);if(e)e.textContent=i<=n?'★':'☆';});};
+window.submitRev=async()=>{
+  const name=document.getElementById('rn')?.value.trim();
+  const comment=document.getElementById('rc')?.value.trim();
+  const msg=document.getElementById('rmsg');
+  if(!selStar){msg.textContent='⚠️ ເລືອກດາວ';msg.style.color='#f5c842';msg.style.display='inline';return;}
+  if(!name){msg.textContent='⚠️ ໃສ່ຊື່';msg.style.color='#f5c842';msg.style.display='inline';return;}
+  await sb.from('ratings').insert({studio_uid:curStudio.id,score:selStar,reviewer_name:name,comment});
+  msg.textContent='✅ ຂອບໃຈ!';msg.style.color='#80ffaa';msg.style.display='inline';
+  selStar=0;
+  setTimeout(()=>{loadPanelTab('reviews');},1200);
+};
+
+// ─── LIGHTBOX ─────────────────────────────────────────────
+window.openLb=(idx,photos)=>{
+  const p=typeof photos==='string'?JSON.parse(photos.replace(/&quot;/g,'"')):photos;
+  lbPhotos=p; lbIdx=idx; updateLb();
+  document.getElementById('lb').classList.remove('hidden');
+};
+window.closeLb=()=>document.getElementById('lb').classList.add('hidden');
+window.navLb=d=>{lbIdx=Math.max(0,Math.min(lbPhotos.length-1,lbIdx+d));updateLb();};
+function updateLb(){
+  const p=lbPhotos[lbIdx]; if(!p)return;
+  document.getElementById('lb-img').src=p.url;
+  document.getElementById('lb-cap').textContent=p.caption?`${p.caption} · ${p.category||''}`:`${lbIdx+1} / ${lbPhotos.length}`;
+}
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('lb').classList.contains('hidden')){
+    if(e.key==='Escape')closeLb();if(e.key==='ArrowLeft')navLb(-1);if(e.key==='ArrowRight')navLb(1);
+  }else if(e.key==='Escape')closePanel();
+});
+
+// ─── CHAT ─────────────────────────────────────────────────
+let meSession=null;
+sb.auth.getSession().then(({data:{session}})=>{
+  meSession=session;
+  if(session) setupGlobalNotif(session.user.id);
+});
+
+window.goChat=(studioId)=>{
+  if(!meSession){
+    if(confirm('ຕ້ອງ Login ກ່ອນ Chat — ໄປ Login ຕອນນີ້?'))
+      location.href='login.html?tab=member&next=my-chats.html?studio='+studioId;
+    return;
+  }
+  location.href='my-chats.html?studio='+studioId;
+};
+
+function setupGlobalNotif(userId){
+  sb.channel(`notif-${userId}`)
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'messages',filter:`sender_key=eq.${userId}`},payload=>{
+      const m=payload.new;
+      if(m.is_from_studio){
+        playNotifSound();
+        showFloatNotif(m.studio_uid, m.content);
+      }
+    }).subscribe();
+}
+
+function playNotifSound(){try{const c=new AudioContext();[[880,0],[1100,.13]].forEach(([f,d])=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(0,c.currentTime+d);g.gain.linearRampToValueAtTime(.2,c.currentTime+d+.02);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+d+.35);o.start(c.currentTime+d);o.stop(c.currentTime+d+.4);});}catch(e){}}
+
+function showFloatNotif(studioId, msg){
+  const d=document.createElement('div');
+  d.style.cssText='position:fixed;bottom:24px;right:24px;background:#1e1e30;border:1px solid rgba(124,92,252,.4);border-radius:14px;padding:14px 18px;z-index:9999;cursor:pointer;box-shadow:0 8px 30px rgba(0,0,0,.5);max-width:280px;animation:slideUp .3s ease';
+  d.innerHTML=`<div style="font-size:12px;color:var(--muted);margin-bottom:4px">💬 ຂໍ້ຄວາມໃໝ່ຈາກ Studio</div><div style="font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${msg}</div><div style="font-size:11px;color:var(--p);margin-top:5px">ກົດເພື່ອເບິ່ງ →</div>`;
+  d.onclick=()=>location.href='my-chats.html?studio='+studioId;
+  const style=document.createElement('style');
+  style.textContent='@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}';
+  document.head.appendChild(style);
+  document.body.appendChild(d);
+  setTimeout(()=>d.remove(),6000);
+}
+
+loadStudios();
+</script>
+</body>
+</html>

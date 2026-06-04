@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SHARE LOD — Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&family=Noto+Sans+Lao:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#080810;--surface:#0f0f1a;--card:#13131f;--border:rgba(255,255,255,0.06);--text:#f0eff8;--muted:#7a79a0;--accent1:#7c5cfc;--grad:linear-gradient(135deg,#7c5cfc,#e05cfc);}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans','Noto Sans Lao',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+  .orb{position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;}
+  .orb1{width:500px;height:500px;background:rgba(124,92,252,.15);top:-100px;left:-100px;}
+  .orb2{width:400px;height:400px;background:rgba(224,92,252,.12);bottom:-100px;right:-100px;}
+  .wrap{width:100%;max-width:440px;padding:24px;position:relative;z-index:2;}
+  .logo{font-family:'Playfair Display',serif;font-size:26px;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-align:center;margin-bottom:6px;}
+  .logo-sub{text-align:center;color:var(--muted);font-size:14px;margin-bottom:36px;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:36px;}
+  .tabs{display:flex;background:var(--surface);border-radius:12px;padding:4px;margin-bottom:28px;}
+  .tab{flex:1;padding:10px;text-align:center;border-radius:10px;font-size:14px;font-weight:500;cursor:pointer;color:var(--muted);border:none;background:none;font-family:'DM Sans','Noto Sans Lao',sans-serif;transition:all .2s;}
+  .tab.active{background:var(--grad);color:#fff;}
+  .fg{margin-bottom:18px;}
+  label{display:block;font-size:13px;color:var(--muted);margin-bottom:7px;font-weight:500;}
+  input{width:100%;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;font-family:'DM Sans','Noto Sans Lao',sans-serif;outline:none;transition:border-color .2s;}
+  input:focus{border-color:rgba(124,92,252,.5);}
+  input::placeholder{color:var(--muted);}
+  .btn{width:100%;padding:14px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:500;cursor:pointer;font-family:'DM Sans','Noto Sans Lao',sans-serif;margin-top:6px;transition:opacity .2s;}
+  .btn:hover{opacity:.88;}
+  .btn:disabled{opacity:.5;cursor:not-allowed;}
+  .plan-list{display:flex;flex-direction:column;gap:8px;margin-bottom:18px;}
+  .po{padding:13px 16px;border:1px solid var(--border);border-radius:10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:all .2s;}
+  .po:hover{border-color:rgba(124,92,252,.3);}
+  .po.sel{border-color:rgba(124,92,252,.6);background:rgba(124,92,252,.08);}
+  .po-n{font-size:14px;font-weight:500;}
+  .po-d{font-size:12px;color:var(--muted);}
+  .po-p{font-size:13px;font-weight:600;color:var(--accent1);}
+  .msg{border-radius:10px;padding:11px 15px;font-size:13px;margin-bottom:14px;display:none;}
+  .err{background:rgba(255,80,80,.1);border:1px solid rgba(255,80,80,.3);color:#ff8080;}
+  .suc{background:rgba(80,255,150,.1);border:1px solid rgba(80,255,150,.3);color:#80ffaa;}
+  .back{text-align:center;margin-top:18px;font-size:13px;color:var(--muted);}
+  .back a{color:var(--accent1);text-decoration:none;}
+  #reg-form{display:none;}
+</style>
+</head>
+<body>
+<div class="orb orb1"></div><div class="orb orb2"></div>
+<div class="wrap">
+  <div class="logo">SHARE LOD</div>
+  <div class="logo-sub">ລະບົບຝາກຟາຍສຳລັບຊ່າງພາບ</div>
+  <div style="text-align:center;margin-bottom:16px"><a href="explore.html" style="font-size:12px;color:var(--muted);text-decoration:none">🌐 ສຳຫຼວດ Studio ທັງໝົດ →</a></div>
+  <div class="card">
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('login')">ເຂົ້າສູ່ລະບົບ</button>
+      <button class="tab" onclick="switchTab('member')">ສະໝັກ Member ຟຣີ</button>
+      <button class="tab" onclick="switchTab('register')">ສ້າງ Studio</button>
+    </div>
+    <!-- LOGIN -->
+    <div id="login-form">
+      <div class="msg err" id="le"></div>
+      <div class="fg"><label>Email</label><input type="email" id="le-em" placeholder="your@email.com"></div>
+      <div class="fg"><label>ລະຫັດຜ່ານ</label><input type="password" id="le-pw" placeholder="••••••••"></div>
+      <button class="btn" id="btn-li" onclick="doLogin()">ເຂົ້າສູ່ລະບົບ</button>
+    </div>
+    <!-- MEMBER FREE -->
+    <div id="member-form" style="display:none">
+      <div class="msg err" id="me"></div>
+      <div class="msg suc" id="ms"></div>
+      <div style="background:rgba(80,255,150,.06);border:1px solid rgba(80,255,150,.15);border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:12px;color:#80ffaa">
+        ✅ <strong>ຟຣີ 100%</strong> — Like, Comment, Chat ກັບ Studio ໄດ້ທັນທີ
+      </div>
+      <div class="fg"><label>ຊື່ (Nickname)</label><input type="text" id="m-name" placeholder="ຊື່ຂອງທ່ານ"></div>
+      <div class="fg"><label>Email</label><input type="email" id="m-em" placeholder="your@email.com"></div>
+      <div class="fg"><label>ລະຫັດຜ່ານ</label><input type="password" id="m-pw" placeholder="ຢ່າງໜ້ອຍ 6 ຕົວ"></div>
+      <button class="btn" id="btn-mg" onclick="doMemberRegister()">✅ ສ້າງ Member Account ຟຣີ</button>
+    </div>
+    <!-- REGISTER STUDIO -->
+    <div id="reg-form" style="display:none">
+      <div class="msg err" id="re"></div>
+      <div class="msg suc" id="rs"></div>
+      <div class="fg"><label>ຊື່ Studio</label><input type="text" id="r-name" placeholder="John Photo Studio"></div>
+      <div class="fg"><label>Email</label><input type="email" id="r-em" placeholder="your@email.com"></div>
+      <div class="fg"><label>ລະຫັດຜ່ານ</label><input type="password" id="r-pw" placeholder="ຢ່າງໜ້ອຍ 6 ຕົວ"></div>
+      <div class="fg">
+        <label>ເລືອກ Plan</label>
+        <div class="plan-list">
+          <div class="po sel" data-plan="starter" onclick="selPlan(this)"><div><div class="po-n">🥉 Starter</div><div class="po-d">10 GB Storage</div></div><div class="po-p">80K/ເດືອນ</div></div>
+          <div class="po" data-plan="pro" onclick="selPlan(this)"><div><div class="po-n">🥈 Pro ⭐</div><div class="po-d">30 GB Storage</div></div><div class="po-p">150K/ເດືອນ</div></div>
+          <div class="po" data-plan="studio" onclick="selPlan(this)"><div><div class="po-n">🥇 Studio</div><div class="po-d">80 GB Storage</div></div><div class="po-p">280K/ເດືອນ</div></div>
+        </div>
+      </div>
+      <button class="btn" id="btn-rg" onclick="doRegister()">ສ້າງ Studio Account</button>
+    </div>
+  </div>
+  <div class="back"><a href="#" onclick="forgotPw()">ລືມລະຫັດຜ່ານ?</a></div>
+</div>
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+const sb = createClient('https://vuhjmwnxbvzppcoklgir.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1aGptd254YnZ6cHBjb2tsZ2lyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5OTM2NzAsImV4cCI6MjA5MDU2OTY3MH0.ijlH_tjBZm4irxrq-FXfIKIKdwZJTdTzaYbTPrpd928');
+const PL={starter:10737418240,pro:32212254720,studio:85899345920};
+let plan='starter';
+
+function show(el,msg){el.textContent=msg;el.style.display='block';}
+
+// ── Tab switching (ຕ້ອງ define ກ່ອນທຸກຢ່າງ) ───────────────
+window.switchTab=t=>{
+  const tabs=document.querySelectorAll('.tab');
+  tabs[0]?.classList.toggle('active',t==='login');
+  tabs[1]?.classList.toggle('active',t==='member');
+  tabs[2]?.classList.toggle('active',t==='register');
+  document.getElementById('login-form').style.display  =t==='login'   ?'block':'none';
+  document.getElementById('member-form').style.display =t==='member'  ?'block':'none';
+  document.getElementById('reg-form').style.display    =t==='register'?'block':'none';
+};
+
+window.selPlan=el=>{document.querySelectorAll('.po').forEach(p=>p.classList.remove('sel'));el.classList.add('sel');plan=el.dataset.plan;};
+
+// ── Route after login ──────────────────────────────────────
+async function go(uid){
+  const {data}=await sb.from('profiles').select('role').eq('id',uid).single();
+  const next=new URLSearchParams(location.search).get('next');
+  if(data?.role==='admin') location.href='admin.html';
+  else if(data?.role==='member') location.href=next||'feed.html';
+  else location.href=next||'dashboard.html';
+}
+
+// ── Login ──────────────────────────────────────────────────
+window.doLogin=async()=>{
+  const email=document.getElementById('le-em').value.trim(),pass=document.getElementById('le-pw').value;
+  const btn=document.getElementById('btn-li'),err=document.getElementById('le');
+  err.style.display='none';
+  if(!email||!pass){show(err,'ກະລຸນາໃສ່ Email ແລະ ລະຫັດຜ່ານ');return;}
+  btn.disabled=true;btn.textContent='ກຳລັງເຂົ້າ...';
+  const {data,error}=await sb.auth.signInWithPassword({email,password:pass});
+  if(error){show(err,'Email ຫຼື ລະຫັດຜ່ານ ບໍ່ຖືກ');btn.disabled=false;btn.textContent='ເຂົ້າສູ່ລະບົບ';return;}
+  go(data.user.id);
+};
+
+// ── Register Free Member ───────────────────────────────────
+window.doMemberRegister=async()=>{
+  const name=document.getElementById('m-name').value.trim(),email=document.getElementById('m-em').value.trim(),pass=document.getElementById('m-pw').value;
+  const btn=document.getElementById('btn-mg'),err=document.getElementById('me'),ok=document.getElementById('ms');
+  err.style.display=ok.style.display='none';
+  if(!name||!email||!pass){show(err,'ກະລຸນາໃສ່ຂໍ້ມູນໃຫ້ຄົບ');return;}
+  if(pass.length<6){show(err,'ລະຫັດຜ່ານຕ້ອງ 6 ຕົວຂຶ້ນໄປ');return;}
+  btn.disabled=true;btn.textContent='ກຳລັງສ້າງ...';
+  const {data,error}=await sb.auth.signUp({email,password:pass,options:{data:{studio_name:name}}});
+  if(error){show(err,error.message.includes('already')?'Email ນີ້ຖືກໃຊ້ແລ້ວ':'ຜິດພາດ: '+error.message);btn.disabled=false;btn.textContent='✅ ສ້າງ Account ຟຣີ';return;}
+  if(data.user){
+    await sb.from('profiles').upsert({id:data.user.id,studio_name:name,role:'member',plan_status:'active'});
+  }
+  show(ok,'✅ ສ້າງ Account ສຳເລັດ! ກຳລັງໄປ Feed...');
+  setTimeout(()=>location.href='feed.html',1500);
+};
+
+// ── Register Studio ────────────────────────────────────────
+window.doRegister=async()=>{
+  const name=document.getElementById('r-name').value.trim(),email=document.getElementById('r-em').value.trim(),pass=document.getElementById('r-pw').value;
+  const btn=document.getElementById('btn-rg'),err=document.getElementById('re'),ok=document.getElementById('rs');
+  err.style.display=ok.style.display='none';
+  if(!name||!email||!pass){show(err,'ກະລຸນາໃສ່ຂໍ້ມູນໃຫ້ຄົບ');return;}
+  if(pass.length<6){show(err,'ລະຫັດຜ່ານຕ້ອງ 6 ຕົວຂຶ້ນໄປ');return;}
+  btn.disabled=true;btn.textContent='ກຳລັງສ້າງ...';
+  const {data,error}=await sb.auth.signUp({email,password:pass,options:{data:{studio_name:name}}});
+  if(error){show(err,error.message.includes('already')?'Email ນີ້ຖືກໃຊ້ແລ້ວ':'ຜິດພາດ: '+error.message);btn.disabled=false;btn.textContent='ສ້າງ Studio Account';return;}
+  if(data.user){
+    await sb.from('profiles').update({studio_name:name,plan,plan_status:'pending',storage_limit:PL[plan]}).eq('id',data.user.id);
+  }
+  show(ok,'✅ ສ້າງ Account ສຳເລັດ! ກຳລັງໄປ Dashboard...');
+  setTimeout(()=>location.href='dashboard.html',1500);
+};
+
+window.forgotPw=async()=>{
+  const email=prompt('ໃສ່ Email ທີ່ລົງທະບຽນໄວ້:');
+  if(!email)return;
+  const {error}=await sb.auth.resetPasswordForEmail(email);
+  if(error)alert('ຜິດພາດ: '+error.message);
+  else alert('✅ ສົ່ງລິ້ງ Reset ໄປ '+email+' ແລ້ວ');
+};
+
+// ── Init (ດຳເນີນການຫຼັງ function define ທຸກຢ່າງ) ───────────
+const {data:{session}}=await sb.auth.getSession();
+if(session){go(session.user.id);}else{
+  const urlTab=new URLSearchParams(location.search).get('tab');
+  if(urlTab==='member') window.switchTab('member');
+  else if(urlTab==='register') window.switchTab('register');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SHARE LOD — ການສົນທະນາ</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&family=Noto+Sans+Lao:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080810;--surface:#0f0f1a;--card:#13131f;--border:rgba(255,255,255,.06);--text:#f0eff8;--muted:#7a79a0;--p:#7c5cfc;--grad:linear-gradient(135deg,#7c5cfc,#e05cfc);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans','Noto Sans Lao',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+nav{padding:0 28px;height:54px;display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--border);background:rgba(8,8,16,.95);backdrop-filter:blur(20px);position:sticky;top:0;z-index:100;}
+.nav-logo{font-family:'Playfair Display',serif;font-size:20px;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none;}
+.nav-links{display:flex;gap:6px;margin-left:auto;}
+.nl{padding:6px 14px;border-radius:100px;font-size:12px;font-weight:500;color:var(--muted);text-decoration:none;transition:all .2s;}
+.nl:hover{color:var(--text);}
+.nl.on{background:var(--grad);color:#fff;}
+.msng{display:flex;flex:1;height:calc(100vh - 54px);}
+/* CONV LIST */
+.conv-panel{width:300px;border-right:1px solid var(--border);display:flex;flex-direction:column;background:var(--surface);flex-shrink:0;}
+.conv-head{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.conv-head h2{font-family:'Playfair Display',serif;font-size:17px;font-weight:800;}
+.conv-search{padding:10px 14px;border-bottom:1px solid var(--border);}
+.cs-inp{width:100%;padding:8px 13px;background:var(--bg);border:1px solid var(--border);border-radius:100px;color:var(--text);font-size:13px;font-family:'DM Sans','Noto Sans Lao',sans-serif;outline:none;}
+.cs-inp::placeholder{color:var(--muted);}
+.conv-list{flex:1;overflow-y:auto;}
+.conv-item{padding:13px 16px;cursor:pointer;transition:background .15s;display:flex;align-items:center;gap:11px;border-bottom:1px solid var(--border);}
+.conv-item:hover{background:rgba(255,255,255,.03);}
+.conv-item.active{background:rgba(124,92,252,.1);}
+.c-av{width:44px;height:44px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;overflow:hidden;background:var(--grad);}
+.c-av img{width:100%;height:100%;object-fit:cover;}
+.c-info{flex:1;min-width:0;}
+.c-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.c-prev{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;}
+.c-prev.new{color:var(--text);font-weight:600;}
+.c-right{text-align:right;flex-shrink:0;}
+.c-time{font-size:10px;color:var(--muted);}
+.c-badge{background:var(--p);color:#fff;border-radius:100px;font-size:9px;font-weight:700;padding:2px 6px;margin-top:3px;display:inline-block;}
+.del-btn{padding:4px 8px;background:rgba(255,80,80,.1);border:1px solid rgba(255,80,80,.2);color:#ff8080;border-radius:7px;font-size:10px;cursor:pointer;font-family:'DM Sans','Noto Sans Lao',sans-serif;margin-top:4px;display:block;}
+/* CHAT AREA */
+.chat-panel{flex:1;display:flex;flex-direction:column;min-width:0;}
+.chat-hd{padding:13px 20px;border-bottom:1px solid var(--border);background:var(--surface);display:flex;align-items:center;gap:12px;}
+.chat-hav{width:38px;height:38px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:15px;overflow:hidden;flex-shrink:0;}
+.chat-hav img{width:100%;height:100%;object-fit:cover;}
+.chat-hname{font-size:14px;font-weight:700;}
+.chat-hsub{font-size:11px;color:#44c868;margin-top:1px;}
+.visit-btn{margin-left:auto;padding:6px 13px;background:rgba(124,92,252,.12);border:1px solid rgba(124,92,252,.2);color:var(--p);border-radius:100px;font-size:11px;cursor:pointer;font-family:'DM Sans','Noto Sans Lao',sans-serif;text-decoration:none;white-space:nowrap;}
+.chat-msgs{flex:1;overflow-y:auto;padding:18px 20px;display:flex;flex-direction:column;gap:6px;}
+.mwrap{display:flex;flex-direction:column;}
+.mwrap.me{align-items:flex-end;}
+.mwrap.them{align-items:flex-start;}
+.bubble{padding:10px 14px;border-radius:18px;font-size:13px;line-height:1.6;max-width:72%;word-break:break-word;}
+.bubble.me{background:var(--grad);color:#fff;border-bottom-right-radius:4px;}
+.bubble.them{background:var(--card);border:1px solid var(--border);border-bottom-left-radius:4px;}
+.mtime{font-size:9px;color:var(--muted);margin-top:2px;padding:0 3px;}
+.date-sep{text-align:center;font-size:11px;color:var(--muted);margin:10px 0;}
+.chat-inp-area{padding:13px 20px;border-top:1px solid var(--border);background:var(--surface);}
+.inp-row{display:flex;gap:9px;align-items:flex-end;}
+.chat-inp{flex:1;padding:10px 16px;background:var(--bg);border:1px solid var(--border);border-radius:22px;color:var(--text);font-size:13px;font-family:'DM Sans','Noto Sans Lao',sans-serif;outline:none;resize:none;max-height:100px;line-height:1.5;transition:border-color .2s;}
+.chat-inp:focus{border-color:rgba(124,92,252,.4);}
+.chat-inp::placeholder{color:var(--muted);}
+.send-btn{width:42px;height:42px;background:var(--grad);border:none;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+.send-btn svg{width:18px;height:18px;fill:#fff;}
+.no-chat{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--muted);}
+.spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--p);border-radius:50%;animation:spin .8s linear infinite;margin:30px auto;display:block;}
+.empty{text-align:center;padding:40px;color:var(--muted);font-size:13px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+@media(max-width:640px){.conv-panel{width:64px;}.c-info,.c-right{display:none;}}
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="feed.html">SHARE LOD</a>
+  <div class="nav-links">
+    <a class="nl" href="feed.html">📰 Feed</a>
+    <a class="nl" href="explore.html">🔍 Studios</a>
+    <a class="nl on" href="my-chats.html">💬 ການສົນທະນາ</a>
+    <span id="nav-user" style="font-size:12px;color:var(--muted);padding:6px 10px"></span>
+    <a href="login.html" id="nav-logout" style="padding:6px 13px;border-radius:100px;background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--muted);font-size:12px;text-decoration:none;display:none">ອອກ</a>
+  </div>
+</nav>
+<div class="msng">
+  <div class="conv-panel">
+    <div class="conv-head">
+      <h2>💬 ການສົນທະນາ</h2>
+    </div>
+    <div class="conv-search"><input class="cs-inp" placeholder="ຄົ້ນຫາ..." id="cs" oninput="filterConvs(this.value)"></div>
+    <div class="conv-list" id="conv-list"><div class="spinner"></div></div>
+  </div>
+  <div class="chat-panel" id="chat-panel">
+    <div class="no-chat">
+      <div style="font-size:52px">💬</div>
+      <div style="font-size:15px;font-weight:500">ເລືອກການສົນທະນາ</div>
+      <div style="font-size:12px">ຄລິກ Studio ໃນ Feed ຫຼື Explore ເພື່ອ Chat</div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+const sb = createClient('https://vuhjmwnxbvzppcoklgir.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1aGptd254YnZ6cHBjb2tsZ2lyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5OTM2NzAsImV4cCI6MjA5MDU2OTY3MH0.ijlH_tjBZm4irxrq-FXfIKIKdwZJTdTzaYbTPrpd928');
+
+let me=null, convs=[], selStudio=null, rtCh=null;
+
+// ── Sound ─────────────────────────────────────────────────
+function playSound(){try{const c=new AudioContext();[[880,0],[1100,.13]].forEach(([f,d])=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(0,c.currentTime+d);g.gain.linearRampToValueAtTime(.2,c.currentTime+d+.02);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+d+.35);o.start(c.currentTime+d);o.stop(c.currentTime+d+.4);});}catch(e){}}
+async function pushNotif(title,body){if(!('Notification' in window))return;if(Notification.permission==='default')await Notification.requestPermission();if(Notification.permission==='granted'&&document.hidden)new Notification(title,{body});}
+
+function timeAgo(ts){const d=Math.floor((Date.now()-new Date(ts))/1000);if(d<60)return'ຫາກໍ';if(d<3600)return Math.floor(d/60)+'ນ';if(d<86400)return Math.floor(d/3600)+'ຊມ';return new Date(ts).toLocaleDateString('lo-LA',{day:'numeric',month:'short'});}
+function fmtTime(ts){return new Date(ts).toLocaleTimeString('lo-LA',{hour:'2-digit',minute:'2-digit'});}
+function fmtDate(ts){return new Date(ts).toLocaleDateString('lo-LA',{weekday:'short',day:'numeric',month:'short'});}
+
+// ── Auth ─────────────────────────────────────────────────
+const {data:{session}}=await sb.auth.getSession();
+if(!session){location.href='login.html?tab=member&next=my-chats.html';return;}
+
+// Build me from profile; fallback to session data if profile missing/RLS blocked
+const {data:u, error:profErr}=await sb.from('profiles').select('*').eq('id',session.user.id).single();
+me = u || {id:session.user.id, email:session.user.email, studio_name:session.user.user_metadata?.studio_name||session.user.email};
+
+document.getElementById('nav-user').textContent=me.studio_name||me.email||'User';
+const lo=document.getElementById('nav-logout');lo.style.display='inline';
+lo.onclick=async()=>{await sb.auth.signOut();location.href='feed.html';};
+if('Notification' in window && Notification.permission==='default') setTimeout(()=>Notification.requestPermission(),1500);
+
+// ── Load Conversations ────────────────────────────────────
+async function loadConvs(keepSel=false){
+  const {data,error}=await sb.from('messages').select('*').eq('sender_key',me.id).order('created_at',{ascending:false});
+  if(error){document.getElementById('conv-list').innerHTML=`<div class="empty">❌ ${error.message}<br><small>ກະລຸນາ Run SQL ກ່ອນ</small></div>`;return;}
+
+  // Group by studio_uid
+  const map={};
+  for(const m of (data||[])){
+    if(!map[m.studio_uid]){map[m.studio_uid]={studioId:m.studio_uid,last:m,unread:0,msgs:[]};}
+    map[m.studio_uid].msgs.push(m);
+    if(!m.is_read&&m.is_from_studio) map[m.studio_uid].unread++;
+  }
+
+  // Load studio profiles
+  const studioIds=Object.keys(map);
+  if(!studioIds.length){document.getElementById('conv-list').innerHTML='<div class="empty">ຍັງບໍ່ມີການສົນທະນາ<br><a href="explore.html" style="color:var(--p)">ຄົ້ນຫາ Studio →</a></div>';return;}
+
+  const {data:studios}=await sb.from('profiles').select('id,studio_name,branding_logo,branding_color').in('id',studioIds);
+  const stMap={};(studios||[]).forEach(s=>stMap[s.id]=s);
+
+  convs=Object.values(map).map(c=>({...c,studio:stMap[c.studioId]||{studio_name:'Studio',id:c.studioId}}))
+    .sort((a,b)=>new Date(b.last.created_at)-new Date(a.last.created_at));
+
+  renderConvs(convs);
+  if(keepSel&&selStudio) openConv(selStudio.id);
+}
+
+function renderConvs(list){
+  const el=document.getElementById('conv-list');
+  if(!list.length){el.innerHTML='<div class="empty">ຍັງບໍ່ມີການສົນທະນາ<br><a href="explore.html" style="color:var(--p)">ຄົ້ນຫາ Studio →</a></div>';return;}
+  el.innerHTML=list.map(c=>{
+    const s=c.studio;
+    const col=s.branding_color||'#7c5cfc';
+    const logoHtml=s.branding_logo?`<img src="${s.branding_logo}">`:(s.studio_name||'S').charAt(0);
+    return`<div class="conv-item ${selStudio?.id===s.id?'active':''}" onclick="openConv('${s.id}')">
+      <div class="c-av" style="background:linear-gradient(135deg,${col},#e05cfc)">${logoHtml}</div>
+      <div class="c-info">
+        <div class="c-name">${s.studio_name||'Studio'}</div>
+        <div class="c-prev ${c.unread?'new':''}">${c.last.is_from_studio?'':'ທ່ານ: '}${c.last.content}</div>
+        <button class="del-btn" onclick="event.stopPropagation();delConv('${s.id}')">🗑 ລຶບ</button>
+      </div>
+      <div class="c-right">
+        <div class="c-time">${timeAgo(c.last.created_at)}</div>
+        ${c.unread?`<div class="c-badge">${c.unread}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.filterConvs=q=>{
+  const f=convs.filter(c=>(c.studio?.studio_name||'').toLowerCase().includes(q.toLowerCase()));
+  renderConvs(f);
+};
+
+// ── Open Conversation ─────────────────────────────────────
+window.openConv=async(studioId)=>{
+  let conv=convs.find(c=>c.studioId===studioId);
+  let studio=conv?.studio;
+
+  // New conversation: fetch studio profile directly
+  if(!studio){
+    const {data:sp}=await sb.from('profiles').select('id,studio_name,branding_logo,branding_color').eq('id',studioId).single();
+    if(!sp){return;}
+    studio=sp;
+  }
+
+  selStudio=studio;
+  renderConvs(convs);
+
+  // Mark read
+  if(conv){
+    await sb.from('messages').update({is_read:true}).eq('studio_uid',studioId).eq('sender_key',me.id).eq('is_from_studio',true);
+    conv.unread=0;
+    renderConvs(convs);
+  }
+
+  const s=studio;
+  const col=s.branding_color||'#7c5cfc';
+  const logoHtml=s.branding_logo?`<img src="${s.branding_logo}">`:(s.studio_name||'S').charAt(0);
+
+  document.getElementById('chat-panel').innerHTML=`
+    <div class="chat-hd">
+      <div class="chat-hav" style="background:linear-gradient(135deg,${col},#e05cfc)">${logoHtml}</div>
+      <div>
+        <div class="chat-hname">${s.studio_name||'Studio'}</div>
+        <div class="chat-hsub">● ອອນລາຍ</div>
+      </div>
+      <a class="visit-btn" href="studio.html?id=${s.id}" target="_blank">🏢 ເບິ່ງ Profile</a>
+    </div>
+    <div class="chat-msgs" id="msgs-area"></div>
+    <div class="chat-inp-area">
+      <div class="inp-row">
+        <textarea class="chat-inp" id="msg-inp" rows="1" placeholder="ພິມຂໍ້ຄວາມ..." onkeydown="handleKey(event,'${studioId}')"></textarea>
+        <button class="send-btn" onclick="sendMsg('${studioId}')">
+          <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+        </button>
+      </div>
+    </div>`;
+  document.getElementById('msg-inp').focus();
+  await loadMsgs(studioId);
+};
+
+async function loadMsgs(studioId){
+  const {data}=await sb.from('messages').select('*').eq('studio_uid',studioId).eq('sender_key',me.id).order('created_at',{ascending:true});
+  const el=document.getElementById('msgs-area');if(!el)return;
+  if(!data?.length){el.innerHTML='<div style="text-align:center;padding:28px;font-size:12px;color:var(--muted)">ເລີ່ມການສົນທະນາ...</div>';return;}
+
+  let html='',prevDate='';
+  for(const m of data){
+    const date=fmtDate(m.created_at);
+    if(date!==prevDate){html+=`<div class="date-sep">${date}</div>`;prevDate=date;}
+    const isMe=!m.is_from_studio;
+    html+=`<div class="mwrap ${isMe?'me':'them'}">
+      <div class="bubble ${isMe?'me':'them'}">${m.content.replace(/\n/g,'<br>')}</div>
+      <div class="mtime">${fmtTime(m.created_at)}${isMe?` ${m.is_read?'✓✓':'✓'}`:''}</div>
+    </div>`;
+  }
+  el.innerHTML=html;
+  el.scrollTop=el.scrollHeight;
+}
+
+// ── Send ──────────────────────────────────────────────────
+window.sendMsg=async(studioId)=>{
+  const inp=document.getElementById('msg-inp');
+  const content=inp?.value.trim();if(!content)return;
+  inp.value='';inp.style.height='auto';
+  await sb.from('messages').insert({
+    studio_uid:studioId,sender_name:me?.studio_name||me?.email||'User',
+    sender_key:me.id,content,is_from_studio:false,is_read:false,
+    project_id:null,project_name:'Direct Chat'
+  });
+  loadMsgs(studioId);
+};
+
+window.handleKey=(e,studioId)=>{
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg(studioId);}
+  const inp=document.getElementById('msg-inp');
+  if(inp){inp.style.height='auto';inp.style.height=Math.min(inp.scrollHeight,100)+'px';}
+};
+
+// ── Delete Conversation ───────────────────────────────────
+window.delConv=async(studioId)=>{
+  if(!confirm('ລຶບການສົນທະນາທັງໝົດກັບ Studio ນີ້?'))return;
+  await sb.from('messages').delete().eq('studio_uid',studioId).eq('sender_key',me.id);
+  if(selStudio?.id===studioId){
+    selStudio=null;
+    document.getElementById('chat-panel').innerHTML='<div class="no-chat"><div style="font-size:52px">💬</div><div>ເລືອກການສົນທະນາ</div></div>';
+  }
+  loadConvs();
+};
+
+// ── Realtime ─────────────────────────────────────────────
+function setupRealtime(){
+  if(rtCh) sb.removeChannel(rtCh);
+  rtCh=sb.channel(`my-chat-${me.id}`)
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'messages',filter:`sender_key=eq.${me.id}`},payload=>{
+      const m=payload.new;
+      if(m.is_from_studio){
+        playSound();
+        const studioName=convs.find(c=>c.studioId===m.studio_uid)?.studio?.studio_name||'Studio';
+        pushNotif(`ຂໍ້ຄວາມຈາກ ${studioName}`,m.content);
+        // Auto-open if chat panel is showing this conversation
+        if(selStudio?.id===m.studio_uid) loadMsgs(m.studio_uid);
+      }
+      loadConvs(true);
+    }).subscribe();
+}
+
+// ── Open from URL param ───────────────────────────────────
+try{
+  await loadConvs();
+}catch(e){
+  document.getElementById('conv-list').innerHTML=`<div class="empty">❌ Error: ${e.message}</div>`;
+}
+setupRealtime();
+const initStudio=new URLSearchParams(location.search).get('studio');
+if(initStudio) setTimeout(()=>openConv(initStudio),500);
+</script>
+</body>
+</html>

@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SHARE LOD — Feed</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&family=Noto+Sans+Lao:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080810;--surface:#0f0f1a;--card:#13131f;--border:rgba(255,255,255,.06);--text:#f0eff8;--muted:#7a79a0;--p:#7c5cfc;--grad:linear-gradient(135deg,#7c5cfc,#e05cfc);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans','Noto Sans Lao',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+/* NAV */
+nav{padding:0 32px;height:54px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:rgba(8,8,16,.95);backdrop-filter:blur(20px);position:sticky;top:0;z-index:200;}
+.nav-logo{font-family:'Playfair Display',serif;font-size:20px;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none;}
+.nav-mid{display:flex;gap:3px;background:rgba(255,255,255,.05);border-radius:100px;padding:3px;}
+.ntab{padding:6px 18px;border-radius:100px;font-size:12px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--muted);font-family:'DM Sans','Noto Sans Lao',sans-serif;text-decoration:none;transition:all .2s;}
+.ntab.on{background:var(--grad);color:#fff;}
+.nav-right{display:flex;gap:8px;align-items:center;}
+.user-chip{display:flex;align-items:center;gap:7px;padding:5px 12px;background:rgba(255,255,255,.06);border-radius:100px;font-size:12px;cursor:pointer;}
+.u-av{width:22px;height:22px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;}
+.nbtn{padding:7px 16px;border-radius:100px;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans','Noto Sans Lao',sans-serif;text-decoration:none;border:none;}
+.nbtn-grad{background:var(--grad);color:#fff;}
+.nbtn-out{background:transparent;border:1px solid var(--border);color:var(--text);}
+/* LAYOUT */
+.wrap{max-width:1080px;margin:0 auto;padding:24px 20px;display:grid;grid-template-columns:1fr 290px;gap:22px;}
+/* FEED */
+.feed{display:flex;flex-direction:column;gap:14px;}
+/* POST */
+.post{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+.post-head{padding:14px 16px 0;display:flex;align-items:center;gap:11px;}
+.p-av{width:42px;height:42px;border-radius:50%;background:var(--grad);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;overflow:hidden;cursor:pointer;}
+.p-av img{width:100%;height:100%;object-fit:cover;}
+.p-name{font-size:14px;font-weight:700;cursor:pointer;}
+.p-name:hover{color:var(--p);}
+.p-time{font-size:11px;color:var(--muted);margin-top:1px;}
+.post-content{padding:12px 16px;font-size:14px;line-height:1.75;}
+.post-img{width:100%;max-height:520px;object-fit:cover;cursor:pointer;display:block;}
+.post-counts{padding:8px 16px;display:flex;justify-content:space-between;font-size:12px;color:var(--muted);border-bottom:1px solid var(--border);}
+.post-counts span{cursor:pointer;}
+.post-counts span:hover{text-decoration:underline;}
+/* ACTION BAR */
+.post-acts{display:flex;border-bottom:1px solid var(--border);}
+.pact{flex:1;padding:10px 4px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;color:var(--muted);background:none;border:none;cursor:pointer;font-family:'DM Sans','Noto Sans Lao',sans-serif;transition:background .15s;}
+.pact:hover{background:rgba(255,255,255,.04);}
+.pact.liked{color:#e05cfc;font-weight:600;}
+/* COMMENTS */
+.cmts{display:none;padding:12px 16px 6px;}
+.cmts.open{display:block;}
+.cmt-row{display:flex;gap:8px;margin-bottom:10px;}
+.c-av{width:32px;height:32px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;}
+.c-av.studio-c{background:linear-gradient(135deg,#f5c842,#e05cfc);}
+.c-body{flex:1;}
+.c-bubble{background:var(--surface);border-radius:16px;padding:9px 13px;display:inline-block;max-width:100%;}
+.c-name{font-size:11px;font-weight:700;margin-bottom:3px;}
+.c-name.is-owner{color:#f5c842;}
+.c-text{font-size:13px;line-height:1.5;word-break:break-word;}
+.c-meta{display:flex;gap:12px;margin-top:4px;padding:0 4px;}
+.c-time{font-size:10px;color:var(--muted);}
+.c-like-btn{font-size:10px;color:var(--muted);background:none;border:none;cursor:pointer;font-family:'DM Sans','Noto Sans Lao',sans-serif;}
+.c-like-btn.liked{color:#e05cfc;}
+.c-reply-btn{font-size:10px;color:var(--muted);background:none;border:none;cursor:pointer;font-family:'DM Sans','Noto Sans Lao',sans-serif;font-weight:600;}
+.c-reply-btn:hover{color:var(--text);}
+/* Reply indent */
+.replies{margin-left:38px;margin-top:4px;}
+/* Write comment */
+.write-cmt{display:flex;gap:8px;align-items:center;padding:8px 0 4px;}
+.w-av{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;}
+.w-inp{flex:1;padding:8px 14px;background:var(--surface);border:1px solid var(--border);border-radius:100px;color:var(--text);font-size:13px;font-family:'DM Sans','Noto Sans Lao',sans-serif;outline:none;transition:border-color .2s;}
+.w-inp:focus{border-color:rgba(124,92,252,.4);}
+.w-inp::placeholder{color:var(--muted);}
+.w-send{background:none;border:none;color:var(--p);cursor:pointer;font-size:18px;padding:4px;transition:transform .15s;}
+.w-send:hover{transform:scale(1.15);}
+/* SIDEBAR */
+.sidebar{position:sticky;top:70px;height:fit-content;display:flex;flex-direction:column;gap:14px;}
+.side-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;}
+.side-title{font-weight:700;font-size:14px;margin-bottom:12px;}
+.s-row{display:flex;align-items:center;gap:10px;padding:7px 0;cursor:pointer;}
+.s-row:hover .s-n{color:var(--p);}
+.s-logo{width:36px;height:36px;border-radius:9px;flex-shrink:0;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:13px;overflow:hidden;}
+.s-logo img{width:100%;height:100%;object-fit:cover;}
+.s-n{font-size:13px;font-weight:600;transition:color .2s;}
+.s-m{font-size:11px;color:var(--muted);}
+/* CHAT WIDGET (Messenger-style floating) */
+.chat-list-bar{position:fixed;bottom:0;right:20px;display:flex;gap:10px;align-items:flex-end;z-index:300;}
+.chat-bubble-btn{width:48px;height:48px;border-radius:50%;background:var(--grad);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 4px 16px rgba(124,92,252,.4);transition:transform .2s;position:relative;}
+.chat-bubble-btn:hover{transform:scale(1.08);}
+.chat-unread-dot{position:absolute;top:-2px;right:-2px;width:16px;height:16px;background:#ff4444;border:2px solid var(--bg);border-radius:50%;font-size:9px;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;}
+/* Chat window */
+.chat-win{width:310px;background:var(--card);border:1px solid var(--border);border-radius:16px 16px 0 0;overflow:hidden;box-shadow:0 -4px 30px rgba(0,0,0,.4);display:flex;flex-direction:column;}
+.chat-win-head{padding:12px 14px;background:linear-gradient(135deg,rgba(124,92,252,.3),rgba(224,92,252,.2));border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;cursor:pointer;}
+.cw-av{width:34px;height:34px;border-radius:50%;flex-shrink:0;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:13px;overflow:hidden;}
+.cw-av img{width:100%;height:100%;object-fit:cover;}
+.cw-name{font-size:13px;font-weight:700;flex:1;}
+.cw-status{font-size:10px;color:#44c868;}
+.cw-min{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:2px 6px;}
+.chat-win-msgs{height:260px;overflow-y:auto;padding:10px 12px;display:flex;flex-direction:column;gap:5px;}
+.cw-bubble{max-width:78%;padding:8px 12px;border-radius:16px;font-size:13px;line-height:1.5;word-break:break-word;}
+.cw-bubble.me{background:var(--grad);color:#fff;align-self:flex-end;border-bottom-right-radius:3px;}
+.cw-bubble.them{background:var(--surface);border:1px solid var(--border);align-self:flex-start;border-bottom-left-radius:3px;}
+.cw-time{font-size:9px;color:var(--muted);padding:0 3px;align-self:flex-end;}
+.chat-win-inp{padding:9px 12px;border-top:1px solid var(--border);display:flex;gap:7px;align-items:center;}
+.cw-inp{flex:1;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:100px;color:var(--text);font-size:13px;font-family:'DM Sans','Noto Sans Lao',sans-serif;outline:none;}
+.cw-inp::placeholder{color:var(--muted);}
+.cw-send{background:none;border:none;color:var(--p);cursor:pointer;font-size:20px;transition:transform .15s;}
+.cw-send:hover{transform:scale(1.15);}
+/* typing dots */
+.t-dots{display:flex;gap:3px;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:16px;border-bottom-left-radius:3px;align-self:flex-start;}
+.t-dots span{width:6px;height:6px;background:var(--muted);border-radius:50%;animation:tdot 1.2s infinite;}
+.t-dots span:nth-child(2){animation-delay:.2s;}
+.t-dots span:nth-child(3){animation-delay:.4s;}
+@keyframes tdot{0%,80%,100%{transform:scale(.6);opacity:.4;}40%{transform:scale(1);opacity:1;}}
+/* Lightbox */
+.lb{position:fixed;inset:0;background:rgba(0,0,0,.97);z-index:999;display:flex;align-items:center;justify-content:center;}
+.lb.hidden{display:none;}
+.lb-img{max-width:90vw;max-height:90vh;border-radius:10px;object-fit:contain;}
+.lb-x{position:fixed;top:16px;right:16px;background:rgba(255,255,255,.1);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:15px;cursor:pointer;}
+.spinner{width:22px;height:22px;border:3px solid var(--border);border-top-color:var(--p);border-radius:50%;animation:spin .8s linear infinite;margin:50px auto;display:block;}
+.empty{text-align:center;padding:50px;color:var(--muted);}
+@keyframes spin{to{transform:rotate(360deg);}}
+@media(max-width:760px){.wrap{grid-template-columns:1fr;}.sidebar{display:none;}.nav-mid{display:none;}.chat-list-bar{right:8px;}.chat-win{width:calc(100vw - 24px);}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="explore.html">SHARE LOD</a>
+  <div class="nav-mid">
+    <a class="ntab" href="explore.html">🔍 Studios</a>
+    <a class="ntab on" href="feed.html">📰 Feed</a>
+  </div>
+  <div class="nav-right" id="nav-right">
+    <a href="login.html?next=feed.html" class="nbtn nbtn-out">Login</a>
+    <a href="login.html?tab=member&next=feed.html" class="nbtn nbtn-grad">ສ້າງ Account ຟຣີ</a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="feed" id="feed"><div class="spinner"></div></div>
+  <div class="sidebar">
+    <div class="side-card">
+      <div class="side-title">🏆 Studios ຍອດນິຍົມ</div>
+      <div id="top-studios"><div class="spinner"></div></div>
+    </div>
+    <div class="side-card" id="me-card" style="display:none">
+      <div class="side-title">👤 ຂ້ອຍ</div>
+      <div id="me-info"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Floating chat list bar -->
+<div class="chat-list-bar" id="chat-bar"></div>
+
+<!-- Lightbox -->
+<div class="lb hidden" id="lb">
+  <button class="lb-x" onclick="document.getElementById('lb').classList.add('hidden')">✕</button>
+  <img class="lb-img" id="lb-img">
+</div>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+const sb = createClient('https://vuhjmwnxbvzppcoklgir.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1aGptd254YnZ6cHBjb2tsZ2lyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5OTM2NzAsImV4cCI6MjA5MDU2OTY3MH0.ijlH_tjBZm4irxrq-FXfIKIKdwZJTdTzaYbTPrpd928');
+
+let me=null, posts=[], openChats={};
+const sessKey=localStorage.getItem('slod_sess')||Math.random().toString(36).slice(2);
+localStorage.setItem('slod_sess',sessKey);
+
+// ── Sound + Notification ─────────────────────────────────
+function playSound(){
+  try{
+    const c=new AudioContext();
+    [[880,.0],[1100,.12]].forEach(([f,d])=>{
+      const o=c.createOscillator(),g=c.createGain();
+      o.connect(g);g.connect(c.destination);
+      o.frequency.value=f;o.type='sine';
+      g.gain.setValueAtTime(0,c.currentTime+d);
+      g.gain.linearRampToValueAtTime(.22,c.currentTime+d+.02);
+      g.gain.exponentialRampToValueAtTime(.001,c.currentTime+d+.35);
+      o.start(c.currentTime+d);o.stop(c.currentTime+d+.4);
+    });
+  }catch(e){}
+}
+async function showNotif(title,body){
+  if(!('Notification' in window))return;
+  if(Notification.permission==='default') await Notification.requestPermission();
+  if(Notification.permission==='granted'&&document.hidden)
+    new Notification(title,{body,icon:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">💬</text></svg>'});
+}
+
+function timeAgo(ts){const d=Math.floor((Date.now()-new Date(ts))/1000);if(d<60)return'ຫາກໍ';if(d<3600)return Math.floor(d/60)+' ນ';if(d<86400)return Math.floor(d/3600)+' ຊມ';return new Date(ts).toLocaleDateString('lo-LA');}
+function fmtTime(ts){return new Date(ts).toLocaleTimeString('lo-LA',{hour:'2-digit',minute:'2-digit'});}
+
+// ── Auth ─────────────────────────────────────────────────
+const {data:{session}}=await sb.auth.getSession();
+if(session){
+  const {data:u}=await sb.from('profiles').select('*').eq('id',session.user.id).single();
+  me=u;
+  document.getElementById('nav-right').innerHTML=`
+    <div class="user-chip" onclick="location.href='${me.role==='member'?'feed':'dashboard'}.html'">
+      <div class="u-av">${(me.studio_name||'U').charAt(0)}</div>
+      <span>${me.studio_name||'User'}</span>
+    </div>
+    ${me.role!=='member'?`<a href="dashboard.html" class="nbtn nbtn-grad" style="font-size:11px">Dashboard</a>`:''}
+    <button onclick="sb.auth.signOut().then(()=>location.reload())" class="nbtn nbtn-out" style="font-size:11px">ອອກ</button>`;
+  document.getElementById('me-card').style.display='block';
+  document.getElementById('me-info').innerHTML=`
+    <div style="font-weight:600">${me.studio_name}</div>
+    <div style="font-size:11px;color:var(--muted);margin-top:2px">${me.role==='member'?'🆓 Free Member':me.role==='admin'?'🔑 Admin':'🏢 Studio'}</div>`;
+}
+
+function mustLogin(){
+  if(!me){location.href='login.html?tab=member&next=feed.html';return false;}
+  return true;
+}
+function myName(){return me?.studio_name||me?.email||'User';}
+function myInitial(){return (me?.studio_name||'U').charAt(0).toUpperCase();}
+
+// ── Load Feed ────────────────────────────────────────────
+async function loadFeed(){
+  const {data,error}=await sb.rpc('get_global_feed',{p_limit:40,p_offset:0});
+  if(error){document.getElementById('feed').innerHTML=`<div class="empty">❌ ${error.message}<br><small>ກະລຸນາ Run SQL ກ່ອນ</small></div>`;return;}
+  posts=data||[];
+  if(!posts.length){document.getElementById('feed').innerHTML='<div class="empty">📰 ຍັງບໍ່ມີ Post</div>';return;}
+
+  // Load liked posts
+  const {data:lk}=await sb.from('post_likes').select('post_id').eq('session_key',sessKey);
+  const likedSet=new Set((lk||[]).map(l=>l.post_id));
+
+  document.getElementById('feed').innerHTML=posts.map(item=>{
+    const p=item.post,s=item.studio;
+    const col=s.branding_color||'#7c5cfc';
+    const liked=likedSet.has(p.id);
+    return `<div class="post" id="post-${p.id}">
+      <div class="post-head">
+        <div class="p-av" style="background:linear-gradient(135deg,${col},#e05cfc)" onclick="location.href='studio.html?id=${s.id}'">
+          ${s.branding_logo?`<img src="${s.branding_logo}" loading="lazy">`:(s.studio_name||'S').charAt(0)}
+        </div>
+        <div style="flex:1">
+          <div class="p-name" onclick="location.href='studio.html?id=${s.id}'">${s.studio_name||'Studio'}</div>
+          <div class="p-time">${timeAgo(p.created_at)}</div>
+        </div>
+        <button onclick="openChat('${s.id}','${(s.studio_name||'Studio').replace(/'/g,'&#39;')}','${s.branding_logo||''}','${col}')"
+          style="padding:6px 13px;border-radius:100px;background:rgba(124,92,252,.12);border:1px solid rgba(124,92,252,.2);color:var(--p);font-size:11px;font-weight:500;cursor:pointer;font-family:'DM Sans','Noto Sans Lao',sans-serif;white-space:nowrap">
+          💬 Chat
+        </button>
+      </div>
+      ${p.content?`<div class="post-content">${p.content.replace(/\n/g,'<br>')}</div>`:''}
+      ${p.image_url?`<img class="post-img" src="${p.image_url}" loading="lazy" onclick="openLb('${p.image_url}')">`:''}
+      <div class="post-counts">
+        <span id="lcount-${p.id}">❤️ ${p.likes||0}</span>
+        <span onclick="toggleCmts('${p.id}')" id="ccount-${p.id}">💬 ${item.comments_count||0} ຄອມເມັ້ນ</span>
+      </div>
+      <div class="post-acts">
+        <button class="pact ${liked?'liked':''}" id="lb-${p.id}" onclick="doLike('${p.id}')">
+          ${liked?'❤️':'🤍'} Like
+        </button>
+        <button class="pact" onclick="toggleCmts('${p.id}')">💬 Comment</button>
+        <button class="pact" onclick="doShare('${s.id}')">🔗 Share</button>
+      </div>
+      <div class="cmts" id="cmts-${p.id}">
+        <div id="clist-${p.id}"></div>
+        <div class="write-cmt">
+          <div class="w-av">${me?myInitial():'👤'}</div>
+          <input class="w-inp" id="cinp-${p.id}" placeholder="${me?'ຂຽນ Comment...':'Login ເພື່ອ Comment...'}" onkeydown="if(event.key==='Enter'&&!event.shiftKey)doComment('${p.id}','${s.id}')">
+          <button class="w-send" onclick="doComment('${p.id}','${s.id}')">➤</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Like ─────────────────────────────────────────────────
+window.doLike=async(postId)=>{
+  if(!mustLogin())return;
+  const btn=document.getElementById(`lb-${postId}`);
+  const cnt=document.getElementById(`lcount-${postId}`);
+  const liked=btn.classList.contains('liked');
+  const n=parseInt(cnt.textContent.replace(/\D/g,''))||0;
+  if(liked){
+    btn.classList.remove('liked');btn.innerHTML='🤍 Like';cnt.textContent=`❤️ ${Math.max(0,n-1)}`;
+    await sb.from('post_likes').delete().eq('post_id',postId).eq('session_key',sessKey);
+    await sb.from('posts').update({likes:Math.max(0,n-1)}).eq('id',postId);
+  }else{
+    btn.classList.add('liked');btn.innerHTML='❤️ Like';cnt.textContent=`❤️ ${n+1}`;
+    await sb.from('post_likes').insert({post_id:postId,session_key:sessKey});
+    await sb.from('posts').update({likes:n+1}).eq('id',postId);
+  }
+};
+
+// ── Comments ─────────────────────────────────────────────
+window.toggleCmts=async(postId)=>{
+  const el=document.getElementById(`cmts-${postId}`);
+  el.classList.toggle('open');
+  if(el.classList.contains('open')){
+    if(!me) document.getElementById(`cinp-${postId}`).addEventListener('focus',()=>mustLogin(),{once:true});
+    await loadCmts(postId);
+    document.getElementById(`cinp-${postId}`)?.focus();
+  }
+};
+
+async function loadCmts(postId){
+  const {data}=await sb.from('post_comments').select('*').eq('post_id',postId).is('parent_id',null).order('created_at',{ascending:true});
+  const cnt=document.getElementById(`ccount-${postId}`);
+  if(cnt) cnt.textContent=`💬 ${data?.length||0} ຄອມເມັ້ນ`;
+  const cl=document.getElementById(`clist-${postId}`);
+  if(!cl)return;
+  if(!data?.length){cl.innerHTML='<div style="font-size:12px;color:var(--muted);padding:4px 0 6px">ເປັນຄົນທຳອິດ Comment!</div>';return;}
+
+  // Find studio_uid for this post
+  const postItem=posts.find(p=>p.post?.id===postId);
+  const studioId=postItem?.studio?.id;
+
+  cl.innerHTML=data.map(c=>renderCmt(c,studioId,postId)).join('');
+  // Load replies for each comment
+  for(const c of data) loadReplies(c.id,studioId,postId);
+}
+
+function renderCmt(c,studioId,postId){
+  const isOwner=c.is_studio||(studioId&&c.session_key===studioId);
+  return `<div class="cmt-row" id="cmt-${c.id}">
+    <div class="c-av ${isOwner?'studio-c':''}">${(c.commenter_name||'?').charAt(0).toUpperCase()}</div>
+    <div class="c-body">
+      <div class="c-bubble">
+        <div class="c-name ${isOwner?'is-owner':''}">${c.commenter_name}${isOwner?' 🏢':''}</div>
+        <div class="c-text">${c.content}</div>
+      </div>
+      <div class="c-meta">
+        <span class="c-time">${timeAgo(c.created_at)}</span>
+        <button class="c-like-btn" id="clb-${c.id}" onclick="likeCmt('${c.id}')">👍 ${c.likes||0}</button>
+        <button class="c-reply-btn" onclick="showReplyInput('${c.id}','${postId}','${studioId||''}')">↩ Reply</button>
+      </div>
+      <div id="replies-${c.id}"></div>
+      <div id="rinp-${c.id}" style="display:none;margin-top:6px">
+        <div class="write-cmt">
+          <div class="w-av">${me?myInitial():'👤'}</div>
+          <input class="w-inp" id="ri-${c.id}" placeholder="Reply..." onkeydown="if(event.key==='Enter')sendReply('${c.id}','${postId}','${studioId||''}')">
+          <button class="w-send" onclick="sendReply('${c.id}','${postId}','${studioId||''}')">➤</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+async function loadReplies(parentId,studioId,postId){
+  const {data}=await sb.from('post_comments').select('*').eq('parent_id',parentId).order('created_at',{ascending:true});
+  const el=document.getElementById(`replies-${parentId}`);
+  if(!el||!data?.length)return;
+  el.innerHTML=`<div class="replies">${data.map(r=>renderCmt(r,studioId,postId)).join('')}</div>`;
+}
+
+window.showReplyInput=(parentId,postId,studioId)=>{
+  if(!mustLogin())return;
+  const el=document.getElementById(`rinp-${parentId}`);
+  if(!el)return;
+  el.style.display=el.style.display==='none'?'block':'none';
+  document.getElementById(`ri-${parentId}`)?.focus();
+};
+
+window.sendReply=async(parentId,postId,studioId)=>{
+  if(!mustLogin())return;
+  const inp=document.getElementById(`ri-${parentId}`);
+  const content=inp?.value.trim(); if(!content)return;
+  inp.value='';
+  const isOwner=me&&(me.role==='user'&&me.id===studioId);
+  await sb.from('post_comments').insert({post_id:postId,parent_id:parentId,commenter_name:myName(),session_key:me?.id||sessKey,is_studio:isOwner||false,content});
+  document.getElementById(`rinp-${parentId}`).style.display='none';
+  loadCmts(postId);
+};
+
+window.doComment=async(postId,studioId)=>{
+  if(!mustLogin())return;
+  const inp=document.getElementById(`cinp-${postId}`);
+  const content=inp?.value.trim(); if(!content)return;
+  inp.value='';
+  const isOwner=me&&me.id===studioId;
+  await sb.from('post_comments').insert({post_id:postId,parent_id:null,commenter_name:myName(),session_key:me?.id||sessKey,is_studio:isOwner||false,content});
+  loadCmts(postId);
+};
+
+window.likeCmt=async(cmtId)=>{
+  if(!mustLogin())return;
+  const btn=document.getElementById(`clb-${cmtId}`);
+  const n=parseInt(btn.textContent.replace(/\D/g,''))||0;
+  const liked=btn.classList.contains('liked');
+  btn.classList.toggle('liked',!liked);
+  btn.textContent=`👍 ${liked?Math.max(0,n-1):n+1}`;
+  await sb.from('post_comments').update({likes:(liked?Math.max(0,n-1):n+1)}).eq('id',cmtId);
+};
+
+window.doShare=(studioId)=>{
+  navigator.clipboard.writeText(`${location.origin}/studio.html?id=${studioId}`).then(()=>{
+    const t=document.createElement('div');
+    t.textContent='✅ Copy Link ແລ້ວ!';
+    t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1e1e30;border:1px solid rgba(124,92,252,.4);border-radius:10px;padding:10px 20px;font-size:13px;z-index:9999;color:#fff';
+    document.body.appendChild(t);setTimeout(()=>t.remove(),2500);
+  });
+};
+
+// ── Chat (Messenger-style floating) ──────────────────────
+const chatChannels={};
+
+window.openChat=async(studioId,name,logo,color)=>{
+  if(!mustLogin())return;
+  // Redirect to my-chats for persistent history
+  location.href=`my-chats.html?studio=${studioId}`;
+  return;
+  if(openChats[studioId])return; // already open
+
+  const winId=`cw-${studioId}`;
+  openChats[studioId]={studioId,name,logo,color,winId};
+
+  const bar=document.getElementById('chat-bar');
+  const win=document.createElement('div');
+  win.className='chat-win';win.id=winId;
+  const logoHtml=logo?`<img src="${logo}">`:(name.charAt(0));
+  win.innerHTML=`
+    <div class="chat-win-head" onclick="toggleWinMin('${studioId}')">
+      <div class="cw-av" style="background:linear-gradient(135deg,${color},#e05cfc)">${logoHtml}</div>
+      <div style="flex:1"><div class="cw-name">${name}</div><div class="cw-status">● ອອນລາຍ</div></div>
+      <button class="cw-min" onclick="event.stopPropagation();closeChat('${studioId}')">✕</button>
+    </div>
+    <div class="chat-win-msgs" id="cwmsgs-${studioId}"></div>
+    <div class="chat-win-inp">
+      <input class="cw-inp" id="cwinp-${studioId}" placeholder="ຂຽນຂໍ້ຄວາມ..." onkeydown="if(event.key==='Enter')cwSend('${studioId}')">
+      <button class="cw-send" onclick="cwSend('${studioId}')">➤</button>
+    </div>`;
+  bar.appendChild(win);
+
+  await cwLoadMsgs(studioId);
+  setupChatRealtime(studioId,name);
+  document.getElementById(`cwinp-${studioId}`)?.focus();
+
+  // Request notification permission
+  if('Notification' in window && Notification.permission==='default') Notification.requestPermission();
+};
+
+window.closeChat=(studioId)=>{
+  const win=document.getElementById(`cw-${studioId}`);
+  if(win) win.remove();
+  delete openChats[studioId];
+  if(chatChannels[studioId]){sb.removeChannel(chatChannels[studioId]);delete chatChannels[studioId];}
+};
+
+window.toggleWinMin=(studioId)=>{
+  const msgs=document.getElementById(`cwmsgs-${studioId}`);
+  const inp=document.querySelector(`#cw-${studioId} .chat-win-inp`);
+  if(msgs){const hidden=msgs.style.display==='none';msgs.style.display=hidden?'flex':'none';if(inp)inp.style.display=hidden?'flex':'none';}
+};
+
+async function cwLoadMsgs(studioId){
+  const {data}=await sb.from('messages').select('*').eq('studio_uid',studioId).eq('sender_key',me?.id||sessKey).order('created_at',{ascending:true});
+  const el=document.getElementById(`cwmsgs-${studioId}`);
+  if(!el)return;
+  if(!data?.length){el.innerHTML='<div style="text-align:center;padding:20px;font-size:12px;color:var(--muted)">ສົ່ງຂໍ້ຄວາມຫາ Studio ໄດ້ເລີຍ</div>';return;}
+  el.innerHTML=data.map(m=>`
+    <div style="display:flex;flex-direction:column;align-items:${m.is_from_studio?'flex-start':'flex-end'}">
+      <div class="cw-bubble ${m.is_from_studio?'them':'me'}">${m.content.replace(/\n/g,'<br>')}</div>
+      <div class="cw-time">${fmtTime(m.created_at)}</div>
+    </div>`).join('');
+  el.scrollTop=el.scrollHeight;
+}
+
+window.cwSend=async(studioId)=>{
+  const inp=document.getElementById(`cwinp-${studioId}`);
+  const content=inp?.value.trim(); if(!content)return;
+  inp.value='';
+  await sb.from('messages').insert({
+    studio_uid:studioId,sender_name:myName(),sender_key:me?.id||sessKey,
+    content,is_from_studio:false,is_read:false,
+    project_id:null,project_name:'Feed Chat'
+  });
+  cwLoadMsgs(studioId);
+};
+
+function setupChatRealtime(studioId,studioName){
+  if(chatChannels[studioId]) return;
+  const ch=sb.channel(`chat-${studioId}-${me?.id||sessKey}`)
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'messages',filter:`studio_uid=eq.${studioId}`},payload=>{
+      const m=payload.new;
+      if(m.sender_key!==( me?.id||sessKey)) return;
+      cwLoadMsgs(studioId);
+      if(m.is_from_studio){
+        playSound();
+        showNotif(`ຂໍ້ຄວາມຈາກ ${studioName}`,m.content);
+      }
+    }).subscribe();
+  chatChannels[studioId]=ch;
+}
+
+// ── Lightbox ─────────────────────────────────────────────
+window.openLb=url=>{document.getElementById('lb-img').src=url;document.getElementById('lb').classList.remove('hidden');};
+document.addEventListener('keydown',e=>{if(e.key==='Escape') document.getElementById('lb').classList.add('hidden');});
+
+// ── Top Studios ───────────────────────────────────────────
+async function loadTopStudios(){
+  const {data}=await sb.rpc('get_studios');
+  const top=(data||[]).slice(0,6);
+  const el=document.getElementById('top-studios');
+  if(!top.length){el.innerHTML='<div style="font-size:12px;color:var(--muted)">ຍັງບໍ່ມີ Studio</div>';return;}
+  el.innerHTML=top.map(s=>`
+    <div class="s-row" onclick="location.href='studio.html?id=${s.id}'">
+      <div class="s-logo" style="background:linear-gradient(135deg,${s.branding_color||'#7c5cfc'},#e05cfc)">
+        ${s.branding_logo?`<img src="${s.branding_logo}" loading="lazy">`:'📷'}
+      </div>
+      <div><div class="s-n">${s.studio_name}</div><div class="s-m">⭐ ${s.avg_rating||'—'} · 🖼 ${s.portfolio_count||0}</div></div>
+    </div>`).join('');
+}
+
+// ── Global Notification (ຮັບ reply ຈາກ Studio) ─────────────
+if(me){
+  sb.channel(`notif-feed-${me.id}`)
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'messages',filter:`sender_key=eq.${me.id}`},payload=>{
+      const m=payload.new;
+      if(m.is_from_studio){
+        playSound();
+        if('Notification' in window && Notification.permission==='granted' && document.hidden)
+          new Notification('💬 ຂໍ້ຄວາມໃໝ່',{body:m.content});
+        // Show toast
+        const d=document.createElement('div');
+        d.style.cssText='position:fixed;bottom:24px;right:24px;background:#1e1e30;border:1px solid rgba(124,92,252,.4);border-radius:14px;padding:14px 18px;z-index:9999;cursor:pointer;box-shadow:0 8px 30px rgba(0,0,0,.5);max-width:280px;animation:slideUp .3s ease';
+        d.innerHTML=`<div style="font-size:12px;color:#7a79a0;margin-bottom:4px">💬 ຂໍ້ຄວາມໃໝ່ຈາກ Studio</div><div style="font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${m.content}</div><div style="font-size:11px;color:#7c5cfc;margin-top:5px">ກົດເບິ່ງ →</div>`;
+        d.onclick=()=>location.href='my-chats.html?studio='+m.studio_uid;
+        document.body.appendChild(d);
+        setTimeout(()=>d.remove(),6000);
+      }
+    }).subscribe();
+  // Update nav: add my-chats link for logged-in users
+  const nr=document.getElementById('nav-right');
+  if(nr&&me){
+    const chatLink=document.createElement('a');
+    chatLink.href='my-chats.html';
+    chatLink.style.cssText='padding:6px 14px;border-radius:100px;background:rgba(124,92,252,.12);border:1px solid rgba(124,92,252,.2);color:#7c5cfc;font-size:12px;font-weight:500;text-decoration:none;white-space:nowrap;';
+    chatLink.textContent='💬 ການສົນທະນາ';
+    nr.insertBefore(chatLink,nr.firstChild);
+  }
+  if('Notification' in window && Notification.permission==='default') setTimeout(()=>Notification.requestPermission(),2000);
+}
+const slideUp=document.createElement('style');slideUp.textContent='@keyframes slideUp{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}';document.head.appendChild(slideUp);
+
+loadFeed();
+loadTopStudios();
+</script>
+</body>
+</html>

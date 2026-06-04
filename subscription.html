@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SHARE LOD — Subscription</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&family=Noto+Sans+Lao:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080810;--surface:#0f0f1a;--card:#13131f;--border:rgba(255,255,255,0.06);--text:#f0eff8;--muted:#7a79a0;--a1:#7c5cfc;--grad:linear-gradient(135deg,#7c5cfc,#e05cfc);--sw:240px;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans','Noto Sans Lao',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;}
+.sb{width:var(--sw);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:50;}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid var(--border);}
+.sb-logo-txt{font-family:'Playfair Display',serif;font-size:20px;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.sb-studio{font-size:12px;color:var(--muted);margin-top:3px;}
+.sb-nav{flex:1;padding:14px 10px;display:flex;flex-direction:column;gap:3px;}
+.ni{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:var(--muted);text-decoration:none;font-size:13.5px;font-weight:500;transition:all .2s;cursor:pointer;border:none;background:none;width:100%;font-family:'DM Sans','Noto Sans Lao',sans-serif;}
+.ni:hover{background:rgba(255,255,255,.05);color:var(--text);}
+.ni.active{background:rgba(124,92,252,.15);color:var(--a1);}
+.ni .ic{font-size:15px;width:20px;text-align:center;}
+.sb-foot{padding:14px 10px;border-top:1px solid var(--border);}
+.plan-box{background:rgba(124,92,252,.08);border:1px solid rgba(124,92,252,.18);border-radius:10px;padding:12px;margin-bottom:10px;}
+.plan-nm{font-size:11px;color:var(--a1);font-weight:700;text-transform:uppercase;letter-spacing:1px;}
+.main{margin-left:var(--sw);flex:1;}
+.topbar{padding:18px 28px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:40;}
+.tb-title{font-family:'Playfair Display',serif;font-size:21px;font-weight:800;}
+.content{padding:28px;max-width:860px;}
+/* CURRENT PLAN */
+.cpc{background:linear-gradient(135deg,#16162a,#1e1235);border:1px solid rgba(124,92,252,.4);border-radius:18px;padding:28px;margin-bottom:22px;display:flex;align-items:center;gap:24px;}
+.cpc-icon{font-size:44px;}
+.cpc-info h2{font-family:'Playfair Display',serif;font-size:24px;font-weight:800;margin-bottom:4px;}
+.cpc-info p{color:var(--muted);font-size:13px;}
+.cpc-right{margin-left:auto;text-align:right;}
+.badge{display:inline-block;padding:5px 14px;border-radius:100px;font-size:12px;font-weight:600;}
+.ba{background:rgba(80,255,150,.1);color:#80ffaa;border:1px solid rgba(80,255,150,.2);}
+.bp{background:rgba(245,200,66,.1);color:#f5c842;border:1px solid rgba(245,200,66,.2);}
+/* STORAGE */
+.stor-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:22px;}
+.stor-card h3{font-size:14px;font-weight:600;margin-bottom:14px;}
+.stor-nums{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:7px;}
+.stor-bar{height:8px;background:rgba(255,255,255,.05);border-radius:4px;overflow:hidden;}
+.stor-fill{height:100%;background:var(--grad);border-radius:4px;transition:width .5s;}
+/* PAYMENT */
+.pay-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:28px;margin-bottom:22px;}
+.pay-card h3{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;margin-bottom:6px;}
+.pay-card p{color:var(--muted);font-size:13px;margin-bottom:20px;}
+.bank-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:18px;}
+.brow{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.brow:last-child{border-bottom:none;}
+.bl{color:var(--muted);}
+.bv{font-weight:600;}
+.copy-btn{padding:4px 11px;background:rgba(124,92,252,.15);border:1px solid rgba(124,92,252,.2);border-radius:6px;color:var(--a1);font-size:11px;cursor:pointer;font-family:'DM Sans','Noto Sans Lao',sans-serif;}
+.slip-up{border:2px dashed var(--border);border-radius:12px;padding:28px;text-align:center;cursor:pointer;position:relative;transition:all .2s;}
+.slip-up:hover{border-color:rgba(124,92,252,.4);background:rgba(124,92,252,.05);}
+.slip-up input{position:absolute;inset:0;opacity:0;cursor:pointer;}
+.slip-prev{max-width:180px;border-radius:9px;margin:10px auto 0;display:none;}
+.btn-sub{width:100%;padding:13px;background:var(--grad);border:none;border-radius:11px;color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans','Noto Sans Lao',sans-serif;margin-top:14px;transition:opacity .2s;}
+.btn-sub:hover{opacity:.88;}
+.suc{background:rgba(80,255,150,.1);border:1px solid rgba(80,255,150,.3);border-radius:9px;padding:10px 14px;font-size:12px;color:#80ffaa;margin-top:10px;display:none;}
+/* PLANS ROW */
+.plans-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px;}
+.pm{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:18px;text-align:center;cursor:pointer;transition:all .2s;}
+.pm:hover,.pm.cur{border-color:rgba(124,92,252,.5);background:rgba(124,92,252,.07);}
+.pm-nm{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;margin-bottom:3px;}
+.pm-pr{font-size:19px;font-weight:800;color:var(--a1);}
+.pm-st{font-size:11px;color:var(--muted);margin-top:3px;}
+label{display:block;font-size:12px;color:var(--muted);margin-bottom:7px;font-weight:500;}
+@media(max-width:900px){.sb{display:none;}.main{margin-left:0;}.plans-row{grid-template-columns:1fr;}.cpc{flex-direction:column;text-align:center;}.cpc-right{margin-left:0;}}
+</style>
+</head>
+<body>
+<aside class="sb">
+  <div class="sb-logo"><div class="sb-logo-txt">SHARE LOD</div><div class="sb-studio" id="sb-name"></div></div>
+  <nav class="sb-nav">
+    <a class="ni" href="dashboard.html"><span class="ic">📊</span>Dashboard</a>
+    <a class="ni" href="clients.html"><span class="ic">👥</span>Clients</a>
+    <a class="ni" href="upload.html"><span class="ic">⬆️</span>Upload ຟາຍ</a>
+    <a class="ni" href="branding.html"><span class="ic">🎨</span>Branding</a>
+    <a class="ni" href="portfolio.html"><span class="ic">🖼</span>Portfolio</a>
+    <a class="ni" href="inbox.html"><span class="ic">💬</span>Inbox</a>
+    <a class="ni" href="community.html"><span class="ic">🌐</span>Community</a>
+    <a class="ni active" href="subscription.html"><span class="ic">💳</span>Subscription</a>
+    <a class="ni" href="explore.html" target="_blank"><span class="ic">🌐</span>Explore Page</a>
+  </nav>
+  <div class="sb-foot">
+    <div class="plan-box"><div class="plan-nm" id="sb-plan"></div></div>
+    <button class="ni" onclick="logout()" style="color:#ff7070;width:100%"><span class="ic">🚪</span>ອອກ</button>
+  </div>
+</aside>
+<div class="main">
+  <div class="topbar"><div class="tb-title">💳 Subscription</div></div>
+  <div class="content">
+    <div class="cpc">
+      <div class="cpc-icon" id="plan-icon">🥈</div>
+      <div class="cpc-info"><h2 id="plan-name">Pro Plan</h2><p id="plan-detail">30 GB · 150,000 ກີບ/ເດືອນ</p></div>
+      <div class="cpc-right"><div class="badge bp" id="plan-status">⏳ ລໍຖ້າ</div></div>
+    </div>
+    <div class="stor-card">
+      <h3>ວັນໝົດອາຍຸ Subscription</h3>
+      <div id="expiry-info" style="font-size:13px;color:var(--muted);margin-bottom:10px"></div>
+      <h3 style="margin-top:14px">Storage ທີ່ໃຊ້</h3>
+      <div class="stor-nums"><span id="s-used">0 MB</span><span id="s-lim">30 GB</span></div>
+      <div class="stor-bar"><div class="stor-fill" id="s-fill" style="width:0%"></div></div>
+    </div>
+    <div class="pay-card">
+      <h3>ຊຳລະ / ຕໍ່ອາຍຸ</h3>
+      <p>ໂອນເງິນຕາມຂໍ້ມູນລຸ່ມ ແລ້ວ Upload Slip</p>
+      <div class="bank-box" id="bank-box">
+        <div class="brow"><span class="bl">ທະນາຄານ</span><span class="bv" id="bk-bank">—</span></div>
+        <div class="brow"><span class="bl">ຊື່ບັນຊີ</span><span class="bv" id="bk-aname">—</span></div>
+        <div class="brow"><span class="bl">ເລກທີ</span><div style="display:flex;align-items:center;gap:8px"><span class="bv" id="bk-anum">—</span><button class="copy-btn" id="bk-copy" onclick="copyAccNum()">Copy</button></div></div>
+        <div class="brow"><span class="bl">ຈຳນວນ</span><span class="bv" id="pay-amt" style="color:var(--a1)">—</span></div>
+        <div class="brow"><span class="bl">ໝາຍເຫດ</span><span class="bv" id="pay-ref">—</span></div>
+      </div>
+      <div class="slip-up">
+        <input type="file" accept="image/*" onchange="handleSlip(this)">
+        <div style="font-size:32px;margin-bottom:7px">🧾</div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:3px">Upload Slip</div>
+        <div style="font-size:11px;color:var(--muted)">ຄລິກ ຫຼື ລາກວາງ Slip</div>
+        <img class="slip-prev" id="slip-prev">
+      </div>
+      <button class="btn-sub" onclick="submitPay()">📤 ສົ່ງ Slip ຢືນຢັນ</button>
+      <div class="suc" id="suc">✅ ສົ່ງ Slip ສຳເລັດ! Admin ຈະ Activate ພາຍໃນ 1-2 ຊົ່ວໂມງ</div>
+    </div>
+    <div class="pay-card">
+      <h3>Upgrade Plan</h3>
+      <p>ເລືອກ Plan ໃໝ່ ແລ້ວ Upload Slip ຕາມລາຄາໃໝ່</p>
+      <div class="plans-row">
+        <div class="pm" id="pm-starter" onclick="selPlan('starter',this)"><div class="pm-nm">🥉 Starter</div><div class="pm-pr">80K</div><div class="pm-st">10 GB</div></div>
+        <div class="pm" id="pm-pro" onclick="selPlan('pro',this)"><div class="pm-nm">🥈 Pro</div><div class="pm-pr">150K</div><div class="pm-st">30 GB</div></div>
+        <div class="pm" id="pm-studio" onclick="selPlan('studio',this)"><div class="pm-nm">🥇 Studio</div><div class="pm-pr">280K</div><div class="pm-st">80 GB</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+const sb = createClient('https://vuhjmwnxbvzppcoklgir.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1aGptd254YnZ6cHBjb2tsZ2lyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5OTM2NzAsImV4cCI6MjA5MDU2OTY3MH0.ijlH_tjBZm4irxrq-FXfIKIKdwZJTdTzaYbTPrpd928');
+const PI={starter:{name:'Starter',price:'80,000',limit:10737418240,icon:'🥉'},pro:{name:'Pro',price:'150,000',limit:32212254720,icon:'🥈'},studio:{name:'Studio',price:'280,000',limit:85899345920,icon:'🥇'}};
+let uid,userData,slipFile=null,newPlan=null;
+function fmt(b){if(b<1048576)return(b/1024).toFixed(1)+' KB';if(b<1073741824)return(b/1048576).toFixed(1)+' MB';return(b/1073741824).toFixed(2)+' GB';}
+window.logout=async()=>{await sb.auth.signOut();location.href='login.html';}
+window.selPlan=(plan,el)=>{newPlan=plan;document.querySelectorAll('.pm').forEach(p=>p.classList.remove('cur'));el.classList.add('cur');document.getElementById('pay-amt').textContent=PI[plan].price+' ກີບ';};
+window.handleSlip=input=>{slipFile=input.files[0];if(!slipFile)return;const r=new FileReader();r.onload=e=>{const img=document.getElementById('slip-prev');img.src=e.target.result;img.style.display='block';};r.readAsDataURL(slipFile);};
+window.submitPay=async()=>{
+  if(!slipFile){alert('ກະລຸນາ Upload Slip ກ່ອນ');return;}
+  const slipPath=`${uid}/${Date.now()}`;
+  const {error:upErr}=await sb.storage.from('framevault-slips').upload(slipPath,slipFile,{contentType:slipFile.type});
+  if(upErr){alert('Upload Slip ລົ້ມເຫຼວ: '+upErr.message);return;}
+  const {data:urlData}=await sb.storage.from('framevault-slips').createSignedUrl(slipPath,60*60*24*365);
+  const plan=newPlan||userData.plan;
+  await sb.from('payments').insert({uid,studio_name:userData.studio_name,email:userData.email,plan,slip_url:urlData?.signedUrl||'',status:'pending'});
+  if(newPlan&&newPlan!==userData.plan)await sb.from('profiles').update({plan:newPlan,plan_status:'pending',storage_limit:PI[newPlan].limit}).eq('id',uid);
+  else await sb.from('profiles').update({plan_status:'pending'}).eq('id',uid);
+  document.getElementById('suc').style.display='block';
+};
+// ໂຫຼດຂໍ້ມູນທະນາຄານ
+const {data:settings}=await sb.from('settings').select('*').eq('id',1).single();
+if(settings){
+  document.getElementById('bk-bank').textContent=settings.bank_name||'—';
+  document.getElementById('bk-aname').textContent=settings.bank_account_name||'—';
+  document.getElementById('bk-anum').textContent=settings.bank_account_number||'—';
+}
+window.copyAccNum=()=>{
+  const num=document.getElementById('bk-anum').textContent;
+  navigator.clipboard.writeText(num).then(()=>alert('Copy ແລ້ວ!'));
+};
+
+const {data:{session}}=await sb.auth.getSession();
+if(!session){location.href='login.html';}
+uid=session.user.id;
+const {data:u}=await sb.from('profiles').select('*').eq('id',uid).single();
+userData=u;
+const plan=u.plan||'starter',info=PI[plan];
+document.getElementById('sb-name').textContent=u.studio_name||'';
+document.getElementById('sb-plan').textContent=plan.toUpperCase()+' Plan';
+document.getElementById('plan-icon').textContent=info.icon;
+document.getElementById('plan-name').textContent=info.name+' Plan';
+document.getElementById('plan-detail').textContent=fmt(info.limit)+' · '+info.price+' ກີບ/ເດືອນ';
+document.getElementById('pay-amt').textContent=info.price+' ກີບ';
+const noteTemplate=settings?.bank_note||'SHARE LOD';
+document.getElementById('pay-ref').textContent=noteTemplate+'-'+u.email;
+document.getElementById('pm-'+plan).classList.add('cur');
+// ກວດ expiry ອັດຕະໂນມັດ
+await sb.rpc('check_and_suspend_expired');
+
+const isActive=u.plan_status==='active';
+const sb2=document.getElementById('plan-status');
+sb2.textContent=isActive?'✅ Active':u.plan_status==='suspended'?'🚫 ໝົດອາຍຸ':'⏳ ລໍຖ້າ';
+sb2.className='badge '+(isActive?'ba':'bp');
+
+// ສະແດງວັນໝົດອາຍຸ
+const exEl=document.getElementById('expiry-info');
+if(u.plan_expires_at){
+  const exp=new Date(u.plan_expires_at), now=new Date();
+  const days=Math.ceil((exp-now)/(1000*60*60*24));
+  const expStr=exp.toLocaleDateString('lo-LA',{year:'numeric',month:'long',day:'numeric'});
+  if(days>0){
+    exEl.innerHTML=`📅 ໝົດອາຍຸ: <strong style="color:${days<=7?'#ff7850':'var(--text)'}">${expStr}</strong> <span style="color:${days<=7?'#ff7850':'var(--muted)'}">(ອີກ ${days} ວັນ)</span>`;
+  } else {
+    exEl.innerHTML=`<span style="color:#ff5050">❌ Plan ໝົດອາຍຸແລ້ວ — ກະລຸນາຊຳລະເພື່ອຕໍ່ອາຍຸ</span>`;
+  }
+} else {
+  exEl.innerHTML=`<span style="color:var(--muted)">— ຍັງບໍ່ໄດ້ Activate</span>`;
+}
+
+const used=u.storage_used||0,lim=u.storage_limit||info.limit,pct=lim>0?Math.min(100,(used/lim)*100):0;
+document.getElementById('s-used').textContent=fmt(used);document.getElementById('s-lim').textContent=fmt(lim);document.getElementById('s-fill').style.width=pct+'%';
+</script>
+</body>
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SHARE LOD — Clients</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&family=Noto+Sans+Lao:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080810;--surface:#0f0f1a;--card:#13131f;--border:rgba(255,255,255,0.06);--text:#f0eff8;--muted:#7a79a0;--a1:#7c5cfc;--grad:linear-gradient(135deg,#7c5cfc,#e05cfc);--sw:240px;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans','Noto Sans Lao',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;}
+.sb{width:var(--sw);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:50;}
+.sb-logo{padding:24px 20px 18px;border-bottom:1px solid var(--border);}
+.sb-logo-txt{font-family:'Playfair Display',serif;font-size:20px;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.sb-studio{font-size:12px;color:var(--muted);margin-top:3px;}
+.sb-nav{flex:1;padding:14px 10px;display:flex;flex-direction:column;gap:3px;}
+.ni{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:var(--muted);text-decoration:none;font-size:13.5px;font-weight:500;transition:all .2s;cursor:pointer;border:none;background:none;width:100%;font-family:'DM Sans','Noto Sans Lao',sans-serif;}
+.ni:hover{background:rgba(255,255,255,.05);color:var(--text);}
+.ni.active{background:rgba(124,92,252,.15);color:var(--a1);}
+.ni .ic{font-size:15px;width:20px;text-align:center;}
+.sb-foot{padding:14px 10px;border-top:1px solid var(--border);}
+.plan-box{background:rgba(124,92,252,.08);border:1px solid rgba(124,92,252,.18);border-radius:10px;padding:12px;margin-bottom:10px;}
+.plan-nm{font-size:11px;color:var(--a1);font-weight:700;text-transform:uppercase;letter-spacing:1px;}
+.main{margin-left:var(--sw);flex:1;}
+.topbar{padding:18px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--surface);position:sticky;top:0;z-index:40;}
+.tb-title{font-family:'Playfair Display',serif;font-size:21px;font-weight:800;}
+.btn{padding:9px 20px;background:var(--grad);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans','Noto Sans Lao',sans-serif;transition:opacity .2s;}
+.btn:hover{opacity:.85;}
+.content{padding:28px;}
+/* MODAL */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;}
+.ov.hidden{display:none;}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:32px;width:100%;max-width:460px;}
+.modal h3{font-family:'Playfair Display',serif;font-size:20px;font-weight:800;margin-bottom:22px;}
+.fg{margin-bottom:16px;}
+label{display:block;font-size:12px;color:var(--muted);margin-bottom:7px;font-weight:500;}
+input,textarea{width:100%;padding:11px 15px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;font-family:'DM Sans','Noto Sans Lao',sans-serif;outline:none;transition:border-color .2s;}
+input:focus,textarea:focus{border-color:rgba(124,92,252,.5);}
+input::placeholder,textarea::placeholder{color:var(--muted);}
+textarea{resize:vertical;min-height:70px;}
+.modal-acts{display:flex;gap:10px;margin-top:20px;}
+.bf{flex:1;padding:12px;border-radius:10px;font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans','Noto Sans Lao',sans-serif;}
+.bp{background:var(--grad);border:none;color:#fff;}
+.bc{background:transparent;border:1px solid var(--border);color:var(--muted);}
+/* CLIENTS GRID */
+.search{margin-bottom:20px;}
+.search input{max-width:360px;}
+.cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;}
+.cc{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;transition:border-color .2s;}
+.cc:hover{border-color:rgba(124,92,252,.3);}
+.cc-av{width:44px;height:44px;border-radius:11px;background:rgba(124,92,252,.12);display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:12px;}
+.cc-name{font-size:15px;font-weight:600;margin-bottom:3px;}
+.cc-email{font-size:12px;color:var(--muted);margin-bottom:12px;}
+.cc-stats{display:flex;gap:14px;margin-bottom:14px;}
+.cc-stat{font-size:12px;color:var(--muted);}
+.cc-stat span{color:var(--text);font-weight:600;}
+.cc-acts{display:flex;gap:7px;flex-wrap:wrap;}
+.bx{padding:6px 13px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans','Noto Sans Lao',sans-serif;text-decoration:none;transition:all .2s;border:none;}
+.bx-p{background:var(--grad);color:#fff;}
+.bx-o{background:transparent;border:1px solid var(--border);color:var(--text);}
+.bx-o:hover{background:rgba(255,255,255,.05);}
+.bx-d{background:rgba(255,80,80,.1);border:1px solid rgba(255,80,80,.15);color:#ff8080;}
+/* PROJECTS PANEL */
+.proj-panel{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px;margin-top:22px;display:none;}
+.proj-panel.show{display:block;}
+.proj-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+.proj-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;}
+.proj-list{display:flex;flex-direction:column;gap:8px;}
+.pi{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:14px 18px;display:flex;align-items:center;gap:12px;transition:border-color .2s;}
+.pi:hover{border-color:rgba(124,92,252,.3);}
+.pi-info{flex:1;}
+.pi-name{font-size:13.5px;font-weight:500;}
+.pi-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.pi-acts{display:flex;gap:6px;}
+.empty{text-align:center;padding:36px;color:var(--muted);font-size:13px;}
+.spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--a1);border-radius:50%;animation:spin .8s linear infinite;display:inline-block;}
+@keyframes spin{to{transform:rotate(360deg);}}
+@media(max-width:900px){.sb{display:none;}.main{margin-left:0;}.cg{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<aside class="sb">
+  <div class="sb-logo"><div class="sb-logo-txt">SHARE LOD</div><div class="sb-studio" id="sb-name"></div></div>
+  <nav class="sb-nav">
+    <a class="ni" href="dashboard.html"><span class="ic">📊</span>Dashboard</a>
+    <a class="ni active" href="clients.html"><span class="ic">👥</span>Clients</a>
+    <a class="ni" href="upload.html"><span class="ic">⬆️</span>Upload ຟາຍ</a>
+    <a class="ni" href="branding.html"><span class="ic">🎨</span>Branding</a>
+    <a class="ni" href="portfolio.html"><span class="ic">🖼</span>Portfolio</a>
+    <a class="ni" href="inbox.html"><span class="ic">💬</span>Inbox</a>
+    <a class="ni" href="community.html"><span class="ic">🌐</span>Community</a>
+    <a class="ni" href="subscription.html"><span class="ic">💳</span>Subscription</a>
+    <a class="ni" href="explore.html" target="_blank"><span class="ic">🌐</span>Explore Page</a>
+  </nav>
+  <div class="sb-foot">
+    <div class="plan-box"><div class="plan-nm" id="sb-plan"></div></div>
+    <button class="ni" onclick="logout()" style="color:#ff7070;width:100%"><span class="ic">🚪</span>ອອກ</button>
+  </div>
+</aside>
+<div class="main">
+  <div class="topbar"><div class="tb-title">👥 Clients</div><button class="btn" onclick="openM('client')">+ ເພີ່ມ Client</button></div>
+  <div class="content">
+    <div class="search"><input type="text" id="search" placeholder="ຄົ້ນຫາ Client..." oninput="filter()"></div>
+    <div id="clist"><div style="padding:40px;text-align:center;color:var(--muted)"><div class="spinner"></div></div></div>
+    <div class="proj-panel" id="proj-panel">
+      <div class="proj-header">
+        <div class="proj-title">📁 Projects — <span id="proj-client-name"></span></div>
+        <button class="btn" onclick="openM('project')" style="padding:8px 16px;font-size:12px">+ Project</button>
+      </div>
+      <div id="proj-list"></div>
+    </div>
+  </div>
+</div>
+<!-- CLIENT MODAL -->
+<div class="ov hidden" id="cm">
+  <div class="modal">
+    <h3>ເພີ່ມ Client ໃໝ່</h3>
+    <div class="fg"><label>ຊື່ *</label><input type="text" id="c-name" placeholder="ຊື່ລູກຄ້າ"></div>
+    <div class="fg"><label>Email</label><input type="email" id="c-email" placeholder="email@example.com"></div>
+    <div class="fg"><label>ເບີໂທ</label><input type="text" id="c-phone" placeholder="+856 20..."></div>
+    <div class="fg"><label>ໝາຍເຫດ</label><textarea id="c-note" placeholder="ໝາຍເຫດ..."></textarea></div>
+    <div class="fg">
+      <label>⏰ ລຶບຂໍ້ມູນອັດຕະໂນມັດ <span style="color:var(--muted);font-weight:400">(ຫວ່າງ = ບໍ່ລຶບ)</span></label>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input type="number" id="c-days" placeholder="ຈຳນວນວັນ" min="1" style="max-width:140px">
+        <span style="font-size:12px;color:var(--muted)">ວັນ ຫຼັງຈາກສ້າງ</span>
+      </div>
+    </div>
+    <div class="modal-acts"><button class="bf bc" onclick="closeM('client')">ຍົກເລີກ</button><button class="bf bp" onclick="saveClient()">ບັນທຶກ</button></div>
+  </div>
+</div>
+<!-- PROJECT MODAL -->
+<div class="ov hidden" id="pm">
+  <div class="modal">
+    <h3>ເພີ່ມ Project</h3>
+    <div class="fg"><label>ຊື່ Project *</label><input type="text" id="p-name" placeholder="Wedding, Portrait..."></div>
+    <div class="fg"><label>ວັນທີ Shoot</label><input type="date" id="p-date"></div>
+    <div class="fg"><label>ໝາຍເຫດ</label><textarea id="p-note" placeholder="ລາຍລະອຽດ..."></textarea></div>
+    <div class="modal-acts"><button class="bf bc" onclick="closeM('project')">ຍົກເລີກ</button><button class="bf bp" onclick="saveProject()">ບັນທຶກ</button></div>
+  </div>
+</div>
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+const sb = createClient('https://vuhjmwnxbvzppcoklgir.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1aGptd254YnZ6cHBjb2tsZ2lyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5OTM2NzAsImV4cCI6MjA5MDU2OTY3MH0.ijlH_tjBZm4irxrq-FXfIKIKdwZJTdTzaYbTPrpd928');
+
+let uid, all=[], selClient=null;
+function esc(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
+
+window.logout = async()=>{await sb.auth.signOut();location.href='login.html';}
+window.openM  = t => document.getElementById(t==='client'?'cm':'pm').classList.remove('hidden');
+window.closeM = t => document.getElementById(t==='client'?'cm':'pm').classList.add('hidden');
+
+window.filter = () => {
+  const q = document.getElementById('search').value.toLowerCase();
+  render(all.filter(c=>c.name.toLowerCase().includes(q)||(c.email||'').toLowerCase().includes(q)));
+};
+
+function expiryBadge(c){
+  if(!c.expires_at) return '<span style="font-size:11px;color:var(--muted)">♾️ ບໍ່ໝົດກຳນົດ</span>';
+  const days=Math.ceil((new Date(c.expires_at)-new Date())/(1000*60*60*24));
+  if(days<=0) return '<span style="font-size:11px;color:#ff5050">🗑 ໝົດກຳນົດແລ້ວ</span>';
+  const col=days<=3?'#ff7850':days<=7?'#f5c842':'var(--muted)';
+  return `<span style="font-size:11px;color:${col}">⏰ ລຶບໃນ ${days} ວັນ</span>`;
+}
+function render(clients){
+  const el = document.getElementById('clist');
+  if(!clients.length){el.innerHTML='<div class="empty">ຍັງບໍ່ມີ Client — ກົດ + ເພີ່ມ Client</div>';return;}
+  el.innerHTML=`<div class="cg">${clients.map(c=>`
+    <div class="cc">
+      <div class="cc-av">👤</div>
+      <div class="cc-name">${esc(c.name)}</div>
+      <div class="cc-email">${esc(c.email)||'ບໍ່ມີ email'} ${c.phone?'· '+esc(c.phone):''}</div>
+      <div style="margin:6px 0 10px">${expiryBadge(c)}</div>
+      <div class="cc-acts">
+        <button class="bx bx-p" onclick="openProjects('${c.id}','${esc(c.name).replace(/'/g,'&#39;')}')">📁 Projects</button>
+        <a class="bx bx-o" href="upload.html?client=${c.id}">⬆ Upload</a>
+        <button class="bx bx-d" onclick="delClient('${c.id}')">🗑</button>
+      </div>
+    </div>`).join('')}</div>`;
+}
+
+window.openProjects = async(id,name)=>{
+  selClient={id,name};
+  document.getElementById('proj-client-name').textContent = name;
+  document.getElementById('proj-panel').classList.add('show');
+  document.getElementById('proj-list').innerHTML='<div style="padding:16px;text-align:center"><div class="spinner"></div></div>';
+  const {data} = await sb.from('projects').select('*').eq('client_id',id).order('created_at',{ascending:false});
+  if(!data?.length){document.getElementById('proj-list').innerHTML='<div class="empty">ຍັງບໍ່ມີ Project</div>';return;}
+  document.getElementById('proj-list').innerHTML=`<div class="proj-list">${data.map(p=>`
+    <div class="pi">
+      <span style="font-size:20px">📁</span>
+      <div class="pi-info"><div class="pi-name">${p.name}</div><div class="pi-sub">${p.shoot_date||''} ${p.note?'· '+p.note:''}</div></div>
+      <div class="pi-acts">
+        <a class="bx bx-o" href="upload.html?client=${id}&project=${p.id}" style="font-size:11px">⬆ Upload</a>
+        <button class="bx bx-d" onclick="delProject('${p.id}')" style="font-size:11px">🗑</button>
+      </div>
+    </div>`).join('')}</div>`;
+  document.getElementById('proj-panel').scrollIntoView({behavior:'smooth'});
+};
+
+window.saveClient = async()=>{
+  const name=document.getElementById('c-name').value.trim();
+  if(!name){alert('ໃສ່ຊື່ກ່ອນ');return;}
+  const days=parseInt(document.getElementById('c-days').value)||null;
+  const expires_at=days?new Date(Date.now()+days*86400000).toISOString():null;
+  await sb.from('clients').insert({uid,name,email:document.getElementById('c-email').value.trim(),phone:document.getElementById('c-phone').value.trim(),note:document.getElementById('c-note').value.trim(),expires_at});
+  closeM('client');['c-name','c-email','c-phone','c-note','c-days'].forEach(id=>document.getElementById(id).value='');
+  load();
+};
+
+window.saveProject = async()=>{
+  if(!selClient){alert('ເລືອກ Client ກ່ອນ');return;}
+  const name=document.getElementById('p-name').value.trim();
+  if(!name){alert('ໃສ່ຊື່ Project ກ່ອນ');return;}
+  await sb.from('projects').insert({uid,client_id:selClient.id,client_name:selClient.name,name,shoot_date:document.getElementById('p-date').value||null,note:document.getElementById('p-note').value.trim()});
+  closeM('project');['p-name','p-date','p-note'].forEach(id=>document.getElementById(id).value='');
+  openProjects(selClient.id,selClient.name);
+};
+
+window.delClient = async(id)=>{if(!confirm('ລຶບ Client ນີ້?'))return;await sb.from('clients').delete().eq('id',id);load();};
+window.delProject = async(id)=>{if(!confirm('ລຶບ Project?'))return;await sb.from('projects').delete().eq('id',id);openProjects(selClient.id,selClient.name);};
+
+async function load(){
+  const {data}=await sb.from('clients').select('*').eq('uid',uid).order('created_at',{ascending:false});
+  all=data||[];render(all);
+}
+
+const {data:{session}}=await sb.auth.getSession();
+if(!session){location.href='login.html';}
+uid=session.user.id;
+await sb.rpc('check_and_suspend_expired');
+await sb.rpc('delete_expired_clients',{user_uid:uid});
+const {data:u}=await sb.from('profiles').select('studio_name,plan,plan_status').eq('id',uid).single();
+document.getElementById('sb-name').textContent=u?.studio_name||'';
+document.getElementById('sb-plan').textContent=(u?.plan||'starter').toUpperCase()+' Plan';
+load();
+</script>
+</body>
+</html>
