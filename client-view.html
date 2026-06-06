@@ -179,6 +179,7 @@ const sb = createClient('https://vuhjmwnxbvzppcoklgir.supabase.co','eyJhbGciOiJI
 
 const params = new URLSearchParams(location.search);
 const token = params.get('token'), projId = params.get('project');
+const clientToken = params.get('client'); // NEW: client-level link
 let files=[], lbIdx=0, view='grid', activeFolder=null, faceFilterIds=null;
 let faceStream=null, faceReady=false, viewFiles=[], searchQ='';
 let starSet=new Set(), starFilterOn=false;
@@ -209,6 +210,8 @@ const MODEL_URL='https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model';
 // ─── LOAD ──────────────────────────────────────────────────
 async function load(){
   const app=document.getElementById('app');
+  // Client-level link: show all projects
+  if(clientToken) return loadClientView(app);
   if(!token||!projId){app.innerHTML='<div class="st"><div class="st-icon">🔒</div><p>Link ບໍ່ຖືກຕ້ອງ</p></div>';return;}
 
   const [{data:proj}]=await Promise.all([
@@ -312,19 +315,125 @@ async function load(){
   renderRatingSection();
 }
 
+// ─── CLIENT-LEVEL VIEW (all projects) ─────────────────────
+async function loadClientView(app){
+  // Lookup client by token
+  const {data:cl}=await sb.from('clients').select('id,uid,name,expires_at').eq('client_token',clientToken).single();
+  if(!cl){app.innerHTML='<div class="st"><div class="st-icon">🔒</div><p>Link ບໍ່ຖືກຕ້ອງ</p></div>';return;}
+
+  // Check expiry
+  if(cl.expires_at&&new Date(cl.expires_at)<new Date()){
+    app.innerHTML='<div class="st"><div class="st-icon">⏰</div><p>Link ໝົດກຳນົດແລ້ວ</p></div>';return;
+  }
+
+  studioUid=cl.uid;
+  const {data:profileData}=await sb.from('profiles').select('studio_name,branding_logo,branding_color,branding_bio').eq('id',cl.uid).single();
+  const color=profileData?.branding_color||'#7c5cfc';
+  document.documentElement.style.setProperty('--p',color);
+  document.documentElement.style.setProperty('--grad',`linear-gradient(135deg,${color},#e05cfc)`);
+  document.title=`${cl.name} — ${profileData?.studio_name||'SHARE LOD'}`;
+
+  // Load all projects for this client
+  const {data:projects}=await sb.from('projects').select('*').eq('client_id',cl.id).order('created_at',{ascending:false});
+  if(!projects?.length){app.innerHTML='<div class="st"><div class="st-icon">📭</div><p>ຍັງບໍ່ທັນມີ Project</p></div>';return;}
+
+  // Load all files across all projects
+  const projIds=projects.map(p=>p.id);
+  const {data:allFiles}=await sb.from('files').select('*').in('project_id',projIds).eq('share_enabled',true);
+  files=(allFiles||[]).sort((a,b)=>(a.name||'').localeCompare(b.name||'',undefined,{numeric:true,sensitivity:'base'}));
+
+  // Load stars
+  await loadStarsClient();
+
+  app.innerHTML=`
+    <header>
+      <div class="brand">
+        <div class="brand-logo" style="background:linear-gradient(135deg,${color},#e05cfc)">${profileData?.branding_logo?`<img src="${profileData.branding_logo}">`:'📷'}</div>
+        <div><div class="brand-name">${profileData?.studio_name||'Studio'}</div><div class="brand-sub">ສົ່ງໃຫ້ທ່ານດ້ວຍ SHARE LOD</div></div>
+      </div>
+      <div class="head-right">
+        <button class="dl-star-btn" id="dl-starred-btn" onclick="dlStarred()" style="${starSet.size>0?'display:inline-block':'display:none'}">⭐ Download ດາວ</button>
+        <button class="dl-all" onclick="dlAll()">⬇ Download</button>
+      </div>
+    </header>
+    <main>
+      ${profileData?.branding_bio?`<div class="bio">${profileData.branding_bio}</div>`:''}
+      <div class="proj-info">
+        <div class="proj-title">👤 ${cl.name}</div>
+        <div class="proj-meta">
+          <span>📁 ${projects.length} Projects</span>
+          <span>🖼 ${files.length} ຟາຍທັງໝົດ</span>
+          <span id="star-count-meta">${starSet.size>0?`<a class="star-count-link" onclick="filterByStars()">⭐ ${starSet.size} ໝາຍດາວ</a>`:''}</span>
+        </div>
+      </div>
+      <div class="search-bar">
+        <input class="search-input" id="search-input" type="text" placeholder="🔍 ຄົ້ນຫາ..." oninput="onSearch(this.value)">
+        <button class="search-cls" id="search-cls" onclick="clearSearch()" style="display:none">✕</button>
+      </div>
+      <!-- Project tabs -->
+      <div class="ftabs" id="ftabs">
+        <button class="ftab on" onclick="setFolder(null,this)">ທັງໝົດ (${files.length})</button>
+        ${projects.map(p=>`<button class="ftab" onclick="setProjectFilter('${p.id}',this)">📁 ${p.name} (${files.filter(f=>f.project_id===p.id).length})</button>`).join('')}
+      </div>
+      <div class="star-bar hidden" id="star-bar">
+        <span>⭐ ສະແດງ <span id="star-bar-cnt">${starSet.size}</span> ຮູບທີ່ໝາຍດາວ</span>
+        <button class="star-bar-cls" onclick="clearStarFilter()">ສະແດງທັງໝົດ ✕</button>
+      </div>
+      <div class="face-bar hidden" id="face-bar">
+        <span id="face-bar-txt"></span>
+        <button class="face-bar-cls" onclick="clearFaceSearch()">✕</button>
+      </div>
+      <div class="gallery-top">
+        <div class="ct" id="gal-count"></div>
+        <div class="gallery-top-right">
+          <button class="face-btn loading" id="face-search-btn" onclick="openFaceModal()">📷 ຄົ້ນຫາດ້ວຍໃບໜ້າ</button>
+          <div class="vt">
+            <button class="vb on" id="vg" onclick="setView('grid')">⊞</button>
+            <button class="vb" id="vl" onclick="setView('list')">☰</button>
+          </div>
+        </div>
+      </div>
+      <div id="gallery"></div>
+    </main>`;
+
+  renderGallery();
+  trackView();
+  renderRatingSection();
+}
+
+async function loadStarsClient(){
+  const {data}=await sb.from('photo_stars').select('file_id').eq('share_token',clientToken);
+  starSet=new Set((data||[]).map(s=>s.file_id));
+}
+
+// Project filter for client view
+window.setProjectFilter=(projId,el)=>{
+  activeFolder=null;faceFilterIds=null;
+  document.querySelectorAll('.ftab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  viewFiles=files.filter(f=>f.project_id===projId);
+  if(starFilterOn) viewFiles=viewFiles.filter(f=>starSet.has(f.id));
+  if(searchQ) viewFiles=viewFiles.filter(f=>(f.name||'').toLowerCase().includes(searchQ.toLowerCase()));
+  const g=document.getElementById('gallery');
+  const cnt=document.getElementById('gal-count');
+  if(cnt) cnt.textContent=`${viewFiles.length} ລາຍການ`;
+  renderGalleryContent();
+};
+
 // ─── [3] STARS — per share_token ─────────────────────────
+const starToken = clientToken||token; // use whichever is available
 async function loadStars(){
-  const {data}=await sb.from('photo_stars').select('file_id').eq('project_id',projId).eq('share_token',token);
+  const {data}=await sb.from('photo_stars').select('file_id').eq('project_id',projId).eq('share_token',starToken);
   starSet=new Set((data||[]).map(s=>s.file_id));
 }
 window.toggleStar=async(fileId,btn)=>{
   const f=files.find(x=>x.id===fileId);
   if(starSet.has(fileId)){
-    await sb.from('photo_stars').delete().eq('file_id',fileId).eq('share_token',token);
+    await sb.from('photo_stars').delete().eq('file_id',fileId).eq('share_token',starToken);
     starSet.delete(fileId);
     btn.textContent='☆';
   }else{
-    await sb.from('photo_stars').insert({file_id:fileId,project_id:projId,studio_uid:f?.uid,share_token:token});
+    await sb.from('photo_stars').insert({file_id:fileId,project_id:f?.project_id||projId,studio_uid:f?.uid||studioUid,share_token:starToken});
     starSet.add(fileId);
     btn.textContent='⭐';
     btn.style.animation='pop .2s ease';setTimeout(()=>btn.style.animation='',200);
@@ -386,9 +495,12 @@ window.clearSearch=()=>{searchQ='';document.getElementById('search-input').value
 
 function renderGallery(){
   viewFiles=getFiltered();
-  const g=document.getElementById('gallery');
   const cnt=document.getElementById('gal-count');
   if(cnt) cnt.textContent=`${viewFiles.length} ລາຍການ`;
+  renderGalleryContent();
+}
+function renderGalleryContent(){
+  const g=document.getElementById('gallery');
   if(!viewFiles.length){g.innerHTML='<div class="st"><div class="st-icon">📭</div><p style="color:var(--muted)">ບໍ່ພົບຮູບ</p></div>';return;}
   if(view==='grid'){
     g.innerHTML=`<div class="gg">${viewFiles.map((f,i)=>`

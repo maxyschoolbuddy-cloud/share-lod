@@ -182,6 +182,7 @@ function render(clients){
       <div class="cc-acts">
         <button class="bx bx-p" onclick="openProjects('${c.id}','${esc(c.name).replace(/'/g,'&#39;')}')">📁 Projects</button>
         <a class="bx bx-o" href="upload.html?client=${c.id}">⬆ Upload</a>
+        <button class="bx bx-o" onclick="sendClientLink('${c.id}','${esc(c.name).replace(/'/g,'&#39;')}','${c.phone||''}','${c.email||''}')">📤 ສົ່ງ Link</button>
         <button class="bx bx-d" onclick="delClient('${c.id}')">🗑</button>
       </div>
     </div>`).join('')}</div>`;
@@ -226,6 +227,61 @@ window.saveProject = async()=>{
 };
 
 window.delClient = async(id)=>{if(!confirm('ລຶບ Client ນີ້?'))return;await sb.from('clients').delete().eq('id',id);load();};
+
+// ── Send Client Link (all projects in one link) ───────────
+window.sendClientLink=async(clientId,clientName,phone,email)=>{
+  // Get or generate client_token
+  let {data:cl}=await sb.from('clients').select('client_token').eq('id',clientId).single();
+  let token=cl?.client_token;
+  if(!token){
+    token=Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2);
+    await sb.from('clients').update({client_token:token}).eq('id',clientId);
+  }
+  const base=location.origin+location.pathname.replace(/\/[^/]*$/,'/');
+  const url=`${base}client-view.html?client=${token}`;
+  const msg=`ສະບາຍດີ ${clientName||'ທ່ານ'} 📸\nຮູບທັງໝົດຂອງທ່ານພ້ອມແລ້ວ!\nກົດ Link ນີ້ເພື່ອເບິ່ງ:\n${url}`;
+
+  let existing=document.getElementById('share-modal');
+  if(existing)existing.remove();
+  const m=document.createElement('div');
+  m.id='share-modal';
+  m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:2000;display:flex;align-items:flex-end;justify-content:center';
+  m.innerHTML=`
+    <div style="background:#13131f;border:1px solid rgba(255,255,255,.08);border-radius:22px 22px 0 0;padding:28px 24px;width:100%;max-width:480px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div style="font-size:16px;font-weight:700">📤 ສົ່ງ Link — ${clientName}</div>
+        <button onclick="document.getElementById('share-modal').remove()" style="background:rgba(255,255,255,.07);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px">✕</button>
+      </div>
+      <div style="font-size:11px;color:#7a79a0;margin-bottom:6px">Link ນີ້ສະແດງ ທຸກ Project ຂອງ ${clientName}</div>
+      <div style="background:#080810;border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:10px 12px;font-size:11px;color:#7a79a0;margin-bottom:16px;word-break:break-all">${url}</div>
+      <div style="display:flex;flex-direction:column;gap:9px">
+        <button onclick="navigator.clipboard.writeText('${url}').then(()=>{document.getElementById('share-modal').remove();alert('✅ Copy Link ແລ້ວ!')})"
+          style="display:flex;align-items:center;gap:12px;padding:13px 16px;background:rgba(124,92,252,.12);border:1px solid rgba(124,92,252,.2);border-radius:12px;color:#f0eff8;font-size:14px;cursor:pointer;width:100%;font-family:'Noto Sans Lao','DM Sans',sans-serif">
+          <span style="font-size:20px">📋</span><span>Copy Link</span>
+        </button>
+        ${navigator.share?`<button onclick="navigator.share({title:'ຮູບຂອງ ${clientName}',text:\`${msg.replace(/`/g,"'")}\`,url:'${url}'})"
+          style="display:flex;align-items:center;gap:12px;padding:13px 16px;background:rgba(92,252,124,.1);border:1px solid rgba(92,252,124,.2);border-radius:12px;color:#f0eff8;font-size:14px;cursor:pointer;width:100%;font-family:'Noto Sans Lao','DM Sans',sans-serif">
+          <span style="font-size:20px">📱</span><span>Share (WhatsApp / LINE / SMS...)</span>
+        </button>`:''}
+        ${phone?`
+        <a href="https://wa.me/${phone.replace(/[^0-9]/g,'')}?text=${encodeURIComponent(msg)}" target="_blank"
+          style="display:flex;align-items:center;gap:12px;padding:13px 16px;background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.2);border-radius:12px;color:#f0eff8;font-size:14px;text-decoration:none">
+          <span style="font-size:20px">💬</span><span>WhatsApp · ${phone}</span>
+        </a>
+        <a href="sms:${phone}?body=${encodeURIComponent(msg)}"
+          style="display:flex;align-items:center;gap:12px;padding:13px 16px;background:rgba(92,172,252,.1);border:1px solid rgba(92,172,252,.2);border-radius:12px;color:#f0eff8;font-size:14px;text-decoration:none">
+          <span style="font-size:20px">📞</span><span>SMS · ${phone}</span>
+        </a>`:''}
+        ${email?`
+        <a href="mailto:${email}?subject=${encodeURIComponent('ຮູບຂອງ '+clientName)}&body=${encodeURIComponent(msg)}"
+          style="display:flex;align-items:center;gap:12px;padding:13px 16px;background:rgba(252,92,92,.1);border:1px solid rgba(252,92,92,.2);border-radius:12px;color:#f0eff8;font-size:14px;text-decoration:none">
+          <span style="font-size:20px">📧</span><span>Email · ${email}</span>
+        </a>`:''}
+      </div>
+    </div>`;
+  m.addEventListener('click',e=>{if(e.target===m)m.remove();});
+  document.body.appendChild(m);
+};
 window.delProject = async(id)=>{if(!confirm('ລຶບ Project?'))return;await sb.from('projects').delete().eq('id',id);openProjects(selClient.id,selClient.name);};
 
 async function load(){
