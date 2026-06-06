@@ -16,13 +16,16 @@ header{padding:20px 36px;display:flex;align-items:center;justify-content:space-b
 .brand-logo img{width:100%;height:100%;object-fit:cover;}
 .brand-name{font-family:'Playfair Display',serif;font-size:19px;font-weight:800;}
 .brand-sub{font-size:11px;color:var(--muted);margin-top:1px;}
-.head-right{display:flex;gap:8px;align-items:center;}
+.head-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
 .dl-all{padding:9px 20px;background:var(--grad);border:none;border-radius:100px;color:#fff;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans','Noto Sans Lao',sans-serif;transition:opacity .2s;}
 .dl-all:hover{opacity:.85;}
+.dl-star-btn{padding:9px 18px;background:rgba(245,200,66,.12);border:1px solid rgba(245,200,66,.25);border-radius:100px;color:#f5c842;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans','Noto Sans Lao',sans-serif;display:none;}
 main{max-width:1200px;margin:0 auto;padding:32px 28px;position:relative;z-index:1;}
 .proj-info{margin-bottom:22px;}
 .proj-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:900;letter-spacing:-1px;margin-bottom:7px;}
 .proj-meta{display:flex;gap:16px;font-size:12px;color:var(--muted);flex-wrap:wrap;align-items:center;}
+.star-count-link{color:#f5c842;cursor:pointer;text-decoration:none;font-weight:600;}
+.star-count-link:hover{text-decoration:underline;}
 .bio{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 18px;margin-bottom:22px;font-size:13px;color:var(--muted);line-height:1.7;}
 /* EXPIRY BANNER */
 .exp-banner{border-radius:12px;padding:12px 16px;margin-bottom:18px;display:flex;align-items:center;gap:10px;}
@@ -74,7 +77,7 @@ main{max-width:1200px;margin:0 auto;padding:32px 28px;position:relative;z-index:
 /* STAR BUTTON */
 .star-btn{background:none;border:none;font-size:18px;cursor:pointer;padding:3px;line-height:1;transition:transform .15s;flex-shrink:0;color:#f5c842;}
 .star-btn:hover{transform:scale(1.3);}
-.dl-btn{padding:3px 8px;border-radius:6px;background:rgba(124,92,252,.15);border:1px solid rgba(124,92,252,.2);color:var(--p);font-size:11px;text-decoration:none;flex-shrink:0;}
+.dl-btn{padding:3px 8px;border-radius:6px;background:rgba(124,92,252,.15);border:1px solid rgba(124,92,252,.2);color:var(--p);font-size:11px;cursor:pointer;font-family:'DM Sans','Noto Sans Lao',sans-serif;flex-shrink:0;}
 /* LIST */
 .li-row{display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color .2s;}
 .li-row:hover{border-color:rgba(124,92,252,.3);}
@@ -89,7 +92,7 @@ main{max-width:1200px;margin:0 auto;padding:32px 28px;position:relative;z-index:
 .lb.hidden{display:none;}
 .lb-x{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.1);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:16px;cursor:pointer;}
 .lb img,.lb video{max-width:90vw;max-height:85vh;border-radius:10px;object-fit:contain;}
-.lb-foot{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:8px;align-items:center;}
+.lb-foot{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center;}
 .lbb{padding:8px 20px;border-radius:100px;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans','Noto Sans Lao',sans-serif;border:none;}
 .lbb-dl{background:var(--grad);color:#fff;}
 .lbb-nav{background:rgba(255,255,255,.1);color:#fff;}
@@ -98,17 +101,33 @@ main{max-width:1200px;margin:0 auto;padding:32px 28px;position:relative;z-index:
 /* FACE MODAL */
 .face-ov{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(12px);z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px;}
 .face-ov.hidden{display:none;}
-.face-box{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:28px;width:100%;max-width:360px;text-align:center;}
+.face-box{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:28px;width:100%;max-width:380px;text-align:center;}
 .face-box h3{font-family:'Playfair Display',serif;font-size:18px;font-weight:800;margin-bottom:5px;}
-.face-box p{font-size:12px;color:var(--muted);margin-bottom:16px;}
+.face-box p{font-size:12px;color:var(--muted);margin-bottom:14px;}
 #face-video{width:100%;border-radius:12px;background:#000;display:block;aspect-ratio:4/3;object-fit:cover;}
+#face-video.mirrored{transform:scaleX(-1);}
 .face-status{font-size:12px;color:var(--muted);margin:8px 0 12px;}
-.face-btns{display:flex;gap:8px;}
-.face-btns button{flex:1;padding:10px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans','Noto Sans Lao',sans-serif;border:none;}
+.face-btns{display:flex;gap:8px;flex-wrap:wrap;}
+.face-btns button{flex:1;padding:10px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans','Noto Sans Lao',sans-serif;border:none;min-width:80px;}
 .face-btns button:disabled{opacity:.4;cursor:not-allowed;}
 .fbtn-cap{background:var(--grad);color:#fff;}
+.fbtn-flip{background:rgba(255,255,255,.07);color:var(--text);}
 .fbtn-cls{background:rgba(255,255,255,.07);color:var(--muted);}
 canvas#face-canvas{display:none;}
+/* RATING SECTION */
+.rating-wrap{max-width:1200px;margin:0 auto 40px;padding:0 28px;position:relative;z-index:1;}
+.rating-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:24px 28px;}
+.rating-card h3{font-family:'Playfair Display',serif;font-size:18px;font-weight:800;margin-bottom:4px;}
+.rating-card p{font-size:12px;color:var(--muted);margin-bottom:18px;}
+.rstar-row{display:flex;gap:10px;margin-bottom:16px;justify-content:center;}
+.rstar-row span{font-size:36px;cursor:pointer;transition:transform .15s;line-height:1;}
+.rstar-row span:hover{transform:scale(1.15);}
+.rating-inp{width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:13px;font-family:'DM Sans','Noto Sans Lao',sans-serif;outline:none;margin-bottom:10px;}
+.rating-inp:focus{border-color:rgba(124,92,252,.4);}
+.rating-inp::placeholder{color:var(--muted);}
+.rating-ta{resize:vertical;min-height:65px;}
+.rating-submit{padding:10px 28px;background:var(--grad);border:none;border-radius:100px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans','Noto Sans Lao',sans-serif;}
+.rating-done{background:rgba(128,255,160,.08);border:1px solid rgba(128,255,160,.2);border-radius:12px;padding:16px;text-align:center;color:#80ffaa;font-size:14px;}
 /* CHAT WIDGET */
 .chat-fab{position:fixed;bottom:24px;right:24px;width:54px;height:54px;background:var(--grad);border:none;border-radius:50%;font-size:22px;cursor:pointer;z-index:100;box-shadow:0 4px 20px rgba(124,92,252,.4);transition:transform .2s;}
 .chat-fab:hover{transform:scale(1.08);}
@@ -135,8 +154,9 @@ canvas#face-canvas{display:none;}
 .st-icon{font-size:44px;margin-bottom:12px;}
 .spinner{width:26px;height:26px;border:3px solid var(--border);border-top-color:var(--p);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px;}
 @keyframes spin{to{transform:rotate(360deg);}}
+@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.4)}100%{transform:scale(1)}}
 footer{text-align:center;padding:24px;font-size:11px;color:var(--muted);}
-@media(max-width:600px){header{padding:14px;flex-wrap:wrap;gap:10px;}main{padding:18px 14px;}.gg{grid-template-columns:repeat(2,1fr);}.gallery-top{flex-direction:column;align-items:flex-start;gap:8px;}.chat-win{width:calc(100vw - 32px);right:16px;}}
+@media(max-width:600px){header{padding:14px;flex-wrap:wrap;gap:10px;}main{padding:18px 14px;}.gg{grid-template-columns:repeat(2,1fr);}.gallery-top{flex-direction:column;align-items:flex-start;gap:8px;}.chat-win{width:calc(100vw - 32px);right:16px;}.rating-wrap{padding:0 14px;}}
 </style>
 </head>
 <body>
@@ -158,12 +178,13 @@ footer{text-align:center;padding:24px;font-size:11px;color:var(--muted);}
 <!-- FACE MODAL -->
 <div class="face-ov hidden" id="face-modal">
   <div class="face-box">
-    <h3>🤳 ຊອກຮູບດ້ວຍໜ້າ</h3>
+    <h3>🤳 ຄົ້ນຫາດ້ວຍໃບໜ້າ</h3>
     <p>ຈ້ອງກ້ອງ ແລ້ວກົດຖ່າຍ</p>
     <video id="face-video" autoplay muted playsinline></video>
     <div class="face-status" id="face-status">ກຳລັງເປີດ Camera...</div>
     <canvas id="face-canvas"></canvas>
     <div class="face-btns">
+      <button class="fbtn-flip" id="btn-flip" onclick="flipCamera()" disabled>🔄 ສະລັບ</button>
       <button class="fbtn-cap" id="btn-cap" onclick="captureAndSearch()" disabled>📸 ຖ່າຍ & ຊອກ</button>
       <button class="fbtn-cls" onclick="closeFaceModal()">ຍົກເລີກ</button>
     </div>
@@ -201,24 +222,37 @@ const sessKey=localStorage.getItem('slod_sess')||Math.random().toString(36).slic
 localStorage.setItem('slod_sess',sessKey);
 let chatName=localStorage.getItem('chat_name')||'';
 
+// Camera state
+let facingMode='user'; // 'user' = front, 'environment' = back
+
 function fmt(b){if(b<1048576)return(b/1024).toFixed(1)+' KB';if(b<1073741824)return(b/1048576).toFixed(1)+' MB';return(b/1073741824).toFixed(2)+' GB';}
 
-// Face AI
+// ── [1] Face AI — Load with correct label ─────────────────
 const MODEL_URL='https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model';
-(async()=>{try{await Promise.all([faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),faceapi.nets.faceLandmark68TinyNet.loadFromUri(MODEL_URL),faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL)]);faceReady=true;const b=document.getElementById('face-search-btn');if(b){b.classList.remove('loading');b.textContent='🤳 ຊອກດ້ວຍໜ້າ';}}catch(e){}})();
+(async()=>{
+  try{
+    await Promise.all([
+      faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+      faceapi.nets.faceLandmark68TinyNet.loadFromUri(MODEL_URL),
+      faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL)
+    ]);
+    faceReady=true;
+    const b=document.getElementById('face-search-btn');
+    if(b){b.classList.remove('loading');b.textContent='🤳 ຄົ້ນຫາດ້ວຍໃບໜ້າ';}
+  }catch(e){}
+})();
 
 // ─── LOAD ──────────────────────────────────────────────────
 async function load(){
   const app=document.getElementById('app');
   if(!token||!projId){app.innerHTML='<div class="st"><div class="st-icon">🔒</div><p>Link ບໍ່ຖືກຕ້ອງ</p></div>';return;}
 
-  const [{data:proj},{data:profile}]=await Promise.all([
-    sb.from('projects').select('*').eq('id',projId).single(),
-    sb.from('profiles').select('studio_name,branding_logo,branding_color,branding_bio').limit(1)
+  const [{data:proj}]=await Promise.all([
+    sb.from('projects').select('*').eq('id',projId).single()
   ]);
   if(!proj){app.innerHTML='<div class="st"><div class="st-icon">❌</div><p>ບໍ່ພົບ Project</p></div>';return;}
 
-  const {data:profileData}=await sb.from('profiles').select('studio_name,branding_logo,branding_color,branding_bio').eq('id',proj.uid).single();
+  const {data:profileData}=await sb.from('profiles').select('studio_name,branding_logo,branding_color,branding_bio,id').eq('id',proj.uid).single();
   studioProfile=profileData;
   studioUid=proj.uid;
   const color=profileData?.branding_color||'#7c5cfc';
@@ -233,7 +267,7 @@ async function load(){
   const {data:fdata}=await sb.from('files').select('*').eq('project_id',projId).eq('share_enabled',true).order('created_at',{ascending:false});
   files=fdata||[];
 
-  // Load stars
+  // [3] Load stars — per share_token (per client link)
   await loadStars();
 
   // Client expiry
@@ -254,6 +288,11 @@ async function load(){
     else if(days<=7)expiryHtml=`<div class="exp-banner ${days<=3?'danger':'warn'}"><span style="font-size:20px">${days<=3?'🚨':'⚠️'}</span><div><h4>Link ໝົດໃນ ${days} ວັນ!</h4><p>ກ່ອນ ${expStr} — ກະລຸນາ Download ຮູບໃຫ້ຄົບ</p></div></div>`;
   }
 
+  // [4] star count clickable to filter + dl-starred-btn
+  const starCountHtml=starSet.size>0
+    ?`<a class="star-count-link" onclick="filterByStars()">⭐ ${starSet.size} ໝາຍດາວ</a>`
+    :'';
+
   app.innerHTML=`
     <header>
       <div class="brand">
@@ -261,7 +300,8 @@ async function load(){
         <div><div class="brand-name">${profileData?.studio_name||'Studio'}</div><div class="brand-sub">ສົ່ງໃຫ້ທ່ານດ້ວຍ SHARE LOD</div></div>
       </div>
       <div class="head-right">
-        <button class="dl-all" onclick="dlAll()">⬇ Download ທັງໝົດ</button>
+        <button class="dl-star-btn" id="dl-starred-btn" onclick="dlStarred()" style="${starSet.size>0?'display:inline-block':'display:none'}">⭐ Download ດາວ (${starSet.size})</button>
+        <button class="dl-all" onclick="dlAll()">⬇ Download</button>
       </div>
     </header>
     <main>
@@ -269,11 +309,11 @@ async function load(){
       ${expiryHtml}
       <div class="proj-info">
         <div class="proj-title">📁 ${proj.name}</div>
-        <div class="proj-meta">
+        <div class="proj-meta" id="proj-meta">
           ${proj.shoot_date?`<span>📅 ${proj.shoot_date}</span>`:''}
           <span>🖼 ${files.length} ຟາຍ</span>
           <span>👤 ${proj.client_name||''}</span>
-          ${starSet.size>0?`<span style="color:#f5c842">⭐ ${starSet.size} ໝາຍດາວ</span>`:''}
+          ${starCountHtml?`<span id="star-count-meta">${starCountHtml}</span>`:'<span id="star-count-meta"></span>'}
         </div>
       </div>
       <div class="search-bar">
@@ -282,7 +322,7 @@ async function load(){
       </div>
       <div class="ftabs" id="ftabs"></div>
       <div class="star-bar hidden" id="star-bar">
-        <span>⭐ ສະແດງ ${starSet.size} ຮູບທີ່ໝາຍດາວ</span>
+        <span>⭐ ສະແດງ <span id="star-bar-cnt">${starSet.size}</span> ຮູບທີ່ໝາຍດາວ</span>
         <button class="star-bar-cls" onclick="clearStarFilter()">ສະແດງທັງໝົດ ✕</button>
       </div>
       <div class="face-bar hidden" id="face-bar">
@@ -292,7 +332,7 @@ async function load(){
       <div class="gallery-top">
         <div class="ct" id="gal-count"></div>
         <div class="gallery-top-right">
-          <button class="face-btn loading" id="face-search-btn" onclick="openFaceModal()">⏳ ໂຫຼດ AI...</button>
+          <button class="face-btn loading" id="face-search-btn" onclick="openFaceModal()">⏳ ກຳລັງໂຫຼດ AI...</button>
           <div class="vt">
             <button class="vb on" id="vg" onclick="setView('grid')">⊞</button>
             <button class="vb" id="vl" onclick="setView('list')">☰</button>
@@ -300,16 +340,16 @@ async function load(){
         </div>
       </div>
       <div id="gallery"></div>
-    </main>
-    <footer>ສ່ວນໜຶ່ງຂອງ SHARE LOD · ລະບົບຝາກຟາຍສຳລັບຊ່າງພາບ</footer>`;
+    </main>`;
 
   renderFolderTabs();
   renderGallery();
   trackView();
   loadChat();
+  renderRatingSection();
 }
 
-// ─── STARS ────────────────────────────────────────────────
+// ─── [3] STARS — per share_token ─────────────────────────
 async function loadStars(){
   const {data}=await sb.from('photo_stars').select('file_id').eq('project_id',projId).eq('share_token',token);
   starSet=new Set((data||[]).map(s=>s.file_id));
@@ -326,11 +366,21 @@ window.toggleStar=async(fileId,btn)=>{
     btn.textContent='⭐';
     btn.style.animation='pop .2s ease';setTimeout(()=>btn.style.animation='',200);
   }
-  updateStarCount();
+  updateStarUI();
 };
-function updateStarCount(){
-  const m=document.querySelector('.proj-meta');
-  if(m){const s=m.querySelector('.star-count');if(s)s.textContent=`⭐ ${starSet.size} ໝາຍດາວ`;else if(starSet.size>0)m.innerHTML+=`<span class="star-count" style="color:#f5c842">⭐ ${starSet.size} ໝາຍດາວ</span>`;}
+function updateStarUI(){
+  // update star-bar count
+  const sbc=document.getElementById('star-bar-cnt');
+  if(sbc) sbc.textContent=starSet.size;
+  // update meta star link
+  const smeta=document.getElementById('star-count-meta');
+  if(smeta){
+    if(starSet.size>0) smeta.innerHTML=`<a class="star-count-link" onclick="filterByStars()">⭐ ${starSet.size} ໝາຍດາວ</a>`;
+    else smeta.innerHTML='';
+  }
+  // update dl-starred-btn
+  const dsb=document.getElementById('dl-starred-btn');
+  if(dsb){dsb.style.display=starSet.size>0?'inline-block':'none';dsb.textContent=`⭐ Download ດາວ (${starSet.size})`;}
   if(starFilterOn) renderGallery();
 }
 window.filterByStars=()=>{starFilterOn=true;document.getElementById('star-bar').classList.remove('hidden');renderGallery();};
@@ -341,7 +391,6 @@ window.lbToggleStar=()=>{
   const f=viewFiles[lbIdx]; if(!f)return;
   const allBtns=document.querySelectorAll(`[data-star="${f.id}"]`);
   toggleStar(f.id,{textContent:'',style:{animation:''}});
-  // Update all star buttons for this file
   setTimeout(()=>{allBtns.forEach(b=>b.textContent=starSet.has(f.id)?'⭐':'☆');document.getElementById('lb-star').textContent=starSet.has(f.id)?'⭐':'☆';},100);
 };
 
@@ -403,7 +452,7 @@ function renderGallery(){
         </div>
         <span class="li-sz">${fmt(f.size||0)}</span>
         <button class="star-btn" data-star="${f.id}" onclick="event.stopPropagation();toggleStar('${f.id}',this)">${starSet.has(f.id)?'⭐':'☆'}</button>
-        <a class="dl-btn" href="${f.url}" download="${f.name}" onclick="event.stopPropagation()">⬇</a>
+        <button class="dl-btn" onclick="event.stopPropagation();dlFile('${f.url}','${f.name}')">⬇</button>
       </div>`).join('')}</div>`;
   }
 }
@@ -422,22 +471,46 @@ function updLb(){
   const dl=document.getElementById('lb-dl'); dl.dataset.url=f.url; dl.dataset.name=f.name;
 }
 
-// ─── FACE SEARCH ───────────────────────────────────────────
+// ─── [2] FACE SEARCH — camera flip + mirror fix ───────────
 window.openFaceModal=()=>{
   if(!faceReady){alert('AI ກຳລັງໂຫຼດ... ລໍຖ້າ 30 ວິ');return;}
   document.getElementById('face-modal').classList.remove('hidden');
+  startCamera();
+};
+async function startCamera(){
+  if(faceStream){faceStream.getTracks().forEach(t=>t.stop());faceStream=null;}
   document.getElementById('face-status').textContent='ກຳລັງເປີດ Camera...';
   document.getElementById('btn-cap').disabled=true;
-  navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}})
-    .then(stream=>{faceStream=stream;document.getElementById('face-video').srcObject=stream;document.getElementById('face-status').textContent='📸 ຈ້ອງກ້ອງ ແລ້ວກົດຖ່າຍ';document.getElementById('btn-cap').disabled=false;})
-    .catch(()=>{document.getElementById('face-status').textContent='❌ ເປີດ Camera ບໍ່ໄດ້';});
+  document.getElementById('btn-flip').disabled=true;
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode}});
+    faceStream=stream;
+    const vid=document.getElementById('face-video');
+    vid.srcObject=stream;
+    // Mirror front camera for natural selfie feel; back camera shows reality
+    vid.className=facingMode==='user'?'mirrored':'';
+    document.getElementById('face-status').textContent='📸 ຈ້ອງກ້ອງ ແລ້ວກົດຖ່າຍ';
+    document.getElementById('btn-cap').disabled=false;
+    document.getElementById('btn-flip').disabled=false;
+  }catch(e){
+    document.getElementById('face-status').textContent='❌ ເປີດ Camera ບໍ່ໄດ້';
+  }
+}
+window.flipCamera=async()=>{
+  facingMode=facingMode==='user'?'environment':'user';
+  await startCamera();
 };
-window.closeFaceModal=()=>{if(faceStream){faceStream.getTracks().forEach(t=>t.stop());faceStream=null;}document.getElementById('face-modal').classList.add('hidden');};
+window.closeFaceModal=()=>{
+  if(faceStream){faceStream.getTracks().forEach(t=>t.stop());faceStream=null;}
+  document.getElementById('face-modal').classList.add('hidden');
+};
 window.captureAndSearch=async()=>{
   const vid=document.getElementById('face-video');
   const canvas=document.getElementById('face-canvas');
   canvas.width=vid.videoWidth;canvas.height=vid.videoHeight;
-  canvas.getContext('2d').drawImage(vid,0,0);
+  const ctx=canvas.getContext('2d');
+  // Front camera: video stream is NOT actually mirrored (CSS only), capture as-is
+  ctx.drawImage(vid,0,0);
   document.getElementById('face-status').textContent='🔍 ກຳລັງວິເຄາະ...';
   document.getElementById('btn-cap').disabled=true;
   try{
@@ -495,25 +568,116 @@ window.sendMsg=async()=>{
   loadChat();
 };
 
+// ─── [4+5] DOWNLOAD — folder-aware + iOS Photos ───────────
+const isIOS=/iPhone|iPad|iPod/.test(navigator.userAgent)&&!window.MSStream;
+window.dlFile=async(url,name)=>{
+  try{
+    const r=await fetch(url);
+    const blob=await r.blob();
+    // [5] iOS: use Web Share API → saves to Photos app
+    if(isIOS&&navigator.share&&navigator.canShare){
+      const file=new File([blob],name,{type:blob.type});
+      if(navigator.canShare({files:[file]})){
+        await navigator.share({files:[file],title:name});
+        return;
+      }
+    }
+    // Other: create blob URL and trigger download
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download=name;
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(a.href),5000);
+  }catch(e){
+    window.open(url,'_blank');
+  }
+};
+// [4] Download only current view (respects folder/star/face filter)
+window.dlAll=()=>{
+  if(!viewFiles.length)return;
+  viewFiles.forEach((f,i)=>setTimeout(()=>dlFile(f.url,f.name),i*800));
+};
+// [4] Download only starred files
+window.dlStarred=()=>{
+  const starred=files.filter(f=>starSet.has(f.id));
+  if(!starred.length){alert('ຍັງບໍ່ທັນໝາຍດາວຮູບໃດ');return;}
+  starred.forEach((f,i)=>setTimeout(()=>dlFile(f.url,f.name),i*800));
+};
+
 // ─── UTILS ─────────────────────────────────────────────────
 async function trackView(){
   if(!studioUid)return;
   try{await sb.from('gallery_views').insert({project_id:projId,studio_uid:studioUid});}catch(e){}
 }
-// ── Download helper (works cross-origin) ──────────────────
-window.dlFile=async(url,name)=>{
-  try{
-    const r=await fetch(url);const blob=await r.blob();
-    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();
-    setTimeout(()=>URL.revokeObjectURL(a.href),5000);
-  }catch(e){window.open(url,'_blank');}
-};
-window.dlAll=()=>viewFiles.forEach((f,i)=>setTimeout(()=>dlFile(f.url,f.name),i*800));
 document.addEventListener('keydown',e=>{
   if(!document.getElementById('lb').classList.contains('hidden')){
     if(e.key==='Escape')closeLb();if(e.key==='ArrowLeft')navLb(-1);if(e.key==='ArrowRight')navLb(1);if(e.key==='s')lbToggleStar();
   }else if(e.key==='Escape')closeFaceModal();
 });
+
+// ─── [6] RATING SYSTEM ─────────────────────────────────────
+let selRating=0;
+const ratingKey=`rated_${projId}_${token}`;
+
+async function renderRatingSection(){
+  // Check if already rated
+  const {data:existing}=await sb.from('ratings').select('id,score,comment').eq('share_token',token).eq('project_id',projId).maybeSingle();
+
+  const wrap=document.createElement('div');
+  wrap.className='rating-wrap';
+
+  if(existing){
+    wrap.innerHTML=`
+      <div class="rating-card">
+        <h3>⭐ ຂອບໃຈສຳລັບ Review!</h3>
+        <p style="font-size:13px;color:var(--muted)">ທ່ານໃຫ້ ${'★'.repeat(existing.score)+'☆'.repeat(5-existing.score)} ${existing.comment?`— "${existing.comment}"`:''}
+        </p>
+      </div>`;
+  } else {
+    wrap.innerHTML=`
+      <div class="rating-card">
+        <h3>⭐ ໃຫ້ຄະແນນການບໍລິການ</h3>
+        <p>ຊ່ວຍ Studio ປັບປຸງໄດ້ດ້ວຍ Review ຂອງທ່ານ</p>
+        <div class="rstar-row" id="rstar-row">
+          ${[1,2,3,4,5].map(n=>`<span id="rs${n}" onclick="setRatingStar(${n})">☆</span>`).join('')}
+        </div>
+        <input class="rating-inp" id="r-name" placeholder="ຊື່ຂອງທ່ານ *">
+        <textarea class="rating-inp rating-ta" id="r-comment" placeholder="ຄຳເຫັນ (ທາງເລືອກ)..."></textarea>
+        <button class="rating-submit" onclick="submitRating()">ສົ່ງ Review</button>
+        <span id="r-msg" style="font-size:12px;margin-left:10px;display:none"></span>
+      </div>`;
+  }
+
+  wrap.innerHTML += `<footer>ສ່ວນໜຶ່ງຂອງ SHARE LOD · ລະບົບຝາກຟາຍສຳລັບຊ່າງພາບ</footer>`;
+  document.getElementById('app').appendChild(wrap);
+}
+
+window.setRatingStar=n=>{
+  selRating=n;
+  [1,2,3,4,5].forEach(i=>{const el=document.getElementById('rs'+i);if(el)el.textContent=i<=n?'★':'☆';});
+};
+
+window.submitRating=async()=>{
+  const name=document.getElementById('r-name')?.value.trim();
+  const comment=document.getElementById('r-comment')?.value.trim();
+  const msg=document.getElementById('r-msg');
+  if(!selRating){msg.textContent='⚠️ ເລືອກຄະແນນດາວ';msg.style.color='#f5c842';msg.style.display='inline';return;}
+  if(!name){msg.textContent='⚠️ ໃສ່ຊື່ຂອງທ່ານ';msg.style.color='#f5c842';msg.style.display='inline';return;}
+  msg.textContent='ກຳລັງສົ່ງ...';msg.style.color='var(--muted)';msg.style.display='inline';
+  const {error}=await sb.from('ratings').insert({
+    studio_uid:studioUid,
+    project_id:projId,
+    share_token:token,
+    score:selRating,
+    reviewer_name:name,
+    comment:comment||null
+  });
+  if(error){msg.textContent='❌ ຜິດພາດ: '+error.message;msg.style.color='#ff6060';return;}
+  // Show thank you
+  const card=document.querySelector('.rating-card');
+  if(card) card.innerHTML=`<div class="rating-done">✅ ຂອບໃຈສຳລັບ Review! ${'★'.repeat(selRating)}</div>`;
+};
+
 load();
 </script>
 </body>
