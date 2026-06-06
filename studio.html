@@ -37,7 +37,11 @@ nav{padding:16px 36px;display:flex;align-items:center;gap:14px;border-bottom:1px
 /* CONTENT */
 .content{max-width:900px;margin:0 auto;padding:28px;}
 /* PORTFOLIO GRID */
-.pg{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;}
+.port-cat{margin-bottom:28px;}
+.port-cat-hd{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.port-cat-name{font-size:14px;font-weight:600;}
+.port-cat-cnt{font-size:11px;color:var(--muted);background:rgba(255,255,255,.05);padding:2px 9px;border-radius:100px;}
+.pg{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px;}
 .pi{border-radius:10px;overflow:hidden;cursor:pointer;aspect-ratio:1;background:var(--card);transition:transform .15s;}
 .pi:hover{transform:scale(1.03);}
 .pi img{width:100%;height:100%;object-fit:cover;display:block;}
@@ -128,8 +132,15 @@ async function load(){
   const color=p.branding_color||'#7c5cfc';
   document.title=`${p.studio_name||'Studio'} — SHARE LOD`;
 
-  // cover photos
-  const coverImgs=(d.portfolio||[]).slice(0,6).map(f=>`<img src="${f.url}" loading="lazy">`).join('');
+  // cover photos — random 1 per category for diversity
+  const port=d.portfolio||[];
+  const byFolder={};
+  port.forEach(f=>{const k=f.folder_name||'__none__';if(!byFolder[k])byFolder[k]=[];byFolder[k].push(f);});
+  // pick 1 random from each folder, shuffle, take 6
+  const picks=Object.values(byFolder).map(arr=>arr[Math.floor(Math.random()*arr.length)]);
+  // if < 6, fill with random remaining
+  if(picks.length<6){const used=new Set(picks.map(f=>f.id));const rest=port.filter(f=>!used.has(f.id));while(picks.length<6&&rest.length){const i=Math.floor(Math.random()*rest.length);picks.push(...rest.splice(i,1));}}
+  const coverImgs=picks.slice(0,6).filter(f=>f.mime_type?.startsWith('image')).map(f=>`<img src="${f.url}" loading="lazy">`).join('');
 
   document.getElementById('app').innerHTML=`
     <div class="hero">
@@ -317,10 +328,34 @@ window.toggleLike=async(postId,btn)=>{
 function renderPortfolio(el){
   const port=data.portfolio||[];
   if(!port.length){el.innerHTML='<div class="empty">🖼 ຍັງບໍ່ມີຜົນງານ</div>';return;}
-  el.innerHTML=`<div class="pg">${port.map(f=>`
-    <div class="pi" onclick="openLb('${f.url}')">
-      ${f.mime_type?.startsWith('image')?`<img src="${f.url}" loading="lazy">`:`<div class="ph">🎬</div>`}
-    </div>`).join('')}</div>`;
+
+  // Group by folder_name
+  const cats={};
+  port.forEach(f=>{const k=f.folder_name||'__all__';if(!cats[k])cats[k]=[];cats[k].push(f);});
+
+  // Sort: named folders first, then uncategorised
+  const keys=Object.keys(cats).sort((a,b)=>{if(a==='__all__')return 1;if(b==='__all__')return -1;return a.localeCompare(b);});
+
+  // All urls for lightbox
+  const allUrls=port.map(f=>f.url);
+  let idx=0;
+  const idxMap={};port.forEach((f,i)=>idxMap[f.url]=i);
+
+  el.innerHTML=keys.map(k=>{
+    const items=cats[k];
+    const label=k==='__all__'?'📷 ທຸກຜົນງານ':`📂 ${k}`;
+    return `<div class="port-cat">
+      <div class="port-cat-hd">
+        <span class="port-cat-name">${label}</span>
+        <span class="port-cat-cnt">${items.length} ຮູບ</span>
+      </div>
+      <div class="pg">${items.map(f=>`
+        <div class="pi" onclick="openLb('${f.url}')">
+          ${f.mime_type?.startsWith('image')?`<img src="${f.url}" loading="lazy">`:`<div class="ph">🎬</div>`}
+        </div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
 }
 
 function renderReviews(el){
