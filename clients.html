@@ -247,12 +247,15 @@ load();
 <script>
 function openSb(){document.querySelector('.sb').classList.add('open');document.getElementById('sb-ov').style.display='block';document.body.style.overflow='hidden';}
 function closeSb(){document.querySelector('.sb').classList.remove('open');document.getElementById('sb-ov').style.display='none';document.body.style.overflow='';}
+// Force bottom nav on mobile
+if(window.innerWidth<=900){var bn=document.getElementById('bnav');if(bn)bn.style.display='block';}
+window.addEventListener('resize',function(){var bn=document.getElementById('bnav');if(bn)bn.style.display=window.innerWidth<=900?'block':'none';});
 </script>
 <!-- BOTTOM NAV -->
 <nav class="bnav" id="bnav">
   <div class="bnav-inner">
     <a class="bn" href="dashboard.html" id="bn-dashboard"><span class="bn-ic">📊</span><span class="bn-lbl">Dashboard</span></a>
-    <a class="bn" href="clients.html" id="bn-clients" class="bn active"><span class="bn-ic">👥</span><span class="bn-lbl">Clients</span></a>
+    <a class="bn active" href="clients.html" id="bn-clients"><span class="bn-ic">👥</span><span class="bn-lbl">Clients</span></a>
     <a class="bn" href="upload.html" id="bn-upload"><span class="bn-ic">⬆️</span><span class="bn-lbl">Upload</span></a>
     <a class="bn" href="branding.html" id="bn-branding"><span class="bn-ic">🎨</span><span class="bn-lbl">Branding</span></a>
     <a class="bn" href="portfolio.html" id="bn-portfolio"><span class="bn-ic">🖼</span><span class="bn-lbl">Portfolio</span></a>
