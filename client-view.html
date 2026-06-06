@@ -246,27 +246,39 @@ main{max-width:1280px;margin:0 auto;padding:40px 24px 20px;}
 .gi-ph svg{width:28px;height:28px;opacity:.15;stroke:var(--muted);}
 .gi-foot{display:none;}
 
-/* ACTION BUTTONS */
+/* ACTION BUTTONS — inside overlay (desktop hover) */
 .star-btn{
   width:32px;height:32px;
   background:rgba(8,8,14,.6);backdrop-filter:blur(8px);
   border:1px solid rgba(255,255,255,.15);border-radius:8px;
   display:flex;align-items:center;justify-content:center;
-  cursor:pointer;flex-shrink:0;color:rgba(255,255,255,.6);font-size:15px;
+  cursor:pointer;flex-shrink:0;color:rgba(255,255,255,.7);font-size:16px;
   transition:all .2s;
 }
-.star-btn:hover{background:rgba(168,85,247,.3);border-color:var(--pu);color:#fff;}
-.star-btn.starred{background:rgba(168,85,247,.3);border-color:var(--pu);color:#c084fc;}
+.star-btn:hover,.star-btn.starred{background:rgba(245,200,66,.2);border-color:#f5c842;color:#f5c842;}
 
 .dl-btn{
   width:32px;height:32px;
   background:rgba(8,8,14,.6);backdrop-filter:blur(8px);
   border:1px solid rgba(255,255,255,.15);border-radius:8px;
   display:flex;align-items:center;justify-content:center;
-  cursor:pointer;flex-shrink:0;color:rgba(255,255,255,.6);font-size:14px;
+  cursor:pointer;flex-shrink:0;color:rgba(255,255,255,.7);font-size:14px;
   transition:all .2s;
 }
 .dl-btn:hover{background:rgba(34,211,238,.2);border-color:var(--cy);color:var(--cy);}
+
+/* STAR CORNER — always visible on photo (mobile-friendly) */
+.gi-star-corner{
+  position:absolute;bottom:8px;right:8px;z-index:6;
+  width:30px;height:30px;border-radius:8px;
+  background:rgba(8,8,14,.55);backdrop-filter:blur(6px);
+  border:1px solid rgba(255,255,255,.12);
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;cursor:pointer;color:rgba(255,255,255,.5);
+  transition:all .2s;
+}
+.gi-star-corner:hover,.gi-star-corner.starred{color:#f5c842;border-color:rgba(245,200,66,.5);background:rgba(245,200,66,.15);}
+.gi-star-corner.starred{color:#f5c842 !important;}
 
 /* LIST VIEW */
 .li-row{
@@ -752,11 +764,12 @@ window.toggleStar=async(fileId,btn)=>{
   if(starSet.has(fileId)){
     await sb.from('photo_stars').delete().eq('file_id',fileId).eq('share_token',starToken);
     starSet.delete(fileId);
-    btn.textContent='☆';btn.classList.remove('starred');
+    // Update all star buttons for this file
+    document.querySelectorAll(`[data-star="${fileId}"]`).forEach(b=>{b.textContent='☆';b.classList.remove('starred');});
   }else{
     await sb.from('photo_stars').insert({file_id:fileId,project_id:f?.project_id||projId,studio_uid:f?.uid||studioUid,share_token:starToken});
     starSet.add(fileId);
-    btn.textContent='★';btn.classList.add('starred');
+    document.querySelectorAll(`[data-star="${fileId}"]`).forEach(b=>{b.textContent='★';b.classList.add('starred');});
     btn.style.animation='pop .25s ease';setTimeout(()=>btn.style.animation='',250);
   }
   updateStarUI();
@@ -783,8 +796,12 @@ window.clearStarFilter=()=>{starFilterOn=false;document.getElementById('star-bar
 window.lbToggleStar=()=>{
   const f=viewFiles[lbIdx]; if(!f)return;
   const allBtns=document.querySelectorAll(`[data-star="${f.id}"]`);
-  toggleStar(f.id,{textContent:'',style:{animation:''}});
-  setTimeout(()=>{allBtns.forEach(b=>b.textContent=starSet.has(f.id)?'⭐':'☆');document.getElementById('lb-star').textContent=starSet.has(f.id)?'⭐':'☆';},100);
+  toggleStar(f.id,{textContent:'',classList:{add:()=>{},remove:()=>{}},style:{animation:''}});
+  setTimeout(()=>{
+    const on=starSet.has(f.id);
+    allBtns.forEach(b=>{b.textContent=on?'★':'☆';b.classList.toggle('starred',on);});
+    const ls=document.getElementById('lb-star');if(ls){ls.textContent=on?'★':'☆';ls.classList.toggle('starred',on);}
+  },100);
 };
 
 // ─── FOLDER TABS ───────────────────────────────────────────
@@ -829,16 +846,20 @@ function renderGalleryContent(){
   if(view==='grid'){
     g.innerHTML=`<div class="gg">${viewFiles.map((f,i)=>`
       <div class="gi ${selSet.has(f.id)?'selected':''}"
-        onmousedown="lpStart(event,'${f.id}')" onmouseup="lpEnd(event)" onmouseleave="lpEnd(event)"
-        ontouchstart="lpStart(event,'${f.id}')" ontouchend="lpEnd(event)" ontouchcancel="lpEnd(event)"
+        onmousedown="lpStart(event,'${f.id}')" onmouseup="lpEnd(event)" onmouseleave="lpEnd(event)" onmousemove="lpMove(event)"
+        ontouchstart="lpStart(event,'${f.id}')" ontouchend="lpEnd(event)" ontouchcancel="lpEnd(event)" ontouchmove="lpMove(event)"
         onclick="onGiClick(event,${i},'${f.id}')">
         ${f.mime_type?.startsWith('image')?`<img src="${f.url}" loading="lazy" alt="${f.name}">`
           :f.mime_type?.startsWith('video')?`<video src="${f.url}" muted>`
           :`<div class="gi-ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg></div>`}
         <div class="gi-check">✓</div>
+        <button class="gi-star-corner ${starSet.has(f.id)?'starred':''}" data-star="${f.id}"
+          onclick="event.stopPropagation();toggleStar('${f.id}',this)"
+          ontouchstart="event.stopPropagation()" ontouchend="event.stopPropagation()">
+          ${starSet.has(f.id)?'★':'☆'}
+        </button>
         <div class="gi-overlay">
           <div class="gi-actions">
-            <button class="star-btn ${starSet.has(f.id)?'starred':''}" data-star="${f.id}" onclick="event.stopPropagation();toggleStar('${f.id}',this)">${starSet.has(f.id)?'★':'☆'}</button>
             <button class="dl-btn" onclick="event.stopPropagation();dlFile('${f.url}','${f.name}')">↓</button>
           </div>
         </div>
@@ -1063,20 +1084,37 @@ window.submitRating=async()=>{
 };
 
 // ─── LONG PRESS + SELECTION ────────────────────────────
+let _lpEl=null, _lpStartX=0, _lpStartY=0;
+
 window.lpStart=(e,fileId)=>{
+  // Ignore if star button or dl button
+  if(e.target.closest('.gi-star-corner,.dl-btn,.star-btn')) return;
   lpFired=false;
-  const el=e.currentTarget;
+  _lpEl=e.currentTarget;
+  // Record start position to detect scroll
+  const t=e.touches?e.touches[0]:e;
+  _lpStartX=t.clientX; _lpStartY=t.clientY;
   lpTimer=setTimeout(()=>{
     lpFired=true;
-    navigator.vibrate&&navigator.vibrate(30);
-    el.classList.remove('pressing');
+    navigator.vibrate&&navigator.vibrate(40);
+    _lpEl&&_lpEl.classList.remove('pressing');
     enterSelMode(fileId);
-  },450);
-  el.classList.add('pressing');
+  },500);
+  _lpEl.classList.add('pressing');
+};
+window.lpMove=(e)=>{
+  if(!lpTimer) return;
+  const t=e.touches?e.touches[0]:e;
+  const dx=Math.abs(t.clientX-_lpStartX), dy=Math.abs(t.clientY-_lpStartY);
+  if(dx>10||dy>10){ // ຖ້າ scroll — cancel long press
+    clearTimeout(lpTimer);lpTimer=null;
+    _lpEl&&_lpEl.classList.remove('pressing');
+  }
 };
 window.lpEnd=(e)=>{
   clearTimeout(lpTimer);lpTimer=null;
-  if(e?.currentTarget) e.currentTarget.classList.remove('pressing');
+  _lpEl&&_lpEl.classList.remove('pressing');
+  _lpEl=null;
 };
 window.onGiClick=(e,idx,fileId)=>{
   if(lpFired){lpFired=false;return;} // was long press — ignore click
