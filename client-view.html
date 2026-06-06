@@ -274,7 +274,7 @@ async function load(){
       </div>
       <div class="head-right">
         <button class="dl-star-btn" id="dl-starred-btn" onclick="dlStarred()" style="${starSet.size>0?'display:inline-block':'display:none'}">⭐ Download ດາວ (${starSet.size})</button>
-        <button class="dl-all" onclick="dlAll()">⬇ Download</button>
+        <button class="dl-all" id="dl-all-btn" onclick="dlAll()">⬇ Download ທັງໝົດ</button>
       </div>
     </header>
     <main>
@@ -359,7 +359,7 @@ async function loadClientView(app){
       </div>
       <div class="head-right">
         <button class="dl-star-btn" id="dl-starred-btn" onclick="dlStarred()" style="${starSet.size>0?'display:inline-block':'display:none'}">⭐ Download ດາວ</button>
-        <button class="dl-all" onclick="dlAll()">⬇ Download</button>
+        <button class="dl-all" id="dl-all-btn" onclick="dlAll()">⬇ Download ທັງໝົດ</button>
       </div>
     </header>
     <main>
@@ -421,26 +421,27 @@ window.selectProject=(projId,el)=>{
   faceFilterIds=null;
   document.querySelectorAll('.ftab').forEach(t=>t.classList.remove('on'));
   el.classList.add('on');
+  const projLabel=projId?el.textContent.replace(/\s*\(\d+\)$/,'').trim():null;
   // Build folder sub-tabs
   const sub=document.getElementById('sub-ftabs');
   const pFiles=projId?files.filter(f=>f.project_id===projId):files;
   const folders=[...new Set(pFiles.map(f=>f.folder_name).filter(Boolean))];
   if(folders.length){
     sub.className='sub-ftabs show';
-    sub.innerHTML=`<button class="sub-ftab on" onclick="selectFolder(null,this)">ທັງໝົດ (${pFiles.length})</button>`
-      +folders.map(fn=>`<button class="sub-ftab" onclick="selectFolder('${fn}',this)">📂 ${fn} (${pFiles.filter(f=>f.folder_name===fn).length})</button>`).join('');
+    sub.innerHTML=`<button class="sub-ftab on" onclick="selectFolder(null,this,'${(projLabel||'').replace(/'/g,"\\'")}')">ທັງໝົດ (${pFiles.length})</button>`
+      +folders.map(fn=>`<button class="sub-ftab" onclick="selectFolder('${fn}',this,'${fn.replace(/'/g,"\\'")}')">📂 ${fn} (${pFiles.filter(f=>f.folder_name===fn).length})</button>`).join('');
   } else {
     sub.className='sub-ftabs';sub.innerHTML='';
   }
-  applyClientFilter(projId,null);
+  applyClientFilter(projId,null,projLabel);
 };
 // Row 2: select folder within selected project
-window.selectFolder=(folderName,el)=>{
+window.selectFolder=(folderName,el,label)=>{
   document.querySelectorAll('.sub-ftab').forEach(t=>t.classList.remove('on'));
   el.classList.add('on');
-  applyClientFilter(_selProjId,folderName);
+  applyClientFilter(_selProjId,folderName,label||folderName);
 };
-function applyClientFilter(projId,folderName){
+function applyClientFilter(projId,folderName,label){
   let f=files;
   if(projId) f=f.filter(x=>x.project_id===projId);
   if(folderName) f=f.filter(x=>x.folder_name===folderName);
@@ -449,7 +450,14 @@ function applyClientFilter(projId,folderName){
   viewFiles=f;
   const cnt=document.getElementById('gal-count');
   if(cnt) cnt.textContent=`${viewFiles.length} ລາຍການ`;
+  updateDlBtn(label,viewFiles.length);
   renderGalleryContent();
+}
+function updateDlBtn(label,count){
+  const btn=document.getElementById('dl-all-btn');
+  if(!btn) return;
+  if(!label||label==='all') btn.textContent=`⬇ Download ທັງໝົດ (${count})`;
+  else btn.textContent=`⬇ Download "${label}" (${count})`;
 }
 
 // ─── [3] STARS — per share_token ─────────────────────────
@@ -529,6 +537,9 @@ function renderGallery(){
   viewFiles=getFiltered();
   const cnt=document.getElementById('gal-count');
   if(cnt) cnt.textContent=`${viewFiles.length} ລາຍການ`;
+  // Update download button label
+  const folderLabel=activeFolder||null;
+  updateDlBtn(folderLabel,viewFiles.length);
   renderGalleryContent();
 }
 function renderGalleryContent(){
