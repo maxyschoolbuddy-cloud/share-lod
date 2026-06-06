@@ -42,7 +42,10 @@ header{
 .brand-logo img{width:100%;height:100%;object-fit:cover;}
 .brand-info{flex:1;min-width:0;}
 .brand-name{font-size:15px;font-weight:700;background:var(--aura);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;}
-.brand-bio{font-size:11px;color:var(--muted2);margin-top:2px;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:320px;}
+.brand-bio{font-size:9.5px;color:var(--muted);margin-top:1px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:280px;letter-spacing:.2px;}
+.brand-socials{display:flex;gap:8px;margin-top:4px;align-items:center;}
+.soc-link{width:22px;height:22px;border-radius:6px;background:rgba(255,255,255,.06);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:11px;transition:all .2s;flex-shrink:0;}
+.soc-link:hover{background:rgba(168,85,247,.2);border-color:rgba(168,85,247,.4);transform:scale(1.1);}
 .head-right{display:flex;gap:8px;align-items:center;flex-shrink:0;}
 
 /* SELECTION MODE */
@@ -512,7 +515,7 @@ async function load(){
   ]);
   if(!proj){app.innerHTML='<div class="st"><div class="st-icon">❌</div><p>ບໍ່ພົບ Project</p></div>';return;}
 
-  const {data:profileData}=await sb.from('profiles').select('studio_name,branding_logo,branding_color,branding_bio,id').eq('id',proj.uid).single();
+  const {data:profileData}=await sb.from('profiles').select('studio_name,branding_logo,branding_color,branding_bio,id,social_facebook,social_instagram,social_tiktok,social_youtube').eq('id',proj.uid).single();
   studioProfile=profileData;
   studioUid=proj.uid;
   const color=profileData?.branding_color||'#7c5cfc';
@@ -556,10 +559,21 @@ async function load(){
   app.innerHTML=`
     <header>
       <div class="brand">
-        <div class="brand-logo" style="background:linear-gradient(135deg,${color},#e05cfc)">${profileData?.branding_logo?`<img src="${profileData.branding_logo}">`:'📷'}</div>
+        <a href="studio.html?id=${studioUid}" target="_blank" title="ເບິ່ງ Portfolio ທັງໝົດ"
+          style="position:relative;display:block;flex-shrink:0;text-decoration:none">
+          <div class="brand-logo" style="background:linear-gradient(135deg,${color},#e05cfc)">${profileData?.branding_logo?`<img src="${profileData.branding_logo}">`:'📷'}</div>
+          <span style="position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);background:rgba(168,85,247,.9);color:#fff;font-size:8px;padding:2px 5px;border-radius:4px;white-space:nowrap;pointer-events:none;font-family:var(--f)">Portfolio</span>
+        </a>
         <div class="brand-info">
           <div class="brand-name">${profileData?.studio_name||'Studio'}</div>
           <div class="brand-bio">ສົ່ງໃຫ້ທ່ານຜ່ານ <span style="background:var(--aura);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:600">SHARE LOD</span></div>
+          ${(profileData?.social_facebook||profileData?.social_instagram||profileData?.social_tiktok||profileData?.social_youtube)?`
+          <div class="brand-socials">
+            ${profileData.social_facebook?`<a class="soc-link" href="${profileData.social_facebook}" target="_blank" title="Facebook">f</a>`:''}
+            ${profileData.social_instagram?`<a class="soc-link" href="${profileData.social_instagram}" target="_blank" title="Instagram">ig</a>`:''}
+            ${profileData.social_tiktok?`<a class="soc-link" href="${profileData.social_tiktok}" target="_blank" title="TikTok">tt</a>`:''}
+            ${profileData.social_youtube?`<a class="soc-link" href="${profileData.social_youtube}" target="_blank" title="YouTube">▶</a>`:''}
+          </div>`:''}
         </div>
       </div>
       <div class="head-right">
@@ -623,7 +637,7 @@ async function loadClientView(app){
   }
 
   studioUid=cl.uid;
-  const {data:profileData}=await sb.from('profiles').select('studio_name,branding_logo,branding_color,branding_bio').eq('id',cl.uid).single();
+  const {data:profileData}=await sb.from('profiles').select('studio_name,branding_logo,branding_color,branding_bio,social_facebook,social_instagram,social_tiktok,social_youtube').eq('id',cl.uid).single();
   const color=profileData?.branding_color||'#7c5cfc';
   document.documentElement.style.setProperty('--p',color);
   document.documentElement.style.setProperty('--grad',`linear-gradient(135deg,${color},#e05cfc)`);
@@ -644,10 +658,21 @@ async function loadClientView(app){
   app.innerHTML=`
     <header>
       <div class="brand">
-        <div class="brand-logo" style="background:linear-gradient(135deg,${color},#e05cfc)">${profileData?.branding_logo?`<img src="${profileData.branding_logo}">`:'📷'}</div>
+        <a href="studio.html?id=${studioUid}" target="_blank" title="ເບິ່ງ Portfolio ທັງໝົດ"
+          style="position:relative;display:block;flex-shrink:0;text-decoration:none">
+          <div class="brand-logo" style="background:linear-gradient(135deg,${color},#e05cfc)">${profileData?.branding_logo?`<img src="${profileData.branding_logo}">`:'📷'}</div>
+          <span style="position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);background:rgba(168,85,247,.9);color:#fff;font-size:8px;padding:2px 5px;border-radius:4px;white-space:nowrap;pointer-events:none;font-family:var(--f)">Portfolio</span>
+        </a>
         <div class="brand-info">
           <div class="brand-name">${profileData?.studio_name||'Studio'}</div>
           <div class="brand-bio">ສົ່ງໃຫ້ທ່ານຜ່ານ <span style="background:var(--aura);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:600">SHARE LOD</span></div>
+          ${(profileData?.social_facebook||profileData?.social_instagram||profileData?.social_tiktok||profileData?.social_youtube)?`
+          <div class="brand-socials">
+            ${profileData.social_facebook?`<a class="soc-link" href="${profileData.social_facebook}" target="_blank" title="Facebook">f</a>`:''}
+            ${profileData.social_instagram?`<a class="soc-link" href="${profileData.social_instagram}" target="_blank" title="Instagram">ig</a>`:''}
+            ${profileData.social_tiktok?`<a class="soc-link" href="${profileData.social_tiktok}" target="_blank" title="TikTok">tt</a>`:''}
+            ${profileData.social_youtube?`<a class="soc-link" href="${profileData.social_youtube}" target="_blank" title="YouTube">▶</a>`:''}
+          </div>`:''}
         </div>
       </div>
       <div class="head-right">

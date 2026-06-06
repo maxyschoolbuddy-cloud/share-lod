@@ -59,6 +59,10 @@ input[type=color]{padding:4px;height:42px;cursor:pointer;}
 .prev-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;}
 .prev-img{aspect-ratio:1;border-radius:5px;background:rgba(255,255,255,.05);}
 .prev-btn{width:100%;margin-top:10px;padding:8px;border-radius:7px;font-size:11px;font-weight:500;border:none;color:#fff;cursor:pointer;font-family:'DM Sans','Noto Sans Lao',sans-serif;}
+.theme-chip{height:36px;border-radius:10px;cursor:pointer;border:2px solid transparent;transition:all .2s;}
+.theme-chip:hover{transform:scale(1.05);border-color:rgba(255,255,255,.3);}
+.prev-bio:empty::before{content:attr(placeholder);color:var(--muted);pointer-events:none;}
+.prev-nm:empty::before{content:'ຊື່ Studio';color:var(--muted);}
 @media(max-width:1000px){.content{grid-template-columns:1fr;}.prev-card{position:static;}}
 .hbg{display:none;align-items:center;justify-content:center;width:38px;height:38px;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:9px;cursor:pointer;font-size:18px;flex-shrink:0;}
 /* BOTTOM NAV (mobile) */
@@ -114,6 +118,14 @@ input[type=color]{padding:4px;height:42px;cursor:pointer;}
           <span style="font-size:12px;color:var(--muted)">ສີ Button & Accent</span>
         </div>
       </div>
+      <!-- SOCIAL LINKS -->
+      <div style="border-top:1px solid var(--border);padding-top:18px;margin-top:4px;margin-bottom:18px">
+        <div style="font-size:13px;font-weight:600;margin-bottom:14px">🔗 Social Links</div>
+        <div class="fg"><label>📘 Facebook</label><input type="url" id="s-fb" placeholder="https://facebook.com/yourstudio"></div>
+        <div class="fg"><label>📸 Instagram</label><input type="url" id="s-ig" placeholder="https://instagram.com/yourstudio"></div>
+        <div class="fg"><label>🎵 TikTok</label><input type="url" id="s-tt" placeholder="https://tiktok.com/@yourstudio"></div>
+        <div class="fg"><label>▶️ YouTube</label><input type="url" id="s-yt" placeholder="https://youtube.com/@yourstudio"></div>
+      </div>
       <button class="btn-save" onclick="save()">💾 ບັນທຶກ Branding</button>
       <div class="suc" id="suc">✅ ບັນທຶກສຳເລັດ!</div>
     </div>
@@ -124,19 +136,47 @@ input[type=color]{padding:4px;height:42px;cursor:pointer;}
       <div id="port-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px"></div>
       <div id="port-empty" style="font-size:13px;color:var(--muted);padding:16px 0;display:none">ຍັງບໍ່ມີຮູບ Portfolio — Upload ຮູບ ແລ້ວ tick "ເພີ່ມໃສ່ Portfolio"</div>
     </div>
-    <!-- PREVIEW -->
-    <div class="prev-card">
-      <div class="prev-lbl">Preview ໜ້າລູກຄ້າ</div>
-      <div class="prev-bar"><div class="pd pd1"></div><div class="pd pd2"></div><div class="pd pd3"></div><div class="prev-url">sharelod.com/studio/...</div></div>
-      <div class="prev-body">
-        <div class="prev-hd">
-          <div class="prev-logo" id="pvlogo">📷</div>
-          <div><div class="prev-nm" id="pvnm">ຊື່ Studio</div><div style="font-size:10px;color:var(--muted)">ສົ່ງດ້ວຍ SHARE LOD</div></div>
+    <!-- PREVIEW + THEMES -->
+    <div>
+      <!-- THEME PRESETS -->
+      <div class="card" style="margin-bottom:16px">
+        <h3 style="margin-bottom:14px">🎨 Theme Presets</h3>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px" id="theme-grid">
+          <div class="theme-chip" onclick="applyTheme('#7c5cfc','#e05cfc')" title="Aurora" style="background:linear-gradient(135deg,#7c5cfc,#e05cfc)"></div>
+          <div class="theme-chip" onclick="applyTheme('#c9a96e','#8b6fff')" title="Gold" style="background:linear-gradient(135deg,#c9a96e,#8b6fff)"></div>
+          <div class="theme-chip" onclick="applyTheme('#10b981','#06b6d4')" title="Forest" style="background:linear-gradient(135deg,#10b981,#06b6d4)"></div>
+          <div class="theme-chip" onclick="applyTheme('#f43f5e','#fb923c')" title="Sunset" style="background:linear-gradient(135deg,#f43f5e,#fb923c)"></div>
+          <div class="theme-chip" onclick="applyTheme('#0ea5e9','#6366f1')" title="Ocean" style="background:linear-gradient(135deg,#0ea5e9,#6366f1)"></div>
         </div>
-        <div class="prev-bio" id="pvbio" style="display:none"></div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:10px">📁 Wedding 2025 · 42 ຟາຍ</div>
-        <div class="prev-grid"><div class="prev-img"></div><div class="prev-img"></div><div class="prev-img"></div><div class="prev-img"></div><div class="prev-img"></div><div class="prev-img"></div></div>
-        <button class="prev-btn" id="pvbtn" style="background:#7c5cfc">⬇ Download ທັງໝົດ</button>
+        <button onclick="resetTheme()" style="font-size:11px;background:transparent;border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:7px;cursor:pointer;font-family:'DM Sans','Noto Sans Lao',sans-serif">↺ Reset</button>
+      </div>
+      <!-- LIVE PREVIEW -->
+      <div class="prev-card">
+        <div class="prev-lbl" style="display:flex;justify-content:space-between;align-items:center">
+          <span>Preview ໜ້າລູກຄ້າ</span>
+          <span style="font-size:10px;color:var(--muted)">✏️ ກົດຂໍ້ຄວາມເພື່ອແກ້ໄຂ</span>
+        </div>
+        <div class="prev-bar"><div class="pd pd1"></div><div class="pd pd2"></div><div class="pd pd3"></div><div class="prev-url">share-lod.com/client/...</div></div>
+        <div class="prev-body">
+          <div class="prev-hd">
+            <div class="prev-logo" id="pvlogo" style="cursor:pointer" title="Upload Logo" onclick="document.querySelector('.logo-up input').click()">📷</div>
+            <div style="flex:1;min-width:0">
+              <div class="prev-nm" id="pvnm" contenteditable="true" spellcheck="false"
+                oninput="document.getElementById('sn').value=this.textContent.trim()"
+                style="cursor:text;outline:none;border-bottom:1px dashed rgba(255,255,255,.15);padding-bottom:2px">ຊື່ Studio</div>
+              <div style="font-size:9px;color:var(--muted);margin-top:2px">ສົ່ງໃຫ້ທ່ານຜ່ານ SHARE LOD</div>
+            </div>
+          </div>
+          <div class="prev-bio" id="pvbio" contenteditable="true" spellcheck="false"
+            oninput="document.getElementById('bio').value=this.textContent.trim()"
+            placeholder="ກົດເພື່ອໃສ່ Bio..."
+            style="display:block;min-height:28px;cursor:text;outline:none;border-bottom:1px dashed rgba(255,255,255,.1);padding-bottom:4px;margin-bottom:12px;font-size:11px;color:var(--muted)"></div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:10px">📁 Wedding 2025 · 42 ຟາຍ</div>
+          <div class="prev-grid">
+            ${Array(6).fill('<div class="prev-img" style="background:rgba(255,255,255,.06);border-radius:6px"></div>').join('')}
+          </div>
+          <button class="prev-btn" id="pvbtn" style="background:#7c5cfc">⬇ Download ທັງໝົດ</button>
+        </div>
       </div>
     </div>
   </div>
@@ -146,7 +186,22 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 const sb = createClient('https://vuhjmwnxbvzppcoklgir.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1aGptd254YnZ6cHBjb2tsZ2lyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5OTM2NzAsImV4cCI6MjA5MDU2OTY3MH0.ijlH_tjBZm4irxrq-FXfIKIKdwZJTdTzaYbTPrpd928');
 let uid, logoFile=null;
 window.logout=async()=>{await sb.auth.signOut();location.href='login.html';}
-window.updColor=()=>{const c=document.getElementById('color').value;document.getElementById('cprev').style.background=c;document.getElementById('pvbtn').style.background=c;};
+window.updColor=()=>{
+  const c=document.getElementById('color').value;
+  document.getElementById('cprev').style.background=c;
+  document.getElementById('pvbtn').style.background=c;
+};
+let _origColor='#7c5cfc';
+window.applyTheme=(c1,c2)=>{
+  document.getElementById('color').value=c1;
+  document.getElementById('cprev').style.background=`linear-gradient(135deg,${c1},${c2})`;
+  document.getElementById('pvbtn').style.background=`linear-gradient(135deg,${c1},${c2})`;
+};
+window.resetTheme=()=>{
+  document.getElementById('color').value=_origColor;
+  document.getElementById('cprev').style.background=_origColor;
+  document.getElementById('pvbtn').style.background=_origColor;
+};
 window.handleLogo=input=>{
   logoFile=input.files[0];if(!logoFile)return;
   const r=new FileReader();r.onload=e=>{const img=document.getElementById('lp');img.src=e.target.result;img.classList.add('show');document.getElementById('lph').style.display='none';document.getElementById('pvlogo').innerHTML=`<img src="${e.target.result}">`;};r.readAsDataURL(logoFile);
@@ -158,7 +213,13 @@ window.save=async()=>{
     const {error}=await sb.storage.from('framevault-logos').upload(`${uid}/logo`,logoFile,{upsert:true,contentType:logoFile.type});
     if(!error){const {data}=sb.storage.from('framevault-logos').getPublicUrl(`${uid}/logo`);logoUrl=data.publicUrl;}
   }
-  const upd={studio_name:name,branding_bio:bio,branding_color:color};
+  const upd={
+    studio_name:name,branding_bio:bio,branding_color:color,
+    social_facebook:document.getElementById('s-fb').value.trim()||null,
+    social_instagram:document.getElementById('s-ig').value.trim()||null,
+    social_tiktok:document.getElementById('s-tt').value.trim()||null,
+    social_youtube:document.getElementById('s-yt').value.trim()||null,
+  };
   if(logoUrl)upd.branding_logo=logoUrl;
   await sb.from('profiles').update(upd).eq('id',uid);
   document.getElementById('sb-name').textContent=name;
@@ -191,8 +252,12 @@ document.getElementById('sb-plan').textContent=(u.plan||'starter').toUpperCase()
 document.getElementById('sn').value=u.studio_name||'';
 document.getElementById('pvnm').textContent=u.studio_name||'ຊື່ Studio';
 if(u.branding_bio){document.getElementById('bio').value=u.branding_bio;document.getElementById('pvbio').textContent=u.branding_bio;document.getElementById('pvbio').style.display='block';}
-if(u.branding_color){document.getElementById('color').value=u.branding_color;document.getElementById('cprev').style.background=u.branding_color;document.getElementById('pvbtn').style.background=u.branding_color;}
+if(u.branding_color){document.getElementById('color').value=u.branding_color;document.getElementById('cprev').style.background=u.branding_color;document.getElementById('pvbtn').style.background=u.branding_color;_origColor=u.branding_color;}
 if(u.branding_logo){const img=document.getElementById('lp');img.src=u.branding_logo;img.classList.add('show');document.getElementById('lph').style.display='none';document.getElementById('pvlogo').innerHTML=`<img src="${u.branding_logo}">`;}
+if(u.social_facebook)document.getElementById('s-fb').value=u.social_facebook;
+if(u.social_instagram)document.getElementById('s-ig').value=u.social_instagram;
+if(u.social_tiktok)document.getElementById('s-tt').value=u.social_tiktok;
+if(u.social_youtube)document.getElementById('s-yt').value=u.social_youtube;
 </script>
 <div id="sb-ov" onclick="closeSb()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:49;backdrop-filter:blur(2px)"></div>
 <script>
