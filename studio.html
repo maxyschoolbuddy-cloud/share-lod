@@ -125,15 +125,19 @@ function stars(n){return'★'.repeat(Math.round(n||0))+'☆'.repeat(5-Math.round
 
 async function load(){
   if(!uid){document.getElementById('app').innerHTML='<div class="empty">❌ ບໍ່ພົບ Studio</div>';return;}
-  const {data:d}=await sb.rpc('get_studio_profile',{p_uid:uid});
+  const [{data:d},{data:portFull}]=await Promise.all([
+    sb.rpc('get_studio_profile',{p_uid:uid}),
+    sb.from('portfolio').select('id,url,mime_type,caption,category,is_visible,order_index').eq('uid',uid).eq('is_visible',true).order('order_index').order('created_at',{ascending:false})
+  ]);
   if(!d){document.getElementById('app').innerHTML='<div class="empty">❌ ບໍ່ພົບ Studio</div>';return;}
   data=d;
+  data._portFull=portFull||[]; // store full portfolio with category
   const p=d.profile;
   const color=p.branding_color||'#7c5cfc';
   document.title=`${p.studio_name||'Studio'} — SHARE LOD`;
 
   // cover photos — random 1 per category for diversity
-  const port=d.portfolio||[];
+  const port=portFull||d.portfolio||[];
   const byFolder={};
   port.forEach(f=>{const k=f.folder_name||'__none__';if(!byFolder[k])byFolder[k]=[];byFolder[k].push(f);});
   // pick 1 random from each folder, shuffle, take 6
@@ -326,27 +330,27 @@ window.toggleLike=async(postId,btn)=>{
 
 
 function renderPortfolio(el){
-  const port=data.portfolio||[];
+  const port=data._portFull||data.portfolio||[];
   if(!port.length){el.innerHTML='<div class="empty">🖼 ຍັງບໍ່ມີຜົນງານ</div>';return;}
 
-  // Group by folder_name
+  // Group by category field
   const cats={};
-  port.forEach(f=>{const k=f.folder_name||'__all__';if(!cats[k])cats[k]=[];cats[k].push(f);});
+  port.forEach(f=>{
+    const k=(f.category&&f.category.trim()&&f.category!=='General')?f.category:'ທົ່ວໄປ';
+    if(!cats[k])cats[k]=[];
+    cats[k].push(f);
+  });
 
-  // Sort: named folders first, then uncategorised
-  const keys=Object.keys(cats).sort((a,b)=>{if(a==='__all__')return 1;if(b==='__all__')return -1;return a.localeCompare(b);});
-
-  // All urls for lightbox
-  const allUrls=port.map(f=>f.url);
-  let idx=0;
-  const idxMap={};port.forEach((f,i)=>idxMap[f.url]=i);
+  const keys=Object.keys(cats).sort((a,b)=>{
+    if(a==='ທົ່ວໄປ')return 1;if(b==='ທົ່ວໄປ')return -1;
+    return a.localeCompare(b,'lo');
+  });
 
   el.innerHTML=keys.map(k=>{
     const items=cats[k];
-    const label=k==='__all__'?'📷 ທຸກຜົນງານ':`📂 ${k}`;
     return `<div class="port-cat">
       <div class="port-cat-hd">
-        <span class="port-cat-name">${label}</span>
+        <span class="port-cat-name">📂 ${k}</span>
         <span class="port-cat-cnt">${items.length} ຮູບ</span>
       </div>
       <div class="pg">${items.map(f=>`
