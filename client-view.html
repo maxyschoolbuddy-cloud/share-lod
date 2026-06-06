@@ -28,20 +28,77 @@ body{
 
 /* HEADER */
 header{
-  height:60px;padding:0 24px;display:flex;align-items:center;justify-content:space-between;
+  padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;
   position:sticky;top:0;z-index:50;
-  background:rgba(8,8,14,.7);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);
+  background:rgba(8,8,14,.75);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);
 }
-.brand{display:flex;align-items:center;gap:12px;}
+.brand{display:flex;align-items:center;gap:12px;flex:1;min-width:0;}
 .brand-logo{
-  width:36px;height:36px;border-radius:12px;overflow:hidden;flex-shrink:0;
+  width:44px;height:44px;border-radius:14px;overflow:hidden;flex-shrink:0;
   background:linear-gradient(135deg,var(--pu),var(--pi));
-  display:flex;align-items:center;justify-content:center;font-size:15px;
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  box-shadow:0 0 16px var(--glow-p);
 }
 .brand-logo img{width:100%;height:100%;object-fit:cover;}
-.brand-name{font-size:16px;font-weight:700;background:var(--aura);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.brand-sub{font-size:10px;color:var(--muted);margin-top:1px;}
-.head-right{display:flex;gap:8px;align-items:center;}
+.brand-info{flex:1;min-width:0;}
+.brand-name{font-size:15px;font-weight:700;background:var(--aura);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;}
+.brand-bio{font-size:11px;color:var(--muted2);margin-top:2px;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:320px;}
+.head-right{display:flex;gap:8px;align-items:center;flex-shrink:0;}
+
+/* SELECTION MODE */
+.sel-bar{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+  z-index:200;display:flex;align-items:center;gap:10px;
+  background:rgba(15,15,26,.92);backdrop-filter:blur(20px);
+  border:1px solid rgba(168,85,247,.35);border-radius:100px;
+  padding:10px 16px 10px 20px;
+  box-shadow:0 8px 40px rgba(0,0,0,.5),0 0 0 1px rgba(168,85,247,.2);
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),opacity .3s;
+  opacity:0;pointer-events:none;white-space:nowrap;
+}
+.sel-bar.show{transform:translateX(-50%) translateY(0);opacity:1;pointer-events:auto;}
+.sel-count{font-size:13px;font-weight:600;color:var(--text);}
+.sel-count span{
+  background:var(--aura);-webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;background-clip:text;
+}
+.sel-cancel{
+  background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:100px;
+  color:var(--muted2);font-size:12px;font-weight:500;cursor:pointer;
+  padding:6px 14px;font-family:var(--f);transition:all .2s;
+}
+.sel-cancel:hover{color:var(--text);border-color:var(--border);}
+.sel-dl{
+  background:linear-gradient(135deg,var(--pu),var(--pi));
+  border:none;border-radius:100px;
+  color:#fff;font-size:12px;font-weight:600;cursor:pointer;
+  padding:8px 20px;font-family:var(--f);transition:all .2s;
+  box-shadow:0 0 16px var(--glow-p);
+}
+.sel-dl:hover{opacity:.9;transform:scale(1.03);}
+
+/* PHOTO SELECTED STATE */
+.gi.selected{border-color:var(--pu) !important;box-shadow:0 0 0 2px var(--pu),0 0 20px var(--glow-p);}
+.gi.selected .gi-check{opacity:1;}
+.gi-check{
+  position:absolute;top:10px;right:10px;
+  width:26px;height:26px;border-radius:8px;
+  background:linear-gradient(135deg,var(--pu),var(--pi));
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;color:#fff;opacity:0;
+  transition:opacity .2s,transform .2s;z-index:5;
+  box-shadow:0 2px 10px var(--glow-p);
+  transform:scale(0.7);
+}
+.gi.selected .gi-check{opacity:1;transform:scale(1);}
+
+/* LONG PRESS RIPPLE */
+@keyframes lp-ring{0%{transform:scale(.8);opacity:.6}100%{transform:scale(1.5);opacity:0}}
+.gi.pressing::after{
+  content:'';position:absolute;inset:0;border-radius:16px;
+  border:2px solid var(--pu);animation:lp-ring .5s ease-out forwards;
+  pointer-events:none;
+}
 
 /* BUTTONS */
 .dl-all{
@@ -356,6 +413,13 @@ footer{
 <div class="orb orb1"></div>
 <div id="app"><div class="st"><div class="spinner"></div><p style="color:var(--muted)">ກຳລັງໂຫຼດ...</p></div></div>
 
+<!-- SELECTION BAR -->
+<div class="sel-bar" id="sel-bar">
+  <div class="sel-count">ເລືອກ <span id="sel-num">0</span> ຮູບ</div>
+  <button class="sel-cancel" onclick="exitSelMode()">ຍົກເລີກ</button>
+  <button class="sel-dl" onclick="dlSelected()">⬇ Download</button>
+</div>
+
 <!-- LIGHTBOX -->
 <div class="lb hidden" id="lb">
   <button class="lb-x" onclick="closeLb()">✕</button>
@@ -397,6 +461,8 @@ const token = params.get('token'), projId = params.get('project');
 const clientToken = params.get('client'); // NEW: client-level link
 let files=[], lbIdx=0, view='grid', activeFolder=null, faceFilterIds=null;
 let faceStream=null, faceReady=false, viewFiles=[], searchQ='';
+// ─── SELECTION ─────────────────────────────────────────
+let selSet=new Set(), selMode=false, lpTimer=null, lpFired=false;
 let starSet=new Set(), starFilterOn=false;
 let studioUid=null, studioProfile=null;
 const sessKey=localStorage.getItem('slod_sess')||Math.random().toString(36).slice(2);
@@ -479,7 +545,10 @@ async function load(){
     <header>
       <div class="brand">
         <div class="brand-logo" style="background:linear-gradient(135deg,${color},#e05cfc)">${profileData?.branding_logo?`<img src="${profileData.branding_logo}">`:'📷'}</div>
-        <div><div class="brand-name">${profileData?.studio_name||'Studio'}</div><div class="brand-sub">ສົ່ງໃຫ້ທ່ານດ້ວຍ SHARE LOD</div></div>
+        <div class="brand-info">
+          <div class="brand-name">${profileData?.studio_name||'Studio'}</div>
+          ${profileData?.branding_bio?`<div class="brand-bio">${profileData.branding_bio}</div>`:'<div class="brand-bio" style="color:var(--muted)">ສົ່ງໃຫ້ທ່ານດ້ວຍ SHARE LOD</div>'}
+        </div>
       </div>
       <div class="head-right">
         <button class="dl-star-btn" id="dl-starred-btn" onclick="dlStarred()" style="${starSet.size>0?'display:inline-block':'display:none'}">⭐ Download ດາວ (${starSet.size})</button>
@@ -564,7 +633,10 @@ async function loadClientView(app){
     <header>
       <div class="brand">
         <div class="brand-logo" style="background:linear-gradient(135deg,${color},#e05cfc)">${profileData?.branding_logo?`<img src="${profileData.branding_logo}">`:'📷'}</div>
-        <div><div class="brand-name">${profileData?.studio_name||'Studio'}</div><div class="brand-sub">ສົ່ງໃຫ້ທ່ານດ້ວຍ SHARE LOD</div></div>
+        <div class="brand-info">
+          <div class="brand-name">${profileData?.studio_name||'Studio'}</div>
+          ${profileData?.branding_bio?`<div class="brand-bio">${profileData.branding_bio}</div>`:'<div class="brand-bio" style="color:var(--muted)">ສົ່ງໃຫ້ທ່ານດ້ວຍ SHARE LOD</div>'}
+        </div>
       </div>
       <div class="head-right">
         <button class="dl-star-btn" id="dl-starred-btn" onclick="dlStarred()" style="${starSet.size>0?'display:inline-block':'display:none'}">⭐ Download ດາວ</button>
@@ -756,17 +828,21 @@ function renderGalleryContent(){
   if(!viewFiles.length){g.innerHTML='<div class="st"><div class="st-icon">📭</div><p style="color:var(--muted)">ບໍ່ພົບຮູບ</p></div>';return;}
   if(view==='grid'){
     g.innerHTML=`<div class="gg">${viewFiles.map((f,i)=>`
-      <div class="gi" onclick="openLb(${i})">
+      <div class="gi ${selSet.has(f.id)?'selected':''}"
+        onmousedown="lpStart(event,'${f.id}')" onmouseup="lpEnd(event)" onmouseleave="lpEnd(event)"
+        ontouchstart="lpStart(event,'${f.id}')" ontouchend="lpEnd(event)" ontouchcancel="lpEnd(event)"
+        onclick="onGiClick(event,${i},'${f.id}')">
         ${f.mime_type?.startsWith('image')?`<img src="${f.url}" loading="lazy" alt="${f.name}">`
           :f.mime_type?.startsWith('video')?`<video src="${f.url}" muted>`
           :`<div class="gi-ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg></div>`}
+        <div class="gi-check">✓</div>
         <div class="gi-overlay">
-          <button class="star-btn ${starSet.has(f.id)?'starred':''}" data-star="${f.id}" onclick="event.stopPropagation();toggleStar('${f.id}',this)">${starSet.has(f.id)?'★':'☆'}</button>
-          <button class="dl-btn" onclick="event.stopPropagation();dlFile('${f.url}','${f.name}')">↓</button>
+          <div class="gi-actions">
+            <button class="star-btn ${starSet.has(f.id)?'starred':''}" data-star="${f.id}" onclick="event.stopPropagation();toggleStar('${f.id}',this)">${starSet.has(f.id)?'★':'☆'}</button>
+            <button class="dl-btn" onclick="event.stopPropagation();dlFile('${f.url}','${f.name}')">↓</button>
+          </div>
         </div>
-        <div class="gi-foot">
-          <div class="gi-info"><div class="gi-name">${f.name}</div></div>
-        </div>
+        <div class="gi-foot"><div class="gi-info"><div class="gi-name">${f.name}</div></div></div>
       </div>`).join('')}</div>`;
   }else{
     g.innerHTML=`<div class="gl">${viewFiles.map((f,i)=>`
@@ -984,6 +1060,57 @@ window.submitRating=async()=>{
   // Show thank you
   const card=document.querySelector('.rating-card');
   if(card) card.innerHTML=`<div class="rating-done">✅ ຂອບໃຈສຳລັບ Review! ${'★'.repeat(selRating)}</div>`;
+};
+
+// ─── LONG PRESS + SELECTION ────────────────────────────
+window.lpStart=(e,fileId)=>{
+  lpFired=false;
+  const el=e.currentTarget;
+  lpTimer=setTimeout(()=>{
+    lpFired=true;
+    navigator.vibrate&&navigator.vibrate(30);
+    el.classList.remove('pressing');
+    enterSelMode(fileId);
+  },450);
+  el.classList.add('pressing');
+};
+window.lpEnd=(e)=>{
+  clearTimeout(lpTimer);lpTimer=null;
+  if(e?.currentTarget) e.currentTarget.classList.remove('pressing');
+};
+window.onGiClick=(e,idx,fileId)=>{
+  if(lpFired){lpFired=false;return;} // was long press — ignore click
+  if(selMode){e.stopPropagation();toggleSel(fileId);return;}
+  openLb(idx);
+};
+function enterSelMode(fileId){
+  selMode=true;
+  selSet.clear();
+  selSet.add(fileId);
+  updSelBar();
+  renderGalleryContent();
+}
+window.exitSelMode=()=>{
+  selMode=false;selSet.clear();
+  updSelBar();renderGalleryContent();
+};
+function toggleSel(fileId){
+  if(selSet.has(fileId)) selSet.delete(fileId);
+  else selSet.add(fileId);
+  if(selSet.size===0) exitSelMode();
+  else{updSelBar();renderGalleryContent();}
+}
+function updSelBar(){
+  const bar=document.getElementById('sel-bar');
+  const num=document.getElementById('sel-num');
+  if(!bar)return;
+  bar.classList.toggle('show',selMode&&selSet.size>0);
+  if(num) num.textContent=selSet.size;
+}
+window.dlSelected=()=>{
+  const toDown=files.filter(f=>selSet.has(f.id));
+  toDown.forEach((f,i)=>setTimeout(()=>dlFile(f.url,f.name),i*600));
+  exitSelMode();
 };
 
 load();
