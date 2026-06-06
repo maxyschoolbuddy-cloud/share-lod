@@ -75,6 +75,14 @@ textarea{resize:vertical;min-height:70px;}
 .spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--a1);border-radius:50%;animation:spin .8s linear infinite;display:inline-block;}
 @keyframes spin{to{transform:rotate(360deg);}}
 .hbg{display:none;align-items:center;justify-content:center;width:38px;height:38px;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:9px;cursor:pointer;font-size:18px;flex-shrink:0;}
+/* BOTTOM NAV (mobile) */
+.bnav{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(13,13,26,.97);border-top:1px solid rgba(255,255,255,.08);z-index:200;padding:6px 4px env(safe-area-inset-bottom);backdrop-filter:blur(20px);}
+.bnav-inner{display:flex;align-items:stretch;}
+.bn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:8px 2px;color:var(--muted);text-decoration:none;font-size:9px;font-weight:500;border-radius:10px;transition:color .2s;cursor:pointer;border:none;background:none;font-family:'Noto Sans Lao','DM Sans',sans-serif;min-width:0;}
+.bn:hover{color:var(--text);}
+.bn.active{color:var(--a1);}
+.bn-ic{font-size:20px;line-height:1;}
+.bn-lbl{font-size:9px;white-space:nowrap;overflow:hidden;max-width:100%;}
 @media(max-width:900px){.sb{display:none;}.main{margin-left:0;}.cg{grid-template-columns:1fr;}}
 </style>
 </head>
@@ -240,8 +248,23 @@ load();
 function openSb(){document.querySelector('.sb').classList.add('open');document.getElementById('sb-ov').style.display='block';document.body.style.overflow='hidden';}
 function closeSb(){document.querySelector('.sb').classList.remove('open');document.getElementById('sb-ov').style.display='none';document.body.style.overflow='';}
 </script>
+<!-- BOTTOM NAV -->
+<nav class="bnav" id="bnav">
+  <div class="bnav-inner">
+    <a class="bn" href="dashboard.html" id="bn-dashboard"><span class="bn-ic">📊</span><span class="bn-lbl">Dashboard</span></a>
+    <a class="bn" href="clients.html" id="bn-clients" class="bn active"><span class="bn-ic">👥</span><span class="bn-lbl">Clients</span></a>
+    <a class="bn" href="upload.html" id="bn-upload"><span class="bn-ic">⬆️</span><span class="bn-lbl">Upload</span></a>
+    <a class="bn" href="branding.html" id="bn-branding"><span class="bn-ic">🎨</span><span class="bn-lbl">Branding</span></a>
+    <a class="bn" href="portfolio.html" id="bn-portfolio"><span class="bn-ic">🖼</span><span class="bn-lbl">Portfolio</span></a>
+    <a class="bn" href="inbox.html" id="bn-inbox"><span class="bn-ic">💬</span><span class="bn-lbl">Inbox</span></a>
+    <a class="bn" href="community.html" id="bn-community"><span class="bn-ic">🌐</span><span class="bn-lbl">Community</span></a>
+    <a class="bn" href="subscription.html" id="bn-sub"><span class="bn-ic">💳</span><span class="bn-lbl">Plan</span></a>
+  </div>
+</nav>
 </body>
 </html>
+
+
 
 
 
