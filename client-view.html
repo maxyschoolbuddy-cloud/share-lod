@@ -44,11 +44,17 @@ main{max-width:1200px;margin:0 auto;padding:32px 28px;position:relative;z-index:
 .star-bar{background:rgba(245,200,66,.06);border:1px solid rgba(245,200,66,.15);border-radius:10px;padding:9px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;font-size:12px;}
 .star-bar.hidden{display:none;}
 .star-bar-cls{background:none;border:none;color:var(--muted);cursor:pointer;font-size:11px;font-family:'Noto Sans Lao','DM Sans',sans-serif;}
-/* FOLDER TABS */
-.ftabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
-.ftab{padding:6px 14px;border-radius:100px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'Noto Sans Lao','DM Sans',sans-serif;transition:all .2s;}
+/* TABS */
+.ftabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px;}
+.ftab{padding:7px 16px;border-radius:100px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'Noto Sans Lao','DM Sans',sans-serif;transition:all .2s;}
 .ftab:hover{border-color:rgba(124,92,252,.3);color:var(--text);}
 .ftab.on{background:var(--grad);border-color:transparent;color:#fff;}
+/* FOLDER SUB-TABS */
+.sub-ftabs{display:none;gap:5px;flex-wrap:wrap;margin-bottom:14px;padding:8px 12px;background:rgba(255,255,255,.03);border-radius:10px;border:1px solid var(--border);}
+.sub-ftabs.show{display:flex;}
+.sub-ftab{padding:5px 13px;border-radius:100px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'Noto Sans Lao','DM Sans',sans-serif;transition:all .2s;}
+.sub-ftab:hover{border-color:rgba(124,92,252,.3);color:var(--text);}
+.sub-ftab.on{background:rgba(124,92,252,.2);border-color:rgba(124,92,252,.4);color:#fff;}
 /* FACE BAR */
 .face-bar{background:rgba(124,92,252,.1);border:1px solid rgba(124,92,252,.2);border-radius:10px;padding:9px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;font-size:12px;}
 .face-bar.hidden{display:none;}
@@ -370,18 +376,13 @@ async function loadClientView(app){
         <input class="search-input" id="search-input" type="text" placeholder="🔍 ຄົ້ນຫາ..." oninput="onSearch(this.value)">
         <button class="search-cls" id="search-cls" onclick="clearSearch()" style="display:none">✕</button>
       </div>
-      <!-- Project + Folder tabs -->
+      <!-- Row 1: Project tabs -->
       <div class="ftabs" id="ftabs">
-        <button class="ftab on" onclick="setClientFilter(null,null,this)">ທັງໝົດ (${files.length})</button>
-        ${projects.map(p=>{
-          const pFiles=files.filter(f=>f.project_id===p.id);
-          const folders=[...new Set(pFiles.map(f=>f.folder_name).filter(Boolean))];
-          const noFolderFiles=pFiles.filter(f=>!f.folder_name);
-          return `<button class="ftab" onclick="setClientFilter('${p.id}',null,this)" style="background:rgba(124,92,252,.08)">📁 ${p.name} (${pFiles.length})</button>`
-            +(folders.map(fn=>`<button class="ftab" onclick="setClientFilter('${p.id}','${fn}',this)" style="margin-left:2px">📂 ${fn} (${pFiles.filter(f=>f.folder_name===fn).length})</button>`).join(''))
-            +(noFolderFiles.length&&folders.length?`<button class="ftab" onclick="setClientFilter('${p.id}','__none__',this)" style="margin-left:2px">📄 ອື່ນໆ (${noFolderFiles.length})</button>`:'');
-        }).join('')}
+        <button class="ftab on" onclick="selectProject(null,this)">📂 ທັງໝົດ (${files.length})</button>
+        ${projects.map(p=>`<button class="ftab" onclick="selectProject('${p.id}',this)">📁 ${p.name} (${files.filter(f=>f.project_id===p.id).length})</button>`).join('')}
       </div>
+      <!-- Row 2: Folder sub-tabs (ສະແດງເມື່ອເລືອກ project) -->
+      <div class="sub-ftabs" id="sub-ftabs"></div>
       <div class="star-bar hidden" id="star-bar">
         <span>⭐ ສະແດງ <span id="star-bar-cnt">${starSet.size}</span> ຮູບທີ່ໝາຍດາວ</span>
         <button class="star-bar-cls" onclick="clearStarFilter()">ສະແດງທັງໝົດ ✕</button>
@@ -413,22 +414,43 @@ async function loadStarsClient(){
   starSet=new Set((data||[]).map(s=>s.file_id));
 }
 
-// Client-level filter: by project + optional folder
-window.setClientFilter=(projId,folderName,el)=>{
+// Row 1: select project → show folder sub-tabs
+let _selProjId=null;
+window.selectProject=(projId,el)=>{
+  _selProjId=projId;
   faceFilterIds=null;
   document.querySelectorAll('.ftab').forEach(t=>t.classList.remove('on'));
   el.classList.add('on');
+  // Build folder sub-tabs
+  const sub=document.getElementById('sub-ftabs');
+  const pFiles=projId?files.filter(f=>f.project_id===projId):files;
+  const folders=[...new Set(pFiles.map(f=>f.folder_name).filter(Boolean))];
+  if(folders.length){
+    sub.className='sub-ftabs show';
+    sub.innerHTML=`<button class="sub-ftab on" onclick="selectFolder(null,this)">ທັງໝົດ (${pFiles.length})</button>`
+      +folders.map(fn=>`<button class="sub-ftab" onclick="selectFolder('${fn}',this)">📂 ${fn} (${pFiles.filter(f=>f.folder_name===fn).length})</button>`).join('');
+  } else {
+    sub.className='sub-ftabs';sub.innerHTML='';
+  }
+  applyClientFilter(projId,null);
+};
+// Row 2: select folder within selected project
+window.selectFolder=(folderName,el)=>{
+  document.querySelectorAll('.sub-ftab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  applyClientFilter(_selProjId,folderName);
+};
+function applyClientFilter(projId,folderName){
   let f=files;
   if(projId) f=f.filter(x=>x.project_id===projId);
-  if(folderName==='__none__') f=f.filter(x=>!x.folder_name);
-  else if(folderName) f=f.filter(x=>x.folder_name===folderName);
+  if(folderName) f=f.filter(x=>x.folder_name===folderName);
   if(starFilterOn) f=f.filter(x=>starSet.has(x.id));
   if(searchQ) f=f.filter(x=>(x.name||'').toLowerCase().includes(searchQ.toLowerCase()));
   viewFiles=f;
   const cnt=document.getElementById('gal-count');
   if(cnt) cnt.textContent=`${viewFiles.length} ລາຍການ`;
   renderGalleryContent();
-};
+}
 
 // ─── [3] STARS — per share_token ─────────────────────────
 const starToken = clientToken||token; // use whichever is available
