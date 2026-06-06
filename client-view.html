@@ -309,9 +309,7 @@ async function load(){
       <div id="gallery"></div>
     </main>`;
 
-  // ບໍ່ສະແດງ folder tabs ໃນໜ້າ client
-  const ftabsEl=document.getElementById('ftabs');
-  if(ftabsEl) ftabsEl.style.display='none';
+  renderFolderTabs();
   renderGallery();
   trackView();
   renderRatingSection();
@@ -477,8 +475,7 @@ function renderFolderTabs(){
     +folders.map(fn=>`<button class="ftab" onclick="setFolder('${fn}',this)">📂 ${fn} (${files.filter(f=>f.folder_name===fn).length})</button>`).join('');
 }
 window.setFolder=(folder,el)=>{
-  activeFolder=null; // ໃນ client view ບໍ່ filter ຕາມ folder
-  faceFilterIds=null;
+  activeFolder=folder;faceFilterIds=null;
   document.querySelectorAll('.ftab').forEach(t=>t.classList.remove('on'));
   el.classList.add('on');renderGallery();
 };
@@ -486,10 +483,10 @@ window.setFolder=(folder,el)=>{
 // ─── GALLERY ───────────────────────────────────────────────
 function getFiltered(){
   let f=files;
-  // ບໍ່ filter ຕາມ folder_name — ສະແດງໝົດໃຫ້ client
+  if(activeFolder) f=f.filter(x=>x.folder_name===activeFolder);
   if(faceFilterIds) f=f.filter(x=>faceFilterIds.has(x.id));
   if(starFilterOn) f=f.filter(x=>starSet.has(x.id));
-  if(searchQ){const q=searchQ.toLowerCase();f=f.filter(x=>(x.name||'').toLowerCase().includes(q));}
+  if(searchQ){const q=searchQ.toLowerCase();f=f.filter(x=>(x.name||'').toLowerCase().includes(q)||(x.folder_name||'').toLowerCase().includes(q));}
   return f;
 }
 window.setView=mode=>{view=mode;document.getElementById('vg').classList.toggle('on',mode==='grid');document.getElementById('vl').classList.toggle('on',mode==='list');renderGallery();};
