@@ -159,6 +159,7 @@ nav{padding:0 32px;height:54px;display:flex;align-items:center;justify-content:s
 <script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 const sb = createClient('https://vuhjmwnxbvzppcoklgir.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1aGptd254YnZ6cHBjb2tsZ2lyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5OTM2NzAsImV4cCI6MjA5MDU2OTY3MH0.ijlH_tjBZm4irxrq-FXfIKIKdwZJTdTzaYbTPrpd928');
+window.logout=async()=>{await sb.auth.signOut();location.href='login.html';};
 
 let me=null, posts=[], openChats={};
 const sessKey=localStorage.getItem('slod_sess')||Math.random().toString(36).slice(2);
@@ -200,7 +201,7 @@ if(session){
       <span>${me.studio_name||'User'}</span>
     </div>
     ${me.role!=='member'?`<a href="dashboard.html" class="nbtn nbtn-grad" style="font-size:11px">Dashboard</a>`:''}
-    <button onclick="sb.auth.signOut().then(()=>location.reload())" class="nbtn nbtn-out" style="font-size:11px">ອອກ</button>`;
+    <button onclick="logout()" class="nbtn nbtn-out" style="font-size:11px">ອອກ</button>`;
   document.getElementById('me-card').style.display='block';
   document.getElementById('me-info').innerHTML=`
     <div style="font-weight:600">${me.studio_name}</div>
