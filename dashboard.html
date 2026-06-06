@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="lo">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -68,7 +68,8 @@ body{font-family:'DM Sans','Noto Sans Lao',sans-serif;background:var(--bg);color
 .spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--a1);border-radius:50%;animation:spin .8s linear infinite;display:inline-block;}
 @keyframes spin{to{transform:rotate(360deg);}}
 .loading{display:flex;align-items:center;justify-content:center;gap:8px;padding:40px;color:var(--muted);font-size:13px;}
-@media(max-width:900px){.sb{display:none;}.main{margin-left:0;}.stats{grid-template-columns:repeat(2,1fr);}.g2{grid-template-columns:1fr;}}
+.hbg{display:none;align-items:center;justify-content:center;width:38px;height:38px;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:9px;cursor:pointer;font-size:18px;flex-shrink:0;}
+@media(max-width:900px){.sb{transform:translateX(-100%);transition:transform .28s cubic-bezier(.4,0,.2,1);}.sb.open{transform:translateX(0);box-shadow:0 0 40px rgba(0,0,0,.6);}.main{margin-left:0;}.stats{grid-template-columns:repeat(2,1fr);}.g2{grid-template-columns:1fr;}.hbg{display:flex!important;}.topbar{padding:14px 16px;}.content{padding:18px 14px;}}
 </style>
 </head>
 <body>
@@ -96,7 +97,7 @@ body{font-family:'DM Sans','Noto Sans Lao',sans-serif;background:var(--bg);color
   </div>
 </aside>
 <div class="main">
-  <div class="topbar">
+  <div class="topbar"><button class="hbg" onclick="openSb()">☰</button>
     <div class="tb-title" id="greeting">ສະບາຍດີ 👋</div>
     <div class="tb-right">
       <a href="upload.html" class="btn">⬆ Upload</a>
@@ -208,5 +209,13 @@ document.getElementById('main-body').innerHTML = `
     </div>
   </div>`;
 </script>
+<div id="sb-ov" onclick="closeSb()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:49;backdrop-filter:blur(2px)"></div>
+<script>
+function openSb(){document.querySelector('.sb').classList.add('open');document.getElementById('sb-ov').style.display='block';document.body.style.overflow='hidden';}
+function closeSb(){document.querySelector('.sb').classList.remove('open');document.getElementById('sb-ov').style.display='none';document.body.style.overflow='';}
+</script>
 </body>
 </html>
+
+
+

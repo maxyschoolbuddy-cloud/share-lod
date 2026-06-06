@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="lo">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -82,6 +82,7 @@ select:focus,input:focus{border-color:rgba(124,92,252,.5);}
 .empty{text-align:center;padding:36px;color:var(--muted);font-size:13px;}
 .spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--a1);border-radius:50%;animation:spin .8s linear infinite;display:inline-block;}
 @keyframes spin{to{transform:rotate(360deg);}}
+.hbg{display:none;align-items:center;justify-content:center;width:38px;height:38px;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:9px;cursor:pointer;font-size:18px;flex-shrink:0;}
 @media(max-width:900px){.sb{display:none;}.main{margin-left:0;}.row2{grid-template-columns:1fr;}}
 </style>
 </head>
@@ -105,7 +106,7 @@ select:focus,input:focus{border-color:rgba(124,92,252,.5);}
   </div>
 </aside>
 <div class="main">
-  <div class="topbar"><div class="tb-title">⬆️ Upload ຟາຍ</div></div>
+  <div class="topbar"><button class="hbg" onclick="openSb()">☰</button><div class="tb-title">⬆️ Upload ຟາຍ</div></div>
   <div class="content">
     <div class="card">
       <h3>ເລືອກ Client & Project</h3>
@@ -309,5 +310,13 @@ if(p.get('client')){document.getElementById('sel-c').value=p.get('client');await
 if(p.get('project'))document.getElementById('sel-p').value=p.get('project');
 loadFiles();
 </script>
+<div id="sb-ov" onclick="closeSb()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:49;backdrop-filter:blur(2px)"></div>
+<script>
+function openSb(){document.querySelector('.sb').classList.add('open');document.getElementById('sb-ov').style.display='block';document.body.style.overflow='hidden';}
+function closeSb(){document.querySelector('.sb').classList.remove('open');document.getElementById('sb-ov').style.display='none';document.body.style.overflow='';}
+</script>
 </body>
 </html>
+
+
+
