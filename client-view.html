@@ -228,8 +228,11 @@ async function load(){
   if(!tokenCheck?.length){app.innerHTML='<div class="st"><div class="st-icon">🔒</div><p>Link ບໍ່ຖືກຕ້ອງ ຫຼື ໝົດອາຍຸ</p></div>';return;}
 
   // Load files
-  const {data:fdata}=await sb.from('files').select('*').eq('project_id',projId).eq('share_enabled',true).order('name',{ascending:true});
-  files=fdata||[];
+  const {data:fdata}=await sb.from('files').select('*').eq('project_id',projId).eq('share_enabled',true);
+  // Natural sort: A→Z + ຕົວເລກ (1,2,3...10,11 ບໍ່ແມ່ນ 1,10,11,2)
+  files=(fdata||[]).sort((a,b)=>
+    (a.name||'').localeCompare(b.name||'',undefined,{numeric:true,sensitivity:'base'})
+  );
 
   // [3] Load stars — per share_token (per client link)
   await loadStars();
