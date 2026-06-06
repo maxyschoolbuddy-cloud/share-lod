@@ -370,10 +370,17 @@ async function loadClientView(app){
         <input class="search-input" id="search-input" type="text" placeholder="🔍 ຄົ້ນຫາ..." oninput="onSearch(this.value)">
         <button class="search-cls" id="search-cls" onclick="clearSearch()" style="display:none">✕</button>
       </div>
-      <!-- Project tabs -->
+      <!-- Project + Folder tabs -->
       <div class="ftabs" id="ftabs">
-        <button class="ftab on" onclick="setFolder(null,this)">ທັງໝົດ (${files.length})</button>
-        ${projects.map(p=>`<button class="ftab" onclick="setProjectFilter('${p.id}',this)">📁 ${p.name} (${files.filter(f=>f.project_id===p.id).length})</button>`).join('')}
+        <button class="ftab on" onclick="setClientFilter(null,null,this)">ທັງໝົດ (${files.length})</button>
+        ${projects.map(p=>{
+          const pFiles=files.filter(f=>f.project_id===p.id);
+          const folders=[...new Set(pFiles.map(f=>f.folder_name).filter(Boolean))];
+          const noFolderFiles=pFiles.filter(f=>!f.folder_name);
+          return `<button class="ftab" onclick="setClientFilter('${p.id}',null,this)" style="background:rgba(124,92,252,.08)">📁 ${p.name} (${pFiles.length})</button>`
+            +(folders.map(fn=>`<button class="ftab" onclick="setClientFilter('${p.id}','${fn}',this)" style="margin-left:2px">📂 ${fn} (${pFiles.filter(f=>f.folder_name===fn).length})</button>`).join(''))
+            +(noFolderFiles.length&&folders.length?`<button class="ftab" onclick="setClientFilter('${p.id}','__none__',this)" style="margin-left:2px">📄 ອື່ນໆ (${noFolderFiles.length})</button>`:'');
+        }).join('')}
       </div>
       <div class="star-bar hidden" id="star-bar">
         <span>⭐ ສະແດງ <span id="star-bar-cnt">${starSet.size}</span> ຮູບທີ່ໝາຍດາວ</span>
@@ -406,15 +413,18 @@ async function loadStarsClient(){
   starSet=new Set((data||[]).map(s=>s.file_id));
 }
 
-// Project filter for client view
-window.setProjectFilter=(projId,el)=>{
-  activeFolder=null;faceFilterIds=null;
+// Client-level filter: by project + optional folder
+window.setClientFilter=(projId,folderName,el)=>{
+  faceFilterIds=null;
   document.querySelectorAll('.ftab').forEach(t=>t.classList.remove('on'));
   el.classList.add('on');
-  viewFiles=files.filter(f=>f.project_id===projId);
-  if(starFilterOn) viewFiles=viewFiles.filter(f=>starSet.has(f.id));
-  if(searchQ) viewFiles=viewFiles.filter(f=>(f.name||'').toLowerCase().includes(searchQ.toLowerCase()));
-  const g=document.getElementById('gallery');
+  let f=files;
+  if(projId) f=f.filter(x=>x.project_id===projId);
+  if(folderName==='__none__') f=f.filter(x=>!x.folder_name);
+  else if(folderName) f=f.filter(x=>x.folder_name===folderName);
+  if(starFilterOn) f=f.filter(x=>starSet.has(x.id));
+  if(searchQ) f=f.filter(x=>(x.name||'').toLowerCase().includes(searchQ.toLowerCase()));
+  viewFiles=f;
   const cnt=document.getElementById('gal-count');
   if(cnt) cnt.textContent=`${viewFiles.length} ລາຍການ`;
   renderGalleryContent();
